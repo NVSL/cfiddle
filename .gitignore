@@ -1,0 +1,11 @@
+.coverage*
+*~
+*,cover
+server.log
+*.egg-info
+\#*
+.\#*
+__pycache__
+venv
+
+*.exe
