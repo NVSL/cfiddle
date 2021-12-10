@@ -25,22 +25,23 @@ def environment(**kwds):
         os.environ.clear()
         os.environ.update(env)
 
-def cross_product(parameters, base=None):
-    if base is None:
-        base = {}
-        
-    ret = []
+def cross_product(parameters):
     if len(parameters) == 0:
-        return [base]
-    else:
-        rest = cross_product(parameters[:-1], base)
-        name, values = parameters[-1]
-        for r in rest:
-             for v in values:
-                t = copy.copy(r)
-                t[name] = v
-                ret.append(t)
-        return ret
+        return []
+    if len(parameters) == 1:
+        name, values = parameters[0]
+        return [{name:v} for v in values]
+    
+    ret = []
+    rest = cross_product(parameters[:-1])
+    name, values = parameters[-1]
+    for r in rest:
+        for v in values:
+            t = copy.copy(r)
+            t[name] = v
+            ret.append(t)
+            
+    return ret
 
 def expand_args(**parameters):
     """
@@ -57,11 +58,12 @@ def expand_args(**parameters):
     def listify(t):
         return t if isinstance(t, Iterable) and not isinstance(t, str) else [t]
     t = [(k, listify(v)) for k,v in parameters.items()]
-
+    print(t)
     return cross_product(t)
         
 
 @pytest.mark.parametrize("inp,output", [
+    (dict(), []),
     (dict(a=1), [{"a": 1}]),
     (dict(a="bc"), [{"a": "bc"}]),
     (dict(a=[1,2]), [{"a": 1},
