@@ -175,14 +175,12 @@ int foo(uint64_t x, float y) {}
 void* foo2(uint64_t x, float y);
 void foo3()
 object(bar);
-""", [
-    Prototype(ctypes.c_int, "foo", [Argument(ctypes.c_uint64,"x" ),
+""", dict(foo=Prototype(ctypes.c_int, "foo", [Argument(ctypes.c_uint64,"x" ),
                                     Argument(ctypes.c_float ,"y" )]),
-    Prototype(ctypes.c_void_p, "foo2", [Argument(ctypes.c_uint64,"x"),
+          foo2=Prototype(ctypes.c_void_p, "foo2", [Argument(ctypes.c_uint64,"x"),
                                         Argument(ctypes.c_float ,"y")]),
-    Prototype(void, "foo3", [])
-]
-    ),
+          foo3=Prototype(void, "foo3", []))
+    )
     ])
 def test_parse_multi_line(filecontents, protos):
     parser = CProtoParser()

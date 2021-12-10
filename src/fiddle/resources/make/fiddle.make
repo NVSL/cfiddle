@@ -1,6 +1,16 @@
 #-*- Makefile -*-
+.SUFFIXES:
 
 BUILD=build
+
+vpath %.cpp $(FIDDLE_VPATH)
+vpath %.cc $(FIDDLE_VPATH)
+vpath %.CPP $(FIDDLE_VPATH)
+vpath %.cp $(FIDDLE_VPATH)
+vpath %.cxx $(FIDDLE_VPATH)
+vpath %.C $(FIDDLE_VPATH)
+vpath %.c++ $(FIDDLE_VPATH)
+vpath %.c $(FIDDLE_VPATH)
 
 CXX?=g++
 CC?=gcc
@@ -17,9 +27,19 @@ LDFLAGS=$(LD_OPTS) $(MORE_LDFLAGS) #-pthread  #-std=gnu++11
 .PHONY: default
 default:
 
-MORE_OBJS=$(addprefix $(BUILD)/,$(addsuffix .o, $(basename $(MORE_SRC))))
+MORE_OBJS=$(addprefix $(BUILD)/,$(addsuffix .o, $(basename $(notdir $(MORE_SRC)))))
+
+testa:
+	@echo $(MORE_SRC)
+	@echo $(notdir $(MORE_SRC))
+	@echo $(MORE_OBJS)
+
 
 $(BUILD)/%.o : %.cpp
+	@mkdir -p $(BUILD)
+	$(CXX) -c $(CXXFLAGS) $< -o $@
+
+$(BUILD)/%.o : %.cc
 	@mkdir -p $(BUILD)
 	$(CXX) -c $(CXXFLAGS) $< -o $@
 
@@ -28,10 +48,6 @@ $(BUILD)/%.o : %.CPP
 	$(CXX) -c $(CXXFLAGS) $< -o $@
 
 $(BUILD)/%.o : %.cp
-	@mkdir -p $(BUILD)
-	$(CXX) -c $(CXXFLAGS) $< -o $@
-
-$(BUILD)/%.o : %.cc
 	@mkdir -p $(BUILD)
 	$(CXX) -c $(CXXFLAGS) $< -o $@
 
@@ -51,12 +67,13 @@ $(BUILD)/%.o : %.c
 	@mkdir -p $(BUILD)
 	$(CC) -c $(CXXFLAGS) $< -o $@
 
-$(BUILD)/%.so: $(BUILD)/%.o  $(MORE_OBJS)
+$(BUILD)/%.so: $(BUILD)/%.o $(MORE_OBJS)
 	@mkdir -p $(BUILD)
 	$(CXX) $^ $(LDFLAGS) -shared -o $@
 
 
--include $(wildcard *.d) $(wildcard $(BUILD)/*.d)
+
+#	-include $(wildcard *.d) $(wildcard $(BUILD)/*.d)
 .PHONY: fiddle-clean
 fiddle-clean:
 	rm -rf $(BUILD)

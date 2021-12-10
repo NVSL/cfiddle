@@ -3,7 +3,6 @@
 .PHONY: default
 default: test_DataSet.exe
 	./test_DataSet.exe
-
 CXXFLAGS=-I../resources/include
 
 %.exe : %.o

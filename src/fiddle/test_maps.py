@@ -10,7 +10,7 @@ def dump(x):
     print("\n".join(map(str,x)))
 
 def test_summarize():
-    builds = build("std_maps.cpp", OPTIMIZE="-O0")
+    builds = build("test_src/std_maps.cpp", OPTIMIZE="-O0")
 
     results = run(build=builds,
                   function=["ordered", "unordered"],
@@ -27,7 +27,7 @@ def test_summarize():
     
     
 def test_maps():
-    builds = build("std_maps.cpp", OPTIMIZE=["-O0", "-O1", "-O3", "-Og"])
+    builds = build("test_src/std_maps.cpp", OPTIMIZE=["-O0", "-O1", "-O3", "-Og"])
 
     results = run((builds[0], "ordered", dict(count=24)),
                   build=builds,

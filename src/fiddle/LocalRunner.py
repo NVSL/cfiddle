@@ -1,4 +1,4 @@
-from .Runner import Runner, Result, do_run
+from .Runner import Runner, Result
 import ctypes
 import tempfile
 import os
@@ -30,5 +30,4 @@ class LocalRunner(Runner):
         return Result(output_directory=output_directory, runnable=r)
     
 
-def run(*argc, **kwargs):
-    return do_run(LocalRunner(), *argc, **kwargs)
+run = LocalRunner()

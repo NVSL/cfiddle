@@ -39,7 +39,7 @@ In C++:
 
 """
 
-def test_this():
+def _test_this():
     source="test.cpp"
     function="simple_print_f"
 

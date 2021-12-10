@@ -5,21 +5,22 @@ import os
 import csv
 import json
 
-Runnable = collections.namedtuple("OneRun", "build,function,arguments")
+Runnable = collections.namedtuple("Runnable", "build,function,arguments")
 
 Result =  collections.namedtuple("Result", "output_directory,runnable")
 
 class Runner:
 
-    def run_one(self, runnable):
+    def run_one(self, runnable, **kwargs):
         raise NotImplemented
         return result
 
-    def run(self, runnable, **kwargs):
-        if isinstance(runnable, Iterable):
-            return ResultList([self.run_one(r, **kwargs) for r in runnable])
-        else:
-            return self.run_one(runnable, **kwargs)
+    def run(self, *argc, **kwargs):
+        runnable = [Runnable(*args) for args in argc] + [Runnable(**args) for args in expand_args(**kwargs)]
+        return ResultList([self.run_one(r) for r in runnable])
+
+    def __call__(self, *argc, **kwargs):
+        return self.run(*argc, **kwargs)
 
 class ResultList(list):
 
@@ -35,11 +36,6 @@ class ResultList(list):
     def dicts(self):
         keys, rows = to_dicts(self)
         return rows
-
-
-def do_run(runner, *argc, **kwargs):
-    runnables = [Runnable(*args) for args in argc] + [Runnable(**args) for args in expand_args(**kwargs)]
-    return runner.run(runnables)
 
 
 def to_csv(csv_file, results):
