@@ -11,7 +11,11 @@ class BadBuildParameter(Exception):
 _BuildResult = collections.namedtuple("BuildResult", "lib,source_file,build_dir,output,build_command,parameters,functions")
 
 class BuildResult(_BuildResult):
-    pass
+
+    def compute_built_filename(self, filename):
+        _, source_name = os.path.split(self.source_file)
+        source_name_base, _ = os.path.splitext(source_name)
+        return os.path.join(build_result.build_dir, filename)
 
 class Builder:
     

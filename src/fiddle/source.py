@@ -3,9 +3,7 @@ import os
 import subprocess
 
 def asm(build_result, show=None, demangle=True, **kwargs):
-    _, source_name = os.path.split(build_result.source_file)
-    source_name_base, _ = os.path.splitext(source_name)
-    asm_file = os.path.join(build_result.build_dir, f"{source_name_base}.s")
+    asm_file = build_result.compute_built_filename(f"{source_name_base}.s")
 
     with open(asm_file) as f:
         if demangle:
@@ -18,12 +16,11 @@ def asm(build_result, show=None, demangle=True, **kwargs):
     return code_segment
 
 
-def source(build_result, show=None, **kwargs):
-    
-    source_name_base, ext = os.path.splitext(build_result.source_file)
-    asm_file = os.path.join(build_result.build_dir, f"{source_name_base}.s")
+def source(build_result, preprocessed=False, show=None, **kwargs):
 
-    with open(build_result.source_file) as f:
+    source_file = build_result.compute_built_filename(f"{source_name_base}.ii") if preprocessed else build_result.source_file
+    
+    with open(source_file) as f:
         content = f.read()
 
     suffixes_to_language = {".CPP" : "c++",
@@ -34,6 +31,7 @@ def source(build_result, show=None, **kwargs):
                             ".C" : "c++",
                             ".c" : "c"}
 
+    _, ext = os.path.splitext(build_result.source_file)
     code_segment = extract_code(build_result.source_file, content, suffixes_to_language[ext], show=show, **kwargs)
 
     return code_segment
@@ -88,6 +86,7 @@ def extract_code(filename, contents, language, show=None, include_header=True):
         src = f"{c[0]}{filename}:{start_line+1}-{end_line} ({end_line-start_line} lines){c[1]}\n" + src
 
     return src
+
 
 def test_extract_source():
     from .MakeBuilder import MakeBuilder
