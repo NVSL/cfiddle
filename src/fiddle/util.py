@@ -3,6 +3,7 @@ import copy
 import os
 from contextlib import contextmanager
 from collections.abc import Iterable
+import subprocess
 
 @contextmanager
 def working_directory(path):
@@ -61,6 +62,13 @@ def expand_args(**parameters):
     print(t)
     return cross_product(t)
         
+
+def invoke_process(cmd):
+    try:
+        p = subprocess.run(cmd, check=True, stderr=subprocess.STDOUT, stdout=subprocess.PIPE)
+        return True, p.stdout.decode()
+    except subprocess.CalledProcessError as e:
+        return False, e.output.decode()
 
 @pytest.mark.parametrize("inp,output", [
     (dict(), []),

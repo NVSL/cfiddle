@@ -21,6 +21,11 @@ void simple_print_f(float a, float b, float c) {
 }
 
 extern "C"
+int nop() {
+	return 4;
+}
+
+extern "C"
 void print_something(int a, int b, int c) {
 
 	std::cerr << a << " " << b << "\n";

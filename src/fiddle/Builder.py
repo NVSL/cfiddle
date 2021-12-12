@@ -18,25 +18,30 @@ class Builder:
     def __init__(self, parser=None):
         self.parser = parser or CProtoParser()
         self.analyses = {}
-
-    def _decorate_result(self, result):
+        
+    def _add_analysis_functions(self, result):
         for a in self.analyses:
             setattr(result, a, types.MethodType(self.analyses[a], result))
         return result
     
-    def build_one(self, source_file, parameters=None, rebuild=False, build_directory=None, build_root=None, makefile=None):
+    def build_one(self, source_file, parameters=None):
         raise NotImplemented
 
-    def build(self, source_file, parameters=None, rebuild=False, build_directory=None, build_root=None, makefile=None, **kwargs):
-        if parameters is None and not kwargs:
-            parameters = {}
-        elif parameters is None:
-            parameters = expand_args(**kwargs)
+    def build(self, source_file, parameters=None, **kwargs):
+
+        if parameters is None:
+            parameters = [] if kwargs else {}
             
+        singleton = False            
         if isinstance(parameters, dict):
-            return self._decorate_result(self.build_one(source_file, parameters, rebuild=rebuild, build_directory=build_directory, build_root=build_root, makefile=makefile))
-        else:
-            return [self._decorate_result(self.build_one(source_file, p, rebuild=rebuild, build_directory=build_directory, build_root=build_root, makefile=makefile)) for p in parameters]
+            parameters = [parameters]
+            singleton = True
+        if kwargs:
+            parameters += expand_args(**kwargs)
+            singleton = False
+
+        r = [self._add_analysis_functions(self.build_one(source_file, p)) for p in parameters]
+        return r[0] if singleton else r
 
     def __call__(self, *argc, **kwargs):
         return self.build(*argc, **kwargs)
@@ -48,5 +53,50 @@ class Builder:
         """
         self.analyses[analysis.__name__] = analysis
         return self
-        
+    
+class TestBuilder(Builder):
+    
+    def build_one(self, source_file, parameters):
+        return BuildResult(f"{source_file}.so", f"dir_{source_file}", "no output", str(parameters), parameters, {})
+    
+def test_builder():
+
+    simple_singleton = TestBuilder().build("foo.cpp")
+    assert isinstance(simple_singleton, BuildResult)
+    assert simple_singleton.parameters == {}
+
+    parameters = dict(foo="bar")
+
+    singleton = TestBuilder().build("foo.cpp", parameters)
+    assert isinstance(singleton, BuildResult)
+    assert singleton.parameters == parameters
+    
+    short_list = TestBuilder().build("foo.cpp", [parameters])
+    assert isinstance(short_list, list)
+    assert len(short_list) == 1
+    assert short_list[0].parameters == parameters
+
+    kwargs_list = TestBuilder().build("foo.cpp", foo=["bar","baz"], bar="foo")
+    assert isinstance(kwargs_list, list)
+    assert len(kwargs_list) == 2
+    assert all([isinstance(x, BuildResult) for x in kwargs_list])
+    assert kwargs_list[0].parameters == dict(foo="bar", bar="foo")
+    assert kwargs_list[1].parameters == dict(foo="baz", bar="foo")
+    
+    compound_list = TestBuilder()("foo.cpp", parameters=[parameters, dict(b="c")], foo=["bar","baz"], bar="foo")
+    assert isinstance(compound_list, list)
+    assert len(compound_list) == 4
+    assert all([isinstance(x, BuildResult) for x in compound_list])
+    assert compound_list[0].parameters == parameters
+    
+def test_decoration():
+    
+    def get_parameters(build_result):
+        return build_result.parameters
+
+    build = TestBuilder().register_analysis(get_parameters)
+
+    parameters = dict(foo="bar")
+    singleton = build("foo.cpp", parameters)
+    assert parameters == singleton.get_parameters()
 

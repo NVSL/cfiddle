@@ -14,6 +14,12 @@ class Runner:
     def run_one(self, runnable, **kwargs):
         raise NotImplemented
         return result
+    
+    def _decorate_result(self, result):
+        for a in self.analyses:
+            setattr(result, a, types.MethodType(self.analyses[a], result))
+        return result
+    
 
     def run(self, *argc, **kwargs):
         runnable = [Runnable(*args) for args in argc] + [Runnable(**args) for args in expand_args(**kwargs)]
