@@ -65,7 +65,7 @@ $(BUILD)/%.o : %.c++
 
 $(BUILD)/%.o : %.c
 	@mkdir -p $(BUILD)
-	$(CC) -c $(CXXFLAGS) $< -o $@
+	$(CC) -c $(CFLAGS) $< -o $@
 
 $(BUILD)/%.so: $(BUILD)/%.o $(MORE_OBJS)
 	@mkdir -p $(BUILD)

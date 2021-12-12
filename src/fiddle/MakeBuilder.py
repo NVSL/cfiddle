@@ -94,6 +94,16 @@ def test_make_builder():
     assert os.path.exists(simple_test.lib)
     assert len(simple_test.functions) == 4;
     assert ctypes.CDLL(simple_test.lib).nop() == 4
+
+    simple_test_cxx = build("test_src/test_cxx.cxx")
+    assert os.path.exists(simple_test_cxx.lib)
+    assert len(simple_test_cxx.functions) == 1
+    assert ctypes.CDLL(simple_test_cxx.lib).nop() == 5
+    
+    simple_test_c = build("test_src/test_c.c")
+    assert os.path.exists(simple_test_c.lib)
+    assert len(simple_test_c.functions) == 1
+    assert ctypes.CDLL(simple_test_c.lib).nop() == 6
     
     alternate_makefile_build = MakeBuilder()
     alternate_makefile_build.makefile("test_src/test.make")
