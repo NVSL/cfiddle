@@ -38,7 +38,7 @@ class MakeBuilder(Builder):
     def _compute_build_directory(self, source_file, parameters):
         _, source_name = os.path.split(source_file)
         source_name_base, _ = os.path.splitext(source_name)
-        return os.path.join(self.build_root, "__".join([f"{p}_{v}" for p,v in parameters.items()])+source_name_base)
+        return os.path.join(self.build_root, "__".join([f"{p}_{v}" for p,v in parameters.items()]) + "_" + source_name_base)
 
     def _compute_so_name(self, source_file, build_directory):
         _, source_name = os.path.split(source_file)
@@ -73,7 +73,13 @@ class MakeBuilder(Builder):
 
         functions = self.parser.parse_file(source_file)
             
-        return BuildResult(lib=so_name, functions=functions, build_command=" ".join(cmd), build_dir=build_directory, output=output, parameters=parameters)
+        return BuildResult(lib=so_name,
+                           source_file=source_file,
+                           functions=functions,
+                           build_command=" ".join(cmd),
+                           build_dir=build_directory,
+                           output=output,
+                           parameters=parameters)
 
 build = MakeBuilder()
 

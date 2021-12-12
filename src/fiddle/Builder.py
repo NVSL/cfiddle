@@ -8,7 +8,7 @@ class BuildFailure(Exception):
 class BadBuildParameter(Exception):
     pass
 
-_BuildResult = collections.namedtuple("BuildResult", "lib,build_dir,output,build_command,parameters,functions")
+_BuildResult = collections.namedtuple("BuildResult", "lib,source_file,build_dir,output,build_command,parameters,functions")
 
 class BuildResult(_BuildResult):
     pass
@@ -57,7 +57,7 @@ class Builder:
 class TestBuilder(Builder):
     
     def build_one(self, source_file, parameters):
-        return BuildResult(f"{source_file}.so", f"dir_{source_file}", "no output", str(parameters), parameters, {})
+        return BuildResult(f"{source_file}.so", source_file, f"dir_{source_file}", "no output", str(parameters), parameters, {})
     
 def test_builder():
 
@@ -94,9 +94,15 @@ def test_decoration():
     def get_parameters(build_result):
         return build_result.parameters
 
-    build = TestBuilder().register_analysis(get_parameters)
+    def get_one_parameter(build_result, parameter):
+        return build_result.parameters[parameter]
+
+    build = TestBuilder()
+    build.register_analysis(get_parameters)
+    build.register_analysis(get_one_parameter)
 
     parameters = dict(foo="bar")
     singleton = build("foo.cpp", parameters)
-    assert parameters == singleton.get_parameters()
+    assert singleton.get_parameters() == parameters
+    assert singleton.get_one_parameter("foo") == "bar"
 

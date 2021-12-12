@@ -49,3 +49,9 @@ void print_something(int a, int b, int c) {
 	
 	std::cout.flush();
 }
+
+
+// don't delete this. it's for a test
+//HERE
+//aoeu
+//THERE
