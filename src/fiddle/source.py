@@ -42,39 +42,21 @@ def source(build_result, show=None, preprocessed=False,  **kwargs):
 
     return code_segment
     
-    
+
+
 def extract_code(filename, contents, language, show=None, include_header=True):
 
     lines = contents.split("\n")
-    start_line = 0
-    end_line = len(lines)
-
+    
     if show is None:
-        show = start_line, end_line
+        show = 0, len(lines)
 
     if isinstance(show, str):
-        if language == "c++":
-            show = (f"[\s\*]{re.escape(show)}\s*\(", "^\}")
-        elif language == "gas":
-            show = (f"^{re.escape(show)}:\s*", ".cfi_endproc")
-        else:
-            raise Exception(f"Don't know how to find functions in {language}")
+        show = construct_function_regex(language, show)
         
     if len(show) == 2:
         if all([isinstance(x, str) for x in show]): 
-            started = False
-            for n, l in enumerate(lines):
-                if not started:
-                    if re.search(show[0], l):
-                        start_line = n
-                        started = True
-
-                else:
-                    if re.search(show[1], l):
-                        end_line = n + 1
-                        break
-            if not started:
-                raise ValueError(f"Couldn't find code for {show}")
+            start_line, end_line = find_region_by_regex(lines, show)
         elif all([isinstance(x, int) for x in show]): 
             start_line, end_line = show
         else:
@@ -94,6 +76,30 @@ def extract_code(filename, contents, language, show=None, include_header=True):
         src = f"{c[0]}{filename}:{start_line+1}-{end_line} ({end_line-start_line} lines){c[1]}\n" + src
 
     return src
+
+def construct_function_regex(language, function):
+    if language == "c++":
+        return (f"[\s\*]{re.escape(function)}\s*\(", "^\}")
+    elif language == "gas":
+        return (f"^{re.escape(function)}:\s*", ".cfi_endproc")
+    else:
+        raise Exception(f"Don't know how to find functions in {language}")
+
+def find_region_by_regex(lines, show):
+    started = False
+    start_line = 0
+    end_line = len(lines)
+    for n, l in enumerate(lines):
+        if not started:
+            if re.search(show[0], l):
+                start_line = n
+                started = True
+        else:
+            if re.search(show[1], l):
+                end_line = n + 1
+                return start_line, end_line
+    raise ValueError(f"Couldn't find code for {show}")
+
 
 
 def test_extract_source():
@@ -120,6 +126,10 @@ def test_extract_source():
     print(test.source(show="more", include_header=False))
     
     assert test.source(show="more", include_header=False) == source_for_more
+
+    assert test.source(show=(0,3), include_header=False) == """// 0
+// 1
+// 2"""
     
     with pytest.raises(ValueError):
         test.source(preprocessed=True, include_header=False, show="more")
