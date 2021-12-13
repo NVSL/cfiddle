@@ -4,7 +4,6 @@
 
 template<class T>
 void go(T v) {
-
 	std::cout << v << "aoeu\n";
 }
 
@@ -55,3 +54,12 @@ void print_something(int a, int b, int c) {
 //HERE
 //aoeu
 //THERE
+
+#ifdef INCLUDE_MORE
+
+extern "C"
+void more() {
+	std::cout << "more\n";
+}
+
+#endif

@@ -15,11 +15,7 @@ class MakeBuilder(Builder):
                  rebuild=False,
                  build_root=None,
                  makefile=None):
-        super().__init__()
-
-        self.build_root = build_root
-        if self.build_root is None:
-            self.build_root = os.environ.get("FIDDLE_BUILD_ROOT", "fiddle/builds")
+        super().__init__(build_root=build_root)
 
         self._makefile = makefile
         if self._makefile is None:
@@ -35,11 +31,6 @@ class MakeBuilder(Builder):
         self._makefile = makefile
         return self
         
-    def _compute_build_directory(self, source_file, parameters):
-        _, source_name = os.path.split(source_file)
-        source_name_base, _ = os.path.splitext(source_name)
-        return os.path.join(self.build_root, "__".join([f"{p}_{v}" for p,v in parameters.items()]) + "_" + source_name_base)
-
     def _compute_so_name(self, source_file, build_directory):
         _, source_name = os.path.split(source_file)
         source_name_base, _ = os.path.splitext(source_name)
@@ -58,7 +49,7 @@ class MakeBuilder(Builder):
         
         if self._rebuild:
             cmd=base_cmd + ["clean"]
-            print(" ".join(cmd))
+            #print(" ".join(cmd))
             success, output = invoke_process(cmd)
             if not success:
                 raise BuildFailure(" ".join(cmd), output)
@@ -66,7 +57,7 @@ class MakeBuilder(Builder):
         so_name = self._compute_so_name(source_file, build_directory)
 
         cmd = base_cmd + [so_name]
-        print(" ".join(cmd))
+        #print(" ".join(cmd))
         success, output = invoke_process(cmd)
         if not success:
             raise BuildFailure(" ".join(cmd), output)
@@ -90,9 +81,10 @@ def test_make_builder():
     builder = MakeBuilder()
 
     build.rebuild(True)
+
     simple_test = build("test_src/test.cpp")
     assert os.path.exists(simple_test.lib)
-    assert len(simple_test.functions) == 4;
+    assert len(simple_test.functions) == 5
     assert ctypes.CDLL(simple_test.lib).nop() == 4
 
     simple_test_cxx = build("test_src/test_cxx.cxx")
@@ -116,10 +108,6 @@ def test_make_builder():
         alternate_root_build = MakeBuilder(build_root=build_root, rebuild=True)
         alt_root_simple_test =  alternate_root_build("test_src/test.cpp")
         assert os.path.exists(alt_root_simple_test.lib)
-        assert len(alt_root_simple_test.functions) == 4;
+        assert len(alt_root_simple_test.functions) == 5
         assert ctypes.CDLL(alt_root_simple_test.lib).nop() == 4
-    
-    with pytest.raises(BuildFailure):
-        build("test_src/broken.cpp")
-    build("test_src/broken.cpp", MORE_CXXFLAGS="-DDONT_BREAK")
     

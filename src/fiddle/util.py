@@ -26,6 +26,10 @@ def environment(**kwds):
         os.environ.clear()
         os.environ.update(env)
 
+def read_file(f, *argc, **kwargs):
+    with open(f, *argc, **kwargs) as f:
+        return f.read()
+    
 def cross_product(parameters):
     if len(parameters) == 0:
         return []
@@ -70,6 +74,30 @@ def invoke_process(cmd):
     except subprocess.CalledProcessError as e:
         return False, e.output.decode()
 
+class DelegatorList(list):
+    def is_callable_by_all(self, attribute):
+        return all([callable(getattr(x, attribute)) for x in self])
+    
+    def is_attr_of_all(self, attribute):
+        return all([hasattr(x, attribute) for x in self])
+    
+    def create_list_invoker(self, requested_method):
+        def create_list_of_results(*argc, **kwargs):
+            return DelegatorList([getattr(i, requested_method)(*argc, **kwargs) for i in self])
+        return create_list_of_results
+    
+    def create_list_of_values(self, requested_attr):
+        return DelegatorList([getattr(i, requested_attr) for i in self])
+
+    def __getattr__(self, requested_attribute):     
+        if self.is_callable_by_all(requested_attribute):
+            return self.create_list_invoker(requested_attribute)
+        elif self.is_attr_of_all(requested_attribute):
+            return self.create_list_of_values(requested_attribute)
+        else:
+            raise ValueError(f"{requested_attribute} is not available for all items")
+
+    
 @pytest.mark.parametrize("inp,output", [
     (dict(), []),
     (dict(a=1), [{"a": 1}]),

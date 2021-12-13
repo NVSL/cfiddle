@@ -1,9 +1,11 @@
 import re
 import os
 import subprocess
+import pytest
 
 def asm(build_result, show=None, demangle=True, **kwargs):
-    asm_file = build_result.compute_built_filename(f"{source_name_base}.s")
+    source_base_name = build_result.extract_build_name(build_result.source_file)
+    asm_file = build_result.compute_built_filename(f"{source_base_name}.s")
 
     with open(asm_file) as f:
         if demangle:
@@ -16,9 +18,11 @@ def asm(build_result, show=None, demangle=True, **kwargs):
     return code_segment
 
 
-def source(build_result, preprocessed=False, show=None, **kwargs):
+def source(build_result, show=None, preprocessed=False,  **kwargs):
 
-    source_file = build_result.compute_built_filename(f"{source_name_base}.ii") if preprocessed else build_result.source_file
+    source_base_name = build_result.extract_build_name(build_result.source_file)
+
+    source_file = build_result.compute_built_filename(f"{source_base_name}.ii") if preprocessed else build_result.source_file
     
     with open(source_file) as f:
         content = f.read()
@@ -29,10 +33,12 @@ def source(build_result, preprocessed=False, show=None, **kwargs):
                             ".cp" : "c++",
                             ".c++" : "c++",
                             ".C" : "c++",
-                            ".c" : "c"}
+                            ".ii" : "c++",
+                            ".c" : "c",
+                            ".i" : "c"}
 
-    _, ext = os.path.splitext(build_result.source_file)
-    code_segment = extract_code(build_result.source_file, content, suffixes_to_language[ext], show=show, **kwargs)
+    _, ext = os.path.splitext(source_file)
+    code_segment = extract_code(source_file, content, suffixes_to_language[ext], show=show, **kwargs)
 
     return code_segment
     
@@ -67,6 +73,8 @@ def extract_code(filename, contents, language, show=None, include_header=True):
                     if re.search(show[1], l):
                         end_line = n + 1
                         break
+            if not started:
+                raise ValueError(f"Couldn't find code for {show}")
         elif all([isinstance(x, int) for x in show]): 
             start_line, end_line = show
         else:
@@ -92,6 +100,7 @@ def test_extract_source():
     from .MakeBuilder import MakeBuilder
 
     build = MakeBuilder()
+    build.rebuild()
     build.register_analysis(source)
     build.register_analysis(asm)
     
@@ -104,11 +113,27 @@ def test_extract_source():
     assert test.source(show="nop", include_header=False) == """int nop() {\n	return 4;\n}"""
     assert test.source(show=("//HERE", "//THERE"), include_header=False) == """//HERE\n//aoeu\n//THERE"""
 
+    source_for_more = r"""void more() {
+	std::cout << "more\n";
+}"""
+
+    print(test.source(show="more", include_header=False))
+    
+    assert test.source(show="more", include_header=False) == source_for_more
+    
+    with pytest.raises(ValueError):
+        test.source(preprocessed=True, include_header=False, show="more")
+    with pytest.raises(ValueError):
+        test.source(show=("AOEU", "AOEU"))
+    
     nop_asm = test.asm(show="nop", include_header=False)
     assert nop_asm.split("\n")[0] == "nop:"
     assert ".cfi_endproc" in nop_asm.split("\n")[-1]
 
+    test_with_more = build("test_src/test.cpp", MORE_CXXFLAGS="-DINCLUDE_MORE")[0]
 
+    def strip_whitespace(text):
+        return "\n".join([l.strip() for l in text])
     
-
-
+    assert strip_whitespace(test_with_more.source(preprocessed=True, include_header=False, show="more")) == strip_whitespace(source_for_more)
+    

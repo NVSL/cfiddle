@@ -1,8 +1,11 @@
 import collections
 from .CProtoParser import CProtoParser
-from .util import expand_args
+from .util import expand_args, read_file
 import types
+import os
+import hashlib
 
+            
 class BuildFailure(Exception):
     pass
 class BadBuildParameter(Exception):
@@ -13,15 +16,21 @@ _BuildResult = collections.namedtuple("BuildResult", "lib,source_file,build_dir,
 class BuildResult(_BuildResult):
 
     def compute_built_filename(self, filename):
+        return os.path.join(self.build_dir, filename)
+
+    def extract_build_name(self, filename):
         _, source_name = os.path.split(self.source_file)
         source_name_base, _ = os.path.splitext(source_name)
-        return os.path.join(build_result.build_dir, filename)
+        return source_name_base
 
 class Builder:
     
-    def __init__(self, parser=None):
+    def __init__(self, parser=None, build_root=None):
         self.parser = parser or CProtoParser()
         self.analyses = {}
+        self.build_root = build_root
+        if self.build_root is None:
+            self.build_root = os.environ.get("FIDDLE_BUILD_ROOT", "fiddle/builds")
         
     def _add_analysis_functions(self, result):
         for a in self.analyses:
@@ -31,7 +40,38 @@ class Builder:
     def build_one(self, source_file, parameters=None):
         raise NotImplemented
 
-    def build(self, source_file, parameters=None, **kwargs):
+    def _update_source(self, source_file, source):
+        with open(source_file) as r:
+            contents = r.read()
+        if contents != source:
+            with open(source_file, "w") as r:
+                r.write(source)
+                
+    def _write_anonymous_source(self, code):
+        hash_value = hashlib.md5(code.encode('utf-8')).hexdigest()
+        anonymous_source_path = os.path.join(self.build_root, f"{hash_value}.cpp")
+        with open(anonymous_source_path, "w") as f:
+            f.write(code)
+        return anonymous_source_path
+
+    def _compute_build_directory(self, source_file, parameters):
+        _, source_name = os.path.split(source_file)
+        source_name_base, _ = os.path.splitext(source_name)
+        return os.path.join(self.build_root, "__".join([f"{p}_{v}" for p,v in parameters.items()]) + "_" + source_name_base)
+
+
+    def build(self, source_file=None, parameters=None, code=None, **kwargs):
+
+        if source_file is None:
+            if code is None:
+                raise ValueError("You must provide either a source_file or code")
+            source_file = self._write_anonymous_source(code)
+            
+        if isinstance(source_file, BuildResult):
+            source_file = source_file.source_file
+        
+        if code:
+            self._update_source(source_file, code)
 
         if parameters is None:
             parameters = [] if kwargs else {}
@@ -50,48 +90,67 @@ class Builder:
     def __call__(self, *argc, **kwargs):
         return self.build(*argc, **kwargs)
 
-    def register_analysis(self, analysis):
-        """
-        Add an analysis function to the BuildResults returned by the builder.  It'll be added as a method for the `BuildResult`s, 
-        so it should take a `BuildResult` as the first argument.
-        """
-        self.analyses[analysis.__name__] = analysis
+    def register_analysis(self, analysis, as_name=None):
+        if as_name is None:
+            as_name = analysis.__name__
+        self.analyses[as_name] = analysis
         return self
     
-class TestBuilder(Builder):
+class CompiledFunctionDelegator:
+    def __init__(self, build_result, function_name):
+        self.build_result = build_result
+        self.function_name = function_name
+
+    def __getattr__(self, name):
+        attr = getattr(self.build_result, name)
+        if callable(attr):
+            def redirect_to_build_result(*args, **kwargs):
+                return attr(self.function_name, *args, **kwargs)
+            return redirect_to_build_result
+        else:
+            return attr
+
+class NopBuilder(Builder):
     
-    def build_one(self, source_file, parameters):
-        return BuildResult(f"{source_file}.so", source_file, f"dir_{source_file}", "no output", str(parameters), parameters, {})
+    def build_one(self, source_path, parameters):
+        _, source_file = os.path.split(source_path)
+        source_file_base, _ = os.path.splitext(source_file)
+        build_directory = self._compute_build_directory(source_file, parameters)
+        return BuildResult(f"{source_file}.so", source_path, build_directory, "no output", str(parameters), parameters, {f"{source_file_base}_func": "nonsense_value"})
     
 def test_builder():
 
-    simple_singleton = TestBuilder().build("foo.cpp")
+    simple_singleton = NopBuilder().build("test_src/test.cpp")
     assert isinstance(simple_singleton, BuildResult)
     assert simple_singleton.parameters == {}
 
     parameters = dict(foo="bar")
 
-    singleton = TestBuilder().build("foo.cpp", parameters)
+    singleton = NopBuilder().build("test_src/test.cpp", parameters)
     assert isinstance(singleton, BuildResult)
     assert singleton.parameters == parameters
-    
-    short_list = TestBuilder().build("foo.cpp", [parameters])
+
+    short_list = NopBuilder().build("test_src/test.cpp", [parameters])
     assert isinstance(short_list, list)
     assert len(short_list) == 1
     assert short_list[0].parameters == parameters
 
-    kwargs_list = TestBuilder().build("foo.cpp", foo=["bar","baz"], bar="foo")
+    kwargs_list = NopBuilder().build("test_src/test.cpp", foo=["bar","baz"], bar="foo")
     assert isinstance(kwargs_list, list)
     assert len(kwargs_list) == 2
     assert all([isinstance(x, BuildResult) for x in kwargs_list])
     assert kwargs_list[0].parameters == dict(foo="bar", bar="foo")
     assert kwargs_list[1].parameters == dict(foo="baz", bar="foo")
     
-    compound_list = TestBuilder()("foo.cpp", parameters=[parameters, dict(b="c")], foo=["bar","baz"], bar="foo")
+    compound_list = NopBuilder()("test_src/test.cpp", parameters=[parameters, dict(b="c")], foo=["bar","baz"], bar="foo")
     assert isinstance(compound_list, list)
     assert len(compound_list) == 4
     assert all([isinstance(x, BuildResult) for x in compound_list])
     assert compound_list[0].parameters == parameters
+
+    embedded_code = NopBuilder().build(code="somecode")
+    assert os.path.exists(embedded_code.source_file)
+    assert read_file(embedded_code.source_file) == "somecode"
     
 def test_decoration():
     
@@ -101,12 +160,25 @@ def test_decoration():
     def get_one_parameter(build_result, parameter):
         return build_result.parameters[parameter]
 
-    build = TestBuilder()
+    build = NopBuilder()
     build.register_analysis(get_parameters)
     build.register_analysis(get_one_parameter)
 
     parameters = dict(foo="bar")
-    singleton = build("foo.cpp", parameters)
+    singleton = build("test_src/test.cpp", parameters)
     assert singleton.get_parameters() == parameters
     assert singleton.get_one_parameter("foo") == "bar"
 
+def test_delegator():
+    build = NopBuilder()
+    build.register_analysis(CompiledFunctionDelegator, as_name="function")
+    def return_function(build_result, function_name):
+        return build_result.functions[function_name]
+    build.register_analysis(return_function)
+    simple_singleton = build.build("test_src/test.cpp")
+
+    delegated_function = simple_singleton.function("test_func")
+
+    assert delegated_function.parameters == simple_singleton.parameters
+    assert simple_singleton.functions["test_func"] == "nonsense_value"
+    assert delegated_function.return_function() == "nonsense_value"
