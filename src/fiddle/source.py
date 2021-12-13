@@ -13,20 +13,34 @@ def asm(build_result, show=None, demangle=True, **kwargs):
         else:
             asm_content = f.read()
 
-    code_segment = extract_code(asm_file, asm_content, "gas", show=show, **kwargs)
+    code_segment = extract_code(asm_file, show=show, language="gas", **kwargs)
 
     return code_segment
 
 
-def source(build_result, show=None, preprocessed=False,  **kwargs):
-
-    source_base_name = build_result.extract_build_name(build_result.source_file)
-
-    source_file = build_result.compute_built_filename(f"{source_base_name}.ii") if preprocessed else build_result.source_file
+def preprocessed(build_result, show=None, language=None,  **kwargs):
     
-    with open(source_file) as f:
-        content = f.read()
+    compiled_source_base_name = build_result.extract_build_name(build_result.source_file)
+    preprocessed_suffix = compute_preprocessed_suffix(build_result.source_file, language=language)
+    source_file_to_search = build_result.compute_built_filename(f"{compiled_source_base_name}{preprocessed_suffix}")
+    
+    return extract_code(source_file_to_search, show=show, language=language, **kwargs)
 
+def source(build_result, show=None, language=None, **kwargs):
+    return extract_code(build_result.source_file, show=show, language=language, **kwargs)
+
+def compute_preprocessed_suffix(filename, language):
+    if language is None:
+        language = infer_language(filename)
+
+    if language == "c++":
+        return ".ii"
+    elif language == "c":
+        return ".i"
+    else:
+        raise ValueError(f"Can't compute preprocessor file extension for file  '{filename}' in '{language}'.")
+        
+def infer_language(filename):
     suffixes_to_language = {".CPP" : "c++",
                             ".cpp" : "c++",
                             ".cc" : "c++",
@@ -37,20 +51,23 @@ def source(build_result, show=None, preprocessed=False,  **kwargs):
                             ".c" : "c",
                             ".i" : "c"}
 
-    _, ext = os.path.splitext(source_file)
-    code_segment = extract_code(source_file, content, suffixes_to_language[ext], show=show, **kwargs)
+    _, ext = os.path.splitext(filename)
+    try:
+        return suffixes_to_language[ext]
+    except KeyError:
+        raise ValueError(f"I don't know what language {filename} is written in.")
 
-    return code_segment
-    
+def extract_code(filename, show=None, language=None, include_header=True):
 
+    with open(filename) as f:
+        lines = f.read().split("\n")
 
-def extract_code(filename, contents, language, show=None, include_header=True):
-
-    lines = contents.split("\n")
-    
     if show is None:
         show = 0, len(lines)
 
+    if language is None:
+        language = infer_language(filename)
+        
     if isinstance(show, str):
         show = construct_function_regex(language, show)
         
@@ -67,15 +84,23 @@ def extract_code(filename, contents, language, show=None, include_header=True):
     src = "\n".join(lines[start_line:end_line])
 
     if include_header:
-        comments_syntaxes = {"c++": ("// ", ""),
-                             "gas": ("; ", ""),
-                             "c": ("/* ", " */")}
-        
-        c = comments_syntaxes[language]
-        
-        src = f"{c[0]}{filename}:{start_line+1}-{end_line} ({end_line-start_line} lines){c[1]}\n" + src
+        src = build_header(language, show) + src
 
     return src
+
+
+def build_header(language, show):
+    comments_syntaxes = {"c++": ("// ", ""),
+                         "gas": ("; ", ""),
+                         "c": ("/* ", " */")}
+
+    try:
+        c = comments_syntaxes[language]
+    except KeyError:
+        raise ValueError(f"Unknown comment syntax for language '{language}'.")
+
+    return f"{c[0]}{filename}:{start_line+1}-{end_line} ({end_line-start_line} lines){c[1]}\n"
+
 
 def construct_function_regex(language, function):
     if language == "c++":
@@ -85,6 +110,7 @@ def construct_function_regex(language, function):
     else:
         raise Exception(f"Don't know how to find functions in {language}")
 
+    
 def find_region_by_regex(lines, show):
     started = False
     start_line = 0
@@ -109,6 +135,7 @@ def test_extract_source():
     build.rebuild()
     build.register_analysis(source)
     build.register_analysis(asm)
+    build.register_analysis(preprocessed)
     
     test = build("test_src/test.cpp")
 
@@ -132,7 +159,7 @@ def test_extract_source():
 // 2"""
     
     with pytest.raises(ValueError):
-        test.source(preprocessed=True, include_header=False, show="more")
+        test.preprocessed(include_header=False, show="more")
     with pytest.raises(ValueError):
         test.source(show=("AOEU", "AOEU"))
     
@@ -145,5 +172,5 @@ def test_extract_source():
     def strip_whitespace(text):
         return "\n".join([l.strip() for l in text])
     
-    assert strip_whitespace(test_with_more.source(preprocessed=True, include_header=False, show="more")) == strip_whitespace(source_for_more)
+    assert strip_whitespace(test_with_more.preprocessed(include_header=False, show="more")) == strip_whitespace(source_for_more)
     
