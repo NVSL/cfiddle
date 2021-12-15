@@ -63,7 +63,6 @@ def expand_args(**parameters):
     def listify(t):
         return t if isinstance(t, Iterable) and not isinstance(t, str) else [t]
     t = [(k, listify(v)) for k,v in parameters.items()]
-    print(t)
     return cross_product(t)
         
 
@@ -74,6 +73,23 @@ def invoke_process(cmd):
     except subprocess.CalledProcessError as e:
         return False, e.output.decode()
 
+import time
+from IPython.display import clear_output
+
+def changes_in(filename):
+    old_last_change = None
+    while True:
+        try:
+            current_last_change = os.path.getmtime(filename)
+            if current_last_change != old_last_change:
+                old_last_change = current_last_change
+                clear_output(wait=True)
+                yield None
+            else:
+                time.sleep(0.5)
+        except KeyboardInterrupt:
+            return
+            
 class ListDelegator(list):
     def is_callable_by_all(self, attribute):
         return all([callable(getattr(x, attribute)) for x in self])
@@ -83,11 +99,11 @@ class ListDelegator(list):
     
     def create_list_invoker(self, requested_method):
         def create_list_of_results(*argc, **kwargs):
-            return DelegatorList([getattr(i, requested_method)(*argc, **kwargs) for i in self])
+            return ListDelegator([getattr(i, requested_method)(*argc, **kwargs) for i in self])
         return create_list_of_results
     
     def create_list_of_values(self, requested_attr):
-        return DelegatorList([getattr(i, requested_attr) for i in self])
+        return ListDelegator([getattr(i, requested_attr) for i in self])
 
     def __getattr__(self, requested_attribute):     
         if self.is_callable_by_all(requested_attribute):

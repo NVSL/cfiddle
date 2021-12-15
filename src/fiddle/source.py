@@ -171,7 +171,7 @@ def test_extract_source():
     assert nop_asm.split("\n")[0] == "nop:"
     assert ".cfi_endproc" in nop_asm.split("\n")[-1]
 
-    test_with_more = build("test_src/test.cpp", MORE_CXXFLAGS="-DINCLUDE_MORE")[0]
+    test_with_more = build("test_src/test.cpp", MORE_CXXFLAGS="-DINCLUDE_MORE")
 
     def strip_whitespace(text):
         return "\n".join([l.strip() for l in text])

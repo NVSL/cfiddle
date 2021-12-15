@@ -25,6 +25,13 @@ class BuildResult(_BuildResult):
         source_name_base, _ = os.path.splitext(source_name)
         return source_name_base
 
+    def get_default_function_name(self):
+        if len(self.functions) == 1:
+            return list(self.functions.values())[0].name
+        else:
+            raise ValueError(f"There's is not exactly one function ({list(build_result.functions.keys())}), so you need to provide one.")
+    
+
 class Builder:
     
     def __init__(self, parser=None, build_root=None):
@@ -75,17 +82,22 @@ class Builder:
         if code:
             self._update_source(source_file, code)
 
+        if isinstance(parameters, list):
+            singleton = False
+        else:
+            singleton = None
+            
         if parameters is None:
             parameters = [] if kwargs else {}
             
-        singleton = False            
         if isinstance(parameters, dict):
             parameters = [parameters]
-            singleton = True
         if kwargs:
             parameters += expand_args(**kwargs)
-            singleton = False
 
+        if singleton is None:
+            singleton = len(parameters) == 1
+            
         r = [self._add_analysis_functions(self.build_one(source_file, p)) for p in parameters]
         return r[0] if singleton else r
 
@@ -97,10 +109,14 @@ class Builder:
             as_name = analysis.__name__
         self.analyses[as_name] = analysis
         return self
+
     
 class CompiledFunctionDelegator:
-    def __init__(self, build_result, function_name):
+    def __init__(self, build_result, function_name=None):
         self.build_result = build_result
+        if function_name is None:
+            function_name = build_result.get_default_function_name()
+
         self.function_name = function_name
 
     def __getattr__(self, name):
@@ -132,6 +148,18 @@ def test_builder():
     assert isinstance(singleton, BuildResult)
     assert singleton.parameters == parameters
 
+    single_item_list = NopBuilder().build("test_src/test.cpp", parameters=[parameters])
+    assert isinstance(single_item_list, list)
+    assert len(single_item_list) == 1
+
+    empty_list = NopBuilder().build("test_src/test.cpp", parameters=[])
+    assert isinstance(empty_list, list)
+    assert len(empty_list) == 0
+
+    kwargs_singleton = NopBuilder().build("test_src/test.cpp", **parameters)
+    assert isinstance(kwargs_singleton, BuildResult)
+    assert kwargs_singleton.parameters == parameters
+
     short_list = NopBuilder().build("test_src/test.cpp", [parameters])
     assert isinstance(short_list, list)
     assert len(short_list) == 1
@@ -153,6 +181,7 @@ def test_builder():
     embedded_code = NopBuilder().build(code="somecode")
     assert os.path.exists(embedded_code.source_file)
     assert read_file(embedded_code.source_file) == "somecode"
+
     
 def test_decoration():
     
@@ -171,6 +200,7 @@ def test_decoration():
     assert singleton.get_parameters() == parameters
     assert singleton.get_one_parameter("foo") == "bar"
 
+    
 def test_delegator():
     build = NopBuilder()
     build.register_analysis(CompiledFunctionDelegator, as_name="function")
@@ -184,3 +214,24 @@ def test_delegator():
     assert delegated_function.parameters == simple_singleton.parameters
     assert simple_singleton.functions["test_func"] == "nonsense_value"
     assert delegated_function.return_function() == "nonsense_value"
+
+def test_foo():
+    from .MakeBuilder import MakeBuilder
+    build = MakeBuilder()
+    build.register_analysis(CompiledFunctionDelegator, as_name="function")
+
+
+    if_ex = build(code=r"""
+#include<cstdint>
+#include<cstdlib>
+
+extern "C" 
+int if_ex(uint64_t array, unsigned long int size) {
+	if (size == 0) {
+		return NULL;
+	}
+	return array+size;
+}
+""")
+
+    if_ex = if_ex.function()

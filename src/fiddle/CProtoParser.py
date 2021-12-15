@@ -82,7 +82,12 @@ def parse_arg(arg):
     tokens = arg.split()
     if tokens == 1:
         raise BadArgument(arg)
+    
+    while tokens[0] in ["register", "const", "volatile"] and len(tokens) > 0:
+        tokens = tokens[1:]
+
     type_name = " ".join(tokens[:-1])
+        
     name = tokens[-1]
     if not re.match(r"[a-zA-Z0-9_ ]+", type_name):
         raise UnknownType(type_name)
@@ -97,7 +102,9 @@ def parse_arg(arg):
     (" int  bar", Argument(ctypes.c_int, "bar")),
     (" int  bar", Argument(ctypes.c_int, "bar")),
     (" long int  bar", Argument(ctypes.c_long, "bar")),
-    (" unsigned long int  bar", Argument(ctypes.c_ulong, "bar"))
+    (" unsigned long int  bar", Argument(ctypes.c_ulong, "bar")),
+    ("register unsigned long int  bar", Argument(ctypes.c_ulong, "bar")),
+    ("register const unsigned long int  bar", Argument(ctypes.c_ulong, "bar"))
 ])
 def test_parse_arg(arg, parsed):
     assert parse_arg(arg) == parsed
