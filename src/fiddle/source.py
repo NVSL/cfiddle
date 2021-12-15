@@ -19,7 +19,8 @@ def asm(build_result, show=None, demangle=True, **kwargs):
 
 
 def preprocessed(build_result, show=None, language=None,  **kwargs):
-    
+    if language is None:
+        language = infer_language(build_result.source_file)
     compiled_source_base_name = build_result.extract_build_name(build_result.source_file)
     preprocessed_suffix = compute_preprocessed_suffix(build_result.source_file, language=language)
     source_file_to_search = build_result.compute_built_filename(f"{compiled_source_base_name}{preprocessed_suffix}")
@@ -27,6 +28,8 @@ def preprocessed(build_result, show=None, language=None,  **kwargs):
     return extract_code(source_file_to_search, show=show, language=language, **kwargs)
 
 def source(build_result, show=None, language=None, **kwargs):
+    if language is None:
+        language = infer_language(build_result.source_file)
     return extract_code(build_result.source_file, show=show, language=language, **kwargs)
 
 def compute_preprocessed_suffix(filename, language):
@@ -84,12 +87,12 @@ def extract_code(filename, show=None, language=None, include_header=True):
     src = "\n".join(lines[start_line:end_line])
 
     if include_header:
-        src = build_header(language, show) + src
+        src = build_header(filename, language,(start_line, end_line)) + src
 
     return src
 
 
-def build_header(language, show):
+def build_header(filename, language, show):
     comments_syntaxes = {"c++": ("// ", ""),
                          "gas": ("; ", ""),
                          "c": ("/* ", " */")}
@@ -99,7 +102,7 @@ def build_header(language, show):
     except KeyError:
         raise ValueError(f"Unknown comment syntax for language '{language}'.")
 
-    return f"{c[0]}{filename}:{start_line+1}-{end_line} ({end_line-start_line} lines){c[1]}\n"
+    return f"{c[0]}{filename}:{show[0]+1}-{show[1]} ({show[1] - show[0]} lines){c[1]}\n"
 
 
 def construct_function_regex(language, function):
@@ -151,6 +154,7 @@ def test_extract_source():
 }"""
 
     print(test.source(show="more", include_header=False))
+    print(test.source(show="more"))
     
     assert test.source(show="more", include_header=False) == source_for_more
 

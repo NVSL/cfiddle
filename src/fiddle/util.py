@@ -74,7 +74,7 @@ def invoke_process(cmd):
     except subprocess.CalledProcessError as e:
         return False, e.output.decode()
 
-class DelegatorList(list):
+class ListDelegator(list):
     def is_callable_by_all(self, attribute):
         return all([callable(getattr(x, attribute)) for x in self])
     

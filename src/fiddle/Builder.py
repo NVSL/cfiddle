@@ -7,7 +7,9 @@ import hashlib
 
             
 class BuildFailure(Exception):
-    pass
+    def __str__(self):
+        return f"Build command failed:\n\n{self.args[0]}\n\n{self.args[1]}"
+    
 class BadBuildParameter(Exception):
     pass
 
