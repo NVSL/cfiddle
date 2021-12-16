@@ -4,6 +4,7 @@ from .util import expand_args, read_file
 import types
 import os
 import hashlib
+import pytest
 
             
 class BuildFailure(Exception):
@@ -41,33 +42,8 @@ class Builder:
         if self.build_root is None:
             self.build_root = os.environ.get("FIDDLE_BUILD_ROOT", "fiddle/builds")
         
-    def _add_analysis_functions(self, result):
-        for a in self.analyses:
-            setattr(result, a, types.MethodType(self.analyses[a], result))
-        return result
-    
     def build_one(self, source_file, parameters=None):
         raise NotImplemented
-
-    def _update_source(self, source_file, source):
-        with open(source_file) as r:
-            contents = r.read()
-        if contents != source:
-            with open(source_file, "w") as r:
-                r.write(source)
-                
-    def _write_anonymous_source(self, code):
-        hash_value = hashlib.md5(code.encode('utf-8')).hexdigest()
-        anonymous_source_path = os.path.join(self.build_root, f"{hash_value}.cpp")
-        with open(anonymous_source_path, "w") as f:
-            f.write(code)
-        return anonymous_source_path
-
-    def _compute_build_directory(self, source_file, parameters):
-        _, source_name = os.path.split(source_file)
-        source_name_base, _ = os.path.splitext(source_name)
-        return os.path.join(self.build_root, "__".join([f"{p}_{v}" for p,v in parameters.items()]) + "_" + source_name_base)
-
 
     def build(self, source_file=None, parameters=None, code=None, **kwargs):
 
@@ -97,12 +73,49 @@ class Builder:
 
         if singleton is None:
             singleton = len(parameters) == 1
-            
-        r = [self._add_analysis_functions(self.build_one(source_file, p)) for p in parameters]
+
+        self._raise_on_invalid_parameters(parameters)
+        
+        r = ListDelegator(self._add_analysis_functions(self.build_one(source_file, p)) for p in parameters)
         return r[0] if singleton else r
 
+    
     def __call__(self, *argc, **kwargs):
         return self.build(*argc, **kwargs)
+
+    def _raise_on_invalid_parameters(self, parameters):
+        for p in parameters:
+            for k,v in p.items():
+                if v is None:
+                    raise ValueError("Can't have 'None' as parameter value in {p}")
+    
+    def _add_analysis_functions(self, result):
+        for a in self.analyses:
+            setattr(result, a, types.MethodType(self.analyses[a], result))
+        return result
+
+    
+    def _update_source(self, source_file, source):
+        with open(source_file) as r:
+            contents = r.read()
+        if contents != source:
+            with open(source_file, "w") as r:
+                r.write(source)
+
+                
+    def _write_anonymous_source(self, code):
+        hash_value = hashlib.md5(code.encode('utf-8')).hexdigest()
+        anonymous_source_path = os.path.join(self.build_root, f"{hash_value}.cpp")
+        with open(anonymous_source_path, "w") as f:
+            f.write(code)
+        return anonymous_source_path
+
+    
+    def _compute_build_directory(self, source_file, parameters):
+        _, source_name = os.path.split(source_file)
+        source_name_base, _ = os.path.splitext(source_name)
+        return os.path.join(self.build_root, "__".join([f"{p}_{v}" for p,v in parameters.items()]) + "_" + source_name_base)
+
 
     def register_analysis(self, analysis, as_name=None):
         if as_name is None:
@@ -182,6 +195,11 @@ def test_builder():
     assert os.path.exists(embedded_code.source_file)
     assert read_file(embedded_code.source_file) == "somecode"
 
+def test_invalid_parameters():
+    with pytest.raises(ValueError):
+        singleton = NopBuilder().build("test_src/test.cpp", OPTIMIZE=None)
+    with pytest.raises(ValueError):
+        singleton = NopBuilder().build("test_src/test.cpp", OPTIMIZE=[None, ""])
     
 def test_decoration():
     
