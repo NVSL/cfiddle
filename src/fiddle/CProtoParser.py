@@ -36,14 +36,15 @@ def parse_prototype(prototype):
     if r is None:
         return None
     
-    return_type, function_name, parameters = r
+    return_type_string, function_name, parameters = r
         
     try:
         parsed_parameters = parse_parameters(parameters)
+        return_type =parse_return_type(return_type_string)
     except (BadParameter, UnknownType) as e:
         return None
 
-    return Prototype(return_type=parse_return_type(return_type),
+    return Prototype(return_type=return_type,
                      name=function_name,
                      parameters = parsed_parameters)
 
@@ -77,6 +78,8 @@ def parse_parameter(parameter):
 
 
 def raise_on_invalid_type(tokens):
+    if len(tokens) == 0:
+        raise UnknownType("Empty type")
     if not all([re.match(r"[a-zA-Z0-9_]+", t) for t in tokens[:-1]]):
         raise UnknownType(" ".join(tokens))
     if not re.match(r"[a-zA-Z0-9_]+[\*\&]*", tokens[-1]):
@@ -108,7 +111,7 @@ def test_split_into_tokens(string, tokens):
     assert split_into_tokens(string) == tokens
     
 def remove_keywords(split_parameter):
-    return list(filter(lambda x: x not in ["register", "const", "volatile", "inline"], split_parameter))
+    return list(filter(lambda x: x not in ["register", "const", "volatile", "inline", "return"], split_parameter))
     
 
 def strip_comments(line):
@@ -269,7 +272,12 @@ def test_parse_prototype(prototype, parsed):
 def test_can_parse(filename, good):
     parser = CProtoParser()
     assert parser.can_parse_file(filename) == good
-    
+
+@pytest.mark.parametrize("line", [
+    ("        return getpid();")
+])
+def test_things_that_are_not_functions(line):
+    assert parse_prototype(line) == None
 
      
 @pytest.mark.parametrize("filecontents,protos", [
