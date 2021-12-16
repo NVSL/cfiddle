@@ -6,32 +6,6 @@ import os
 import hashlib
 import pytest
 
-            
-class BuildFailure(Exception):
-    def __str__(self):
-        return f"Build command failed:\n\n{self.args[0]}\n\n{self.args[1]}"
-    
-class BadBuildParameter(Exception):
-    pass
-
-_BuildResult = collections.namedtuple("BuildResult", "lib,source_file,build_dir,output,build_command,parameters,functions")
-
-class BuildResult(_BuildResult):
-
-    def compute_built_filename(self, filename):
-        return os.path.join(self.build_dir, filename)
-
-    def extract_build_name(self, filename):
-        _, source_name = os.path.split(self.source_file)
-        source_name_base, _ = os.path.splitext(source_name)
-        return source_name_base
-
-    def get_default_function_name(self):
-        if len(self.functions) == 1:
-            return list(self.functions.values())[0].name
-        else:
-            raise ValueError(f"There's is not exactly one function ({list(self.functions.keys())}), so you need to provide one.")
-    
 
 class Builder:
     
@@ -41,10 +15,12 @@ class Builder:
         self.build_root = build_root
         if self.build_root is None:
             self.build_root = os.environ.get("FIDDLE_BUILD_ROOT", "fiddle/builds")
-        
+
+            
     def build_one(self, source_file, parameters=None):
         raise NotImplemented
 
+    
     def build(self, source_file=None, parameters=None, code=None, **kwargs):
 
         if source_file is None:
@@ -83,12 +59,14 @@ class Builder:
     def __call__(self, *argc, **kwargs):
         return self.build(*argc, **kwargs)
 
+    
     def _raise_on_invalid_parameters(self, parameters):
         for p in parameters:
             for k,v in p.items():
-                if v is None:
-                    raise ValueError("Can't have 'None' as parameter value in {p}")
-    
+                if not any([isinstance(v, t) for t in [int, str, float]]) or isinstance(v, bool): # bool is an int!
+                    raise ValueError(f"Can't have '{v}' as parameter value in {p}")
+
+                
     def _add_analysis_functions(self, result):
         for a in self.analyses:
             setattr(result, a, types.MethodType(self.analyses[a], result))
@@ -123,6 +101,32 @@ class Builder:
         self.analyses[as_name] = analysis
         return self
 
+            
+class BuildFailure(Exception):
+    def __str__(self):
+        return f"Build command failed:\n\n{self.args[0]}\n\n{self.args[1]}"
+    
+class BadBuildParameter(Exception):
+    pass
+
+_BuildResult = collections.namedtuple("BuildResult", "lib,source_file,build_dir,output,build_command,parameters,functions")
+
+class BuildResult(_BuildResult):
+
+    def compute_built_filename(self, filename):
+        return os.path.join(self.build_dir, filename)
+
+    def extract_build_name(self, filename):
+        _, source_name = os.path.split(self.source_file)
+        source_name_base, _ = os.path.splitext(source_name)
+        return source_name_base
+
+    def get_default_function_name(self):
+        if len(self.functions) == 1:
+            return list(self.functions.values())[0].name
+        else:
+            raise ValueError(f"There's is not exactly one function ({list(self.functions.keys())}), so you need to provide one.")
+    
     
 class CompiledFunctionDelegator:
     def __init__(self, build_result, function_name=None):
@@ -200,6 +204,12 @@ def test_invalid_parameters():
         singleton = NopBuilder().build("test_src/test.cpp", OPTIMIZE=None)
     with pytest.raises(ValueError):
         singleton = NopBuilder().build("test_src/test.cpp", OPTIMIZE=[None, ""])
+    with pytest.raises(ValueError):
+        singleton = NopBuilder().build("test_src/test.cpp", OPTIMIZE=[[], ""])
+    with pytest.raises(ValueError):
+        singleton = NopBuilder().build("test_src/test.cpp", OPTIMIZE=[True, ""])
+    with pytest.raises(ValueError):
+        singleton = NopBuilder().build("test_src/test.cpp", OPTIMIZE=[{}, ""])
     
 def test_decoration():
     

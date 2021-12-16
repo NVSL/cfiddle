@@ -2,7 +2,8 @@ import re
 import os
 import subprocess
 import pytest
-
+from fiddle.util import ListDelegator
+from fiddle.Builder import CompiledFunctionDelegator
 
 def source(build_result, show=None, language=None, **kwargs):
     if language is None:
@@ -32,6 +33,8 @@ def preprocessed(build_result, show=None, language=None,  **kwargs):
     
     return extract_code(source_file_to_search, show=show, language=language, **kwargs)
 
+def function(build_result, *functions):
+    return ListDelegator([CompiledFunctionDelegator(build_result, f) for f in functions])
 
 def compute_preprocessed_suffix(filename, language):
     if language is None:
@@ -140,6 +143,11 @@ def find_region_by_regex(lines, show):
 
 
 
+source_for_more = r"""void more() {
+	std::cout << "more\n";
+}"""
+
+
 def test_extract_source():
     from .MakeBuilder import MakeBuilder
 
@@ -158,10 +166,6 @@ def test_extract_source():
     assert test.source(show="nop") == """int nop() {\n	return 4;\n}"""
     assert test.source(show=("//HERE", "//THERE")) == """//HERE\n//aoeu\n//THERE"""
 
-    source_for_more = r"""void more() {
-	std::cout << "more\n";
-}"""
-
     print(test.source(show="more", include_header=True))
     print(test.source(show="more"))
     
@@ -175,11 +179,27 @@ def test_extract_source():
         test.preprocessed(show="more")
     with pytest.raises(ValueError):
         test.source(show=("AOEU", "AOEU"))
+
+def _test_asm():
+    # for some reason this hangs on asm(), yet asm() works fine in real code.
+    from .MakeBuilder import MakeBuilder
+
+    build = MakeBuilder()
+    build.rebuild()
+    build.register_analysis(asm)
     
+    test = build("test_src/test.cpp")
     nop_asm = test.asm(show="nop")
     assert nop_asm.split("\n")[0] == "nop:"
     assert ".cfi_endproc" in nop_asm.split("\n")[-1]
 
+
+def test_CPP_flags():
+    from .MakeBuilder import MakeBuilder
+
+    build = MakeBuilder()
+    build.rebuild()
+    build.register_analysis(preprocessed)
     test_with_more = build("test_src/test.cpp", MORE_CXXFLAGS="-DINCLUDE_MORE")
 
     def strip_whitespace(text):

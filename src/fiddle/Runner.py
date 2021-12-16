@@ -5,7 +5,7 @@ import os
 import csv
 import json
 
-Runnable = collections.namedtuple("Runnable", "build,function,arguments")
+Runnable = collections.namedtuple("Runnable", "build,function,parameters")
 
 Result =  collections.namedtuple("Result", "output_directory,runnable")
 
@@ -77,13 +77,13 @@ def to_dicts(results):
     
     # then function args (in order)
     for function in map(lambda x : x.runnable.build.functions[x.runnable.function], results):
-        [ordered_keys.append(a.name) for a in function.arguments if a.name not in ordered_keys]
+        [ordered_keys.append(a.name) for a in function.parameters if a.name not in ordered_keys]
 
     
     # Then outputs 
     for result in results:
         
-        this_result_fields = {** result.runnable.build.parameters, **result.runnable.arguments}
+        this_result_fields = {** result.runnable.build.parameters, **result.runnable.parameters}
         
         f = os.path.join(result.output_directory, "out.csv")
         with open(f) as infile:

@@ -14,7 +14,7 @@ def test_summarize():
 
     results = run(build=builds,
                   function=["ordered", "unordered"],
-                  arguments=expand_args(count=map(lambda x: 2**x, range(0,2))))
+                  parameters=expand_args(count=map(lambda x: 2**x, range(0,2))))
 
     results.csv("out.csv")
     with open("out.csv") as t:
@@ -32,6 +32,6 @@ def test_maps():
     results = run((builds[0], "ordered", dict(count=24)),
                   build=builds,
                   function=["ordered", "unordered"],
-                  arguments=expand_args(count=map(lambda x: 2**x, range(0,20))))
+                  parameters=expand_args(count=map(lambda x: 2**x, range(0,20))))
 
     to_csv("out.csv", results)

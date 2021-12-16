@@ -4,12 +4,12 @@ import ctypes
 import collections
 
 
-class BadArgument(Exception):
+class BadParameter(Exception):
     pass
 
 class UnknownType(Exception):
     pass
-class BadArgumentName(Exception):
+class BadParameterName(Exception):
     pass
 
 class ProtoParser:
@@ -21,5 +21,5 @@ class ProtoParser:
         raise NotImplementedError("parse_file")
 
     
-Prototype = collections.namedtuple("Prototype", "return_type,name,arguments")
-Argument = collections.namedtuple("Argument", "type,name")
+Prototype = collections.namedtuple("Prototype", "return_type,name,parameters")
+Parameter = collections.namedtuple("Parameter", "type,name")

@@ -13,7 +13,7 @@ class LocalRunner(Runner):
         if output_root is None:
             output_root = os.environ.get("FIDDLE_OUTPUT_ROOT", "fiddle/runs")
 
-        args = bind_parameters(r.arguments, r.build.functions[r.function])
+        args = bind_parameters(r.parameters, r.build.functions[r.function])
 
         d, f = os.path.split(r.build.lib)
         arg_string = ", ".join(map(lambda x: str(x.value), args))
