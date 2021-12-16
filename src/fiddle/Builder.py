@@ -1,6 +1,6 @@
 import collections
 from .CProtoParser import CProtoParser
-from .util import expand_args, read_file
+from .util import expand_args, read_file, ListDelegator
 import types
 import os
 import hashlib
@@ -30,7 +30,7 @@ class BuildResult(_BuildResult):
         if len(self.functions) == 1:
             return list(self.functions.values())[0].name
         else:
-            raise ValueError(f"There's is not exactly one function ({list(build_result.functions.keys())}), so you need to provide one.")
+            raise ValueError(f"There's is not exactly one function ({list(self.functions.keys())}), so you need to provide one.")
     
 
 class Builder:
