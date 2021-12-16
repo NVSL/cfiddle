@@ -114,7 +114,7 @@ class Builder:
     def _compute_build_directory(self, source_file, parameters):
         _, source_name = os.path.split(source_file)
         source_name_base, _ = os.path.splitext(source_name)
-        return os.path.join(self.build_root, "__".join([f"{p}_{v}" for p,v in parameters.items()]) + "_" + source_name_base)
+        return os.path.join(self.build_root, "__".join([f"{p}_{v.replace(' ', '')}" for p,v in parameters.items()]) + "_" + source_name_base)
 
 
     def register_analysis(self, analysis, as_name=None):

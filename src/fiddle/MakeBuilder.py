@@ -111,3 +111,12 @@ def test_make_builder():
         assert len(alt_root_simple_test.functions) == 5
         assert ctypes.CDLL(alt_root_simple_test.lib).nop() == 4
     
+def test_complex_flags():
+    builder = MakeBuilder()
+    build.rebuild(True)
+
+    simple_test = build("test_src/test.cpp", OPTIMIZE="-O1 -fno-inline")
+    assert os.path.exists(simple_test.lib)
+
+
+    
