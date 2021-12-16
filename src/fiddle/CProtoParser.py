@@ -124,12 +124,12 @@ def strip_extern_c(line):
 
 
 def split_prototype(prototype):
-    #                   typeparts  lastpart    starsorspace   name     parameters
-    m =  re.match(r"\s*(((\w+\s+)*(\w+\s*))\s*(\s+|(\*+\s*)))(\w+)\s*\((.*)\).*", prototype)
+    #                   typeparts  lastpart    starsorspace   maybe    an     attribute          name    parameters
+    m =  re.match(r"\s*(((\w+\s+)*(\w+\s*))\s*(\s+|(\*+\s*)))(\s*__attribute__\s*\(\(.*\)\)\s*)?(\w+)\s*\((.*)\).*", prototype)
     if m is None:
         return None
 
-    return  m.group(1), m.group(7), m.group(8)
+    return  m.group(1), m.group(8), m.group(9)
 
 
 def parse_parameters(parameter_string):
@@ -246,7 +246,10 @@ def test_parse_parameter(parameter, parsed):
     ("  ostream out(&filebuf);", None),
     ("object(bar);", None),
     ("void foo3()\n",  Prototype(void, "foo3", [])),
-    ("inline int foo()\n",  Prototype(ctypes.c_int, "foo3", []))
+    ("inline int foo3()\n",  Prototype(ctypes.c_int, "foo3", [])),
+    ("int inline __attribute__ ((used)) foo()", Prototype(ctypes.c_int, "foo", [])),
+    ("int __attribute__((used)) foo()", Prototype(ctypes.c_int, "foo", [])),
+    ('int __attribute__((optimize("noinline")) foo(int bar)', Prototype(ctypes.c_int, "foo", [Parameter(ctypes.c_int, "bar")]))
 ])
 def test_parse_prototype(prototype, parsed):
     assert parse_prototype(prototype) == parsed
@@ -254,7 +257,7 @@ def test_parse_prototype(prototype, parsed):
 @pytest.mark.parametrize("prototype,parsed", [
     ("void* foo2(uint64_t x, float y);", Prototype(None, "foo2", [Parameter(ctypes.c_uint64,"x"),
                                                                   Parameter(ctypes.c_float ,"y")]))])
-def test_parse_prototype(prototype, parsed):
+def test_parse_prototype_unhandled_types(prototype, parsed):
     assert isinstance(parse_prototype(prototype).return_type, UnhandledIndirectParameterType)
 
     
