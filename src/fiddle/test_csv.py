@@ -1,5 +1,4 @@
 from .CProtoParser import CProtoParser
-from .Parameters import bind_parameters
 from .util import expand_args
 from .Runner import Runnable
 from .LocalRunner import run
@@ -13,7 +12,7 @@ def test_csv():
 
     with tempfile.NamedTemporaryFile() as combined:
         t = [(b, "go", dict(k=i)) for i,b in enumerate(builds)]
-        run(*t).csv(combined.name)
+        run(*t).as_csv(combined.name)
         combined.flush()
         with open(combined.name, "r") as read_back:
             rows = csv.DictReader(read_back)

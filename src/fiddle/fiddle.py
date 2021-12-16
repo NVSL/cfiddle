@@ -1,5 +1,4 @@
 from .CProtoParser import CProtoParser
-from .Parameters import  bind_parameters
 from .util import expand_args
 from .Runner import Runnable
 from .LocalRunner import LocalRunner
