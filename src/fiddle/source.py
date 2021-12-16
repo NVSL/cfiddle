@@ -3,34 +3,35 @@ import os
 import subprocess
 import pytest
 
+
+def source(build_result, show=None, language=None, **kwargs):
+    if language is None:
+        language = infer_language(build_result.source_file)
+    return extract_code(build_result.source_file, show=show, language=language, **kwargs)
+
+
 def asm(build_result, show=None, demangle=True, **kwargs):
     source_base_name = build_result.extract_build_name(build_result.source_file)
     asm_file = build_result.compute_built_filename(f"{source_base_name}.s")
 
     with open(asm_file) as f:
-        if demangle:
-            asm_content = subprocess.check_output('c++filt', stdin=f).decode()
-        else:
-            asm_content = f.read()
+        assembly = f.read()
 
-    code_segment = extract_code(asm_file, show=show, language="gas", **kwargs)
+    assembly = demangle_assembly(assembly) if demangle else assembly
 
-    return code_segment
+    return extract_code(asm_file, show=show, language="gas", **kwargs)
 
 
 def preprocessed(build_result, show=None, language=None,  **kwargs):
     if language is None:
         language = infer_language(build_result.source_file)
+        
     compiled_source_base_name = build_result.extract_build_name(build_result.source_file)
     preprocessed_suffix = compute_preprocessed_suffix(build_result.source_file, language=language)
     source_file_to_search = build_result.compute_built_filename(f"{compiled_source_base_name}{preprocessed_suffix}")
     
     return extract_code(source_file_to_search, show=show, language=language, **kwargs)
 
-def source(build_result, show=None, language=None, **kwargs):
-    if language is None:
-        language = infer_language(build_result.source_file)
-    return extract_code(build_result.source_file, show=show, language=language, **kwargs)
 
 def compute_preprocessed_suffix(filename, language):
     if language is None:
@@ -42,7 +43,8 @@ def compute_preprocessed_suffix(filename, language):
         return ".i"
     else:
         raise ValueError(f"Can't compute preprocessor file extension for file  '{filename}' in '{language}'.")
-        
+
+    
 def infer_language(filename):
     suffixes_to_language = {".CPP" : "c++",
                             ".cpp" : "c++",
@@ -60,7 +62,8 @@ def infer_language(filename):
     except KeyError:
         raise ValueError(f"I don't know what language {filename} is written in.")
 
-def extract_code(filename, show=None, language=None, include_header=True):
+    
+def extract_code(filename, show=None, language=None, include_header=False):
 
     with open(filename) as f:
         lines = f.read().split("\n")
@@ -90,6 +93,12 @@ def extract_code(filename, show=None, language=None, include_header=True):
         src = build_header(filename, language,(start_line, end_line)) + src
 
     return src
+
+
+def demangle_assembly(assembly):
+    p = subprocess.Popen(['c++filt'], stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+    output, output_err = p.communicate(assembly)
+    return output.decode()
 
 
 def build_header(filename, language, show):
@@ -144,30 +153,30 @@ def test_extract_source():
 
     with open("test_src/test.cpp") as f:
         f = f.read()
-    assert f == test.source(include_header=False)
+    assert f == test.source()
     
-    assert test.source(show="nop", include_header=False) == """int nop() {\n	return 4;\n}"""
-    assert test.source(show=("//HERE", "//THERE"), include_header=False) == """//HERE\n//aoeu\n//THERE"""
+    assert test.source(show="nop") == """int nop() {\n	return 4;\n}"""
+    assert test.source(show=("//HERE", "//THERE")) == """//HERE\n//aoeu\n//THERE"""
 
     source_for_more = r"""void more() {
 	std::cout << "more\n";
 }"""
 
-    print(test.source(show="more", include_header=False))
+    print(test.source(show="more", include_header=True))
     print(test.source(show="more"))
     
-    assert test.source(show="more", include_header=False) == source_for_more
+    assert test.source(show="more") == source_for_more
 
-    assert test.source(show=(0,3), include_header=False) == """// 0
+    assert test.source(show=(0,3)) == """// 0
 // 1
 // 2"""
     
     with pytest.raises(ValueError):
-        test.preprocessed(include_header=False, show="more")
+        test.preprocessed(show="more")
     with pytest.raises(ValueError):
         test.source(show=("AOEU", "AOEU"))
     
-    nop_asm = test.asm(show="nop", include_header=False)
+    nop_asm = test.asm(show="nop")
     assert nop_asm.split("\n")[0] == "nop:"
     assert ".cfi_endproc" in nop_asm.split("\n")[-1]
 
