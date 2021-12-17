@@ -1,7 +1,7 @@
 #-*- Makefile -*-
 .SUFFIXES:
 
-BUILD=build
+BUILD?=build
 
 vpath %.cpp $(FIDDLE_VPATH)
 vpath %.cc $(FIDDLE_VPATH)

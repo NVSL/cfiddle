@@ -7,15 +7,13 @@ import csv
 
 class LocalRunner(Runner):
 
-    def run_one(self, runnable, output_root=None):
+    def run_one(self, runnable):
         
-        if output_root is None:
-            output_root = os.environ.get("FIDDLE_OUTPUT_ROOT", "fiddle/runs")
-            
         args = self.bind_arguments(runnable.arguments, runnable.build.functions[runnable.function])
 
         d, f = os.path.split(runnable.build.lib)
         arg_string = ", ".join(map(lambda x: str(x.value), args))
+        output_root=runnable.build.build_dir
         output_directory = os.path.join(output_root, f"{f}.{runnable.function}({arg_string})")
 
         os.makedirs(output_directory, exist_ok=True)
