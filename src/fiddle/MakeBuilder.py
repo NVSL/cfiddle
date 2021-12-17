@@ -7,6 +7,7 @@ from .util import environment, invoke_process
 
 import pkg_resources
 
+
 DATA_PATH = pkg_resources.resource_filename('fiddle', 'resources/')
 
 class MakeBuilder(Builder):
@@ -98,7 +99,7 @@ class MakeBuilder(Builder):
         while True:
             unique_path = os.path.join(build_directory, f"{self._source_name_base}_{number}.so")
             if not os.path.exists(unique_path):
-                break;
+                break
             number += 1
 
         return unique_path

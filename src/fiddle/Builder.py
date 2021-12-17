@@ -17,7 +17,6 @@ class Builder:
         if self.build_root is None:
             self.build_root = os.environ.get("FIDDLE_BUILD_ROOT", "fiddle/builds")
 
-            
     def build_one(self, parameters=None):
         raise NotImplemented
 
@@ -91,6 +90,7 @@ class Builder:
                 
     def _write_anonymous_source(self, code):
         hash_value = hashlib.md5(code.encode('utf-8')).hexdigest()
+        os.makedirs(self.build_root, exist_ok=True)
         anonymous_source_path = os.path.join(self.build_root, f"{hash_value}.cpp")
         with open(anonymous_source_path, "w") as f:
             f.write(code)
@@ -160,7 +160,9 @@ class CompiledFunctionDelegator:
 class NopBuilder(Builder):
 
     def build_one(self,  parameters):
+        
         return BuildResult(f"{self._source_file}.so", self._source_file, self._compute_build_directory(parameters), "no output", str(parameters), parameters, {f"{self._source_name_base}_func": "nonsense_value"})
+    
     
 def test_builder():
 
@@ -252,7 +254,7 @@ def test_delegator():
     assert simple_singleton.functions["test_func"] == "nonsense_value"
     assert delegated_function.return_function() == "nonsense_value"
 
-def test_foo():
+def test_embedded_source():
     from .MakeBuilder import build
     
     build.register_analysis(CompiledFunctionDelegator, as_name="function")
@@ -271,3 +273,17 @@ int if_ex(uint64_t array, unsigned long int size) {
 """)
 
     if_ex = if_ex.function()
+
+
+def test_alternate_build_directory():
+    from .util import environment
+    import tempfile
+    
+    with tempfile.TemporaryDirectory() as d:
+        build_root=os.path.join(d,"not_there")
+        with environment(FIDDLE_BUILD_ROOT=build_root):
+            build = NopBuilder()
+            build(code="")
+        assert os.path.exists(build_root)
+
+            

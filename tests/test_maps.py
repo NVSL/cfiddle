@@ -1,9 +1,7 @@
-from .CProtoParser import CProtoParser
-from .util import expand_args
-from .Runner import Runnable
-from .LocalRunner import LocalRunner, run
-from .MakeBuilder import MakeBuilder, build
-import sys
+from fiddle.util import expand_args
+from fiddle.LocalRunner import run
+from fiddle.MakeBuilder import build
+
 
 def dump(x):
     print("\n".join(map(str,x)))
@@ -15,7 +13,7 @@ def test_summarize():
     results = run(build=builds,
                   function=["ordered", "unordered"],
                   arguments=expand_args(count=map(lambda x: 2**x, range(0,2))))
-
+    
 
     results.as_csv("out.csv")
     with open("out.csv") as t:

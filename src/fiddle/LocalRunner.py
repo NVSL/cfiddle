@@ -4,6 +4,7 @@ import tempfile
 import os
 from .util import environment
 import csv
+import pkg_resources
 
 
 class LocalRunner(Runner):
@@ -17,7 +18,7 @@ class LocalInvocation:
         self._runner = runner
         self._runnable = runnable
         self._arguments = None
-
+        self._libfiddle = ctypes.CDLL(os.path.join(PACKAGE_DATA_PATH, "libfiddle", "libfiddle.so"))
         
     def run(self):
         self._reset_data_collection()
@@ -67,6 +68,7 @@ class LocalInvocation:
 
 run = LocalRunner()
 
+PACKAGE_DATA_PATH = pkg_resources.resource_filename('fiddle', 'resources/')
 
 def test_hello_world():
     from fiddle.MakeBuilder import build
