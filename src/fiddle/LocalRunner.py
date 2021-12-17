@@ -9,23 +9,61 @@ import csv
 class LocalRunner(Runner):
 
     def run_one(self, runnable):
+        return LocalInvocation(self, runnable).run()
+    
+class LocalInvocation:
+
+    def __init__(self, runner, runnable):
+        self._runner = runner
+        self._runnable = runnable
+        self._arguments = None
+
         
-        args = self.bind_arguments(runnable.arguments, runnable.build.functions[runnable.function])
+    def run(self):
+        self._reset_data_collection()
+        self._invoke_function()
+        results = self._collect_data()
+        return InvocationResult(runnable=self._runnable, results=results)
 
-        d, f = os.path.split(runnable.build.lib)
-        arg_string = ", ".join(map(lambda x: str(x.value), args))
-        output_root=runnable.build.build_dir
-        output_directory = os.path.join(output_root, f"{f}.{runnable.function}({arg_string})")
+    
+    def _invoke_function(self):
+        self._arguments = self._runner.bind_arguments(self._runnable.arguments, self._runnable.build.functions[self._runnable.function])
+        
+        c_lib = ctypes.CDLL(self._runnable.build.lib)
 
-        os.makedirs(output_directory, exist_ok=True)
+        f = getattr(c_lib, self._runnable.function)
 
-        c_lib = ctypes.CDLL(runnable.build.lib)
+        f(*self._arguments)
 
-        with environment(FIDDLE_OUTPUT_DIR=output_directory):
-            f = getattr(c_lib, runnable.function)
-            f(*args)
-            
-        return InvocationResult(output_directory=output_directory, runnable=runnable)
+    
+    def _reset_data_collection(self):
+        libfiddle = ctypes.CDLL("libfiddle.so")
+        libfiddle.clear_stats()
+
+
+    def _collect_data(self):
+        output_file = self._build_results_path()
+        
+        self._write_results(output_file)
+
+        return self._read_results(output_file)
+
+    
+    def _read_results(self, output_file):
+        with open(output_file) as infile:
+            return [r for r in csv.DictReader(infile)]
+
+        
+    def _write_results(self, filename):
+        libfiddle = ctypes.CDLL("libfiddle.so")
+        libfiddle.write_stats(ctypes.c_char_p(filename.encode()))
+        
+
+    def _build_results_path(self):
+        arg_string = ", ".join(map(lambda x: str(x.value), self._arguments))
+        _, source_file_name = os.path.split(self._runnable.build.source_file)
+        result_file_name = f"{source_file_name}.{self._runnable.function}({arg_string}).csv"
+        return os.path.join(self._runnable.build.build_dir, result_file_name)
 
 run = LocalRunner()
 

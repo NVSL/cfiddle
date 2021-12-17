@@ -48,8 +48,8 @@ class Runner:
         for a in signature.parameters:
             if a.name not in arguments:
                 raise MissingArgument(a.name)
-
             r.append(a.type(arguments[a.name]))
+
         for p in arguments:
             if not any(map(lambda x: x.name == p, signature.parameters)):
                 raise UnusedArgument(p)
@@ -58,32 +58,16 @@ class Runner:
 
 class InvocationResult:
 
-    def __init__(self, output_directory, runnable):
-        self.output_directory = output_directory
+    def __init__(self, runnable, results):
         self.runnable = runnable
-        self.data_field_names = None
-        self.recorded_data = None
+        self.results = results
 
+    def get_results_field_names(self):
+        return self.results[0].keys()
+
+    def get_results(self):
+        return self.results
         
-    def get_output_file_name(self):
-        return os.path.join(self.output_directory, "out.csv")
-
-    
-    def collect_data(self):
-        with open(self.get_output_file_name()) as infile:
-            reader = csv.DictReader(infile)
-            self.recorded_data = [r for r in reader]
-            self.data_field_names = reader.fieldnames
-
-            
-    def get_data_field_names(self):
-        return self.data_field_names
-
-    
-    def get_recorded_data(self):
-        return self.recorded_data
-
-
 class InvocationResultsList(list):
 
     def as_csv(self, csv_file):
@@ -123,8 +107,7 @@ class InvocationResultsList(list):
             ordered_keys.merge_in_keys(r.runnable.arguments)
 
         for r in invocation_results:
-            r.collect_data()
-            ordered_keys.merge_in_keys(r.get_data_field_names())
+            ordered_keys.merge_in_keys(r.get_results_field_names())
 
         all_rows = []
 
@@ -136,7 +119,7 @@ class InvocationResultsList(list):
 
     def build_merged_rows(self,ordered_keys, run_result):
         this_result_fields = {** run_result.runnable.build.parameters, **run_result.runnable.arguments}
-        return [{**row, **this_result_fields, "function": run_result.runnable.function} for row in run_result.get_recorded_data()]
+        return [{**row, **this_result_fields, "function": run_result.runnable.function} for row in run_result.get_results()]
         
 
 class OrderedKeySet(list):
