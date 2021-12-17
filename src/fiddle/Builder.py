@@ -74,8 +74,12 @@ class Builder:
 
     
     def _update_source(self, source_file, source):
-        with open(source_file) as r:
-            contents = r.read()
+        if os.path.exists(source_file):
+            with open(source_file) as r:
+                contents = r.read()
+        else:
+            contents = None
+            
         if contents != source:
             with open(source_file, "w") as r:
                 r.write(source)

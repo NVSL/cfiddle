@@ -27,23 +27,25 @@ class MakeBuilder(Builder):
         self._rebuild = rebuild
         return self
 
+    
     def makefile(self, makefile):
         self._makefile = makefile
         return self
-        
-    def _compute_so_name(self, source_file, build_directory):
-        _, source_name = os.path.split(source_file)
-        source_name_base, _ = os.path.splitext(source_name)
-        return os.path.join(build_directory, f"{source_name_base}.so")
+
 
     def build_one(self, source_file, parameters=None):
         build_directory = self._compute_build_directory(source_file, parameters)
-        
+
+        so_make_target = self._compute_so_make_target(source_file, build_directory)
+        so_unique_name = self._compute_so_unique_name(source_file, build_directory)
+
+        vpath = ":".join([os.path.dirname(source_file), build_directory])
+
         parameter_strings  = [f"{name}={value}" for name, value in parameters.items()]
         parameter_strings += [f"BUILD={build_directory}"]
         parameter_strings += [f"FIDDLE_INCLUDE={os.path.join(DATA_PATH, 'include')}"]
-        vpath = ":".join([os.path.dirname(source_file), build_directory])
         parameter_strings += [f"FIDDLE_VPATH={vpath}"]
+        parameter_strings += [f"SO_UNIQUE_NAME={so_unique_name}"]
         
         base_cmd = ["make", "-f", self._makefile] + parameter_strings
         
@@ -54,23 +56,49 @@ class MakeBuilder(Builder):
             if not success:
                 raise BuildFailure(" ".join(cmd), output)
 
-        so_name = self._compute_so_name(source_file, build_directory)
+        cmd = base_cmd + [so_make_target]
 
-        cmd = base_cmd + [so_name]
         #print(" ".join(cmd))
         success, output = invoke_process(cmd)
+
+        #print(output)
         if not success:
             raise BuildFailure(" ".join(cmd), output)
 
         functions = self.parser.parse_file(source_file)
             
-        return BuildResult(lib=so_name,
+        return BuildResult(lib=so_unique_name,
                            source_file=source_file,
                            functions=functions,
                            build_command=" ".join(cmd),
                            build_dir=build_directory,
                            output=output,
                            parameters=parameters)
+
+    def _compute_source_name_base(self, source_file):
+        _, source_name = os.path.split(source_file)
+        source_name_base, _ = os.path.splitext(source_name)
+        return source_name_base
+
+    
+    def _compute_so_make_target(self, source_file, build_directory):
+        source_name_base = self._compute_source_name_base(source_file)
+        return os.path.join(build_directory, f"{source_name_base}.so")
+
+    
+    def _compute_so_unique_name(self, source_file, build_directory):
+        source_name_base = self._compute_source_name_base(source_file)
+        number = 0
+        
+        while True:
+            unique_path = os.path.join(build_directory, f"{source_name_base}_{number}.so")
+            if not os.path.exists(unique_path):
+                break;
+            number += 1
+
+        return unique_path
+
+    
 
 build = MakeBuilder()
 
