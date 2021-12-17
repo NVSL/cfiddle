@@ -30,16 +30,16 @@ class LocalInvocation:
     def _invoke_function(self):
         self._arguments = self._runner.bind_arguments(self._runnable.arguments, self._runnable.build.functions[self._runnable.function])
         
-        c_lib = ctypes.CDLL(self._runnable.build.lib)
-
-        f = getattr(c_lib, self._runnable.function)
-
-        f(*self._arguments)
+        with environment(LD_LIBRARY_PATH=os.path.join(PACKAGE_DATA_PATH, "libfiddle")):
+            print(os.environ)
+            assert os.path.exists(os.path.join(PACKAGE_DATA_PATH, "libfiddle", "libfiddle.so"))
+            c_lib = ctypes.CDLL(self._runnable.build.lib)
+            f = getattr(c_lib, self._runnable.function)
+            f(*self._arguments)
 
     
     def _reset_data_collection(self):
-        libfiddle = ctypes.CDLL("libfiddle.so")
-        libfiddle.clear_stats()
+        self._libfiddle.clear_stats()
 
 
     def _collect_data(self):
@@ -56,10 +56,9 @@ class LocalInvocation:
 
         
     def _write_results(self, filename):
-        libfiddle = ctypes.CDLL("libfiddle.so")
-        libfiddle.write_stats(ctypes.c_char_p(filename.encode()))
-        
+        self._libfiddle.write_stats(ctypes.c_char_p(filename.encode()))
 
+    
     def _build_results_path(self):
         arg_string = ", ".join(map(lambda x: str(x.value), self._arguments))
         _, source_file_name = os.path.split(self._runnable.build.source_file)
