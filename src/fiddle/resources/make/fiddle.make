@@ -16,12 +16,13 @@ CXX?=g++
 CC?=gcc
 WARNINGS=-Wall -Werror
 DEBUG_FLAGS?=-g 
-INCLUDES=-I. -I$(FIDDLE_INCLUDE)
+INCLUDES=-I. -I$(FIDDLE_INCLUDE) 
 CFLAGS=$(WARNINGS) $(DEBUG_FLAGS) -fPIC $(OPTIMIZE) $(INCLUDES) $(MORE_INCLUDES) $(MORE_CFLAGS) -MMD -save-temps=obj
 CXXFLAGS=$(CFLAGS) $(CXX_STANDARD) $(MORE_CXXFLAGS)
 CXX_STANDARD=-std=gnu++11
+LIBS=-L$(FIDDLE_INCLUDE)/../libfiddle/ -lfiddle
 
-LDFLAGS=$(LD_OPTS) $(MORE_LDFLAGS) #-pthread  #-std=gnu++11  
+LDFLAGS=$(LD_OPTS) $(MORE_LDFLAGS) $(LIBS) $(MORE_LIBS) #-pthread  #-std=gnu++11  
 
 .PRECIOUS: $(BUILD)/%.o  $(BUILD)/%.s $(BUILD)%.ii
 .PHONY: default
@@ -76,7 +77,7 @@ $(BUILD)/%.so: $(BUILD)/%.o $(MORE_OBJS)
 	@mkdir -p $(BUILD)
 	$(CXX) $^ $(LDFLAGS) -shared -o $@
 
-#	-include $(wildcard *.d) $(wildcard $(BUILD)/*.d)
+-include $(wildcard *.d) $(wildcard $(BUILD)/*.d)
 .PHONY: fiddle-clean
 fiddle-clean:
 	rm -rf $(BUILD)

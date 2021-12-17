@@ -69,11 +69,15 @@ class DataSet {
 	std::vector<DataRow *> rows;
 public:
 	DataSet() {
-		start_new_row();
 	}
 
+	void clear() {
+		for (auto & r: rows) {
+			delete r;
+		}
+		rows.clear();
+	}
 	void start_new_row() {
-		
 		rows.push_back(new DataRow());
 	}
 
@@ -81,6 +85,9 @@ public:
 		return *rows.back();
 	}
 
+	size_t size() {
+		return rows.size(); 
+	}
 	template<typename T>
 	DataSet & set(const std::string & name, T t) { // It should be const T & t, but this makes string literals work.
 		current_row().set(name, t);

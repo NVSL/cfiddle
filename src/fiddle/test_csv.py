@@ -12,7 +12,9 @@ def test_csv():
 
     with tempfile.NamedTemporaryFile() as combined:
         t = [(b, "go", dict(k=i)) for i,b in enumerate(builds)]
+
         run(*t).as_csv(combined.name)
+        
         combined.flush()
         with open(combined.name, "r") as read_back:
             rows = csv.DictReader(read_back)

@@ -1,16 +1,37 @@
 #ifndef FIDDLE_INCLUDED
 #define FIDDLE_INCLUDED
-#include<sstream>
-std::string out_file(const std::string & name)
+#include"DataSet.hpp"
+#include"walltime.h"
+
+float start_time = 0.0;
+
+extern DataSet * get_dataset();
+extern "C" void write_stats(char *  filename);
+
+void start_measurement(char *tag=NULL)
 {
-	if (name[0] == '/') {
-		return name;
+
+	get_dataset()->start_new_row();
+
+	if (tag) {
+		get_dataset()->set("tag", tag);
 	}
 
-	std::stringstream s;
-	s << std::getenv("FIDDLE_OUTPUT_DIR") << "/" << name;
-	return s.str();
+	start_time = wall_time();
 }
+
+void end_measurement()
+{
+      	get_dataset()->set("ET", wall_time() - start_time);
+}
+
+void restart_measurement(char *tag)
+{
+	end_measurement();
+	start_measurement(tag);
+}
+
+DataSet * get_dataset();
 
 
 #endif

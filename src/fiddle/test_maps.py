@@ -9,11 +9,13 @@ def dump(x):
     print("\n".join(map(str,x)))
 
 def test_summarize():
-    builds = build("test_src/std_maps.cpp", parameters=[], OPTIMIZE="-O0")
-
+    build.verbose()
+    builds = build("test_src/std_maps.cpp", parameters=[], OPTIMIZE=["-O0", "-O1"])
+    
     results = run(build=builds,
                   function=["ordered", "unordered"],
                   arguments=expand_args(count=map(lambda x: 2**x, range(0,2))))
+
 
     results.as_csv("out.csv")
     with open("out.csv") as t:
@@ -34,3 +36,4 @@ def test_maps():
                   arguments=expand_args(count=map(lambda x: 2**x, range(0,20))))
 
     results.as_csv("out.csv")
+

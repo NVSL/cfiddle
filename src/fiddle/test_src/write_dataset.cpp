@@ -3,16 +3,11 @@
 #include<fstream>
 #include <cstdlib>
 
-
 extern "C"
 void go(int k) {
-
-	DataSet ds;
-	ds.set("y", k);
-	ds.start_new_row();
-	ds.set("z", k + 1);
-	std::ofstream out(out_file("out.csv"));
-	ds.write_csv(out);
-
+	get_dataset()->start_new_row();
+	get_dataset()->set("y", k);
+	get_dataset()->start_new_row();
+	get_dataset()->set("z", k + 1);
 }
 

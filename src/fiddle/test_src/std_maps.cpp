@@ -6,30 +6,22 @@
 
 extern "C"
 int ordered(int count) {
-	DataSet ds;
-	float start = wall_time();
+	start_measurement();
 	std::set<int> t;
 	for (int i = 0; i < count; i++) {
 		t.insert(i);
 	}
-	ds.set("ET", wall_time() - start);
-	std::ofstream out(out_file("out.csv"));
-	ds.write_csv(out);
+	end_measurement();
 	return t.size();
 }
 
 extern "C"
 int unordered(int count) {
-	DataSet ds;
-	float start = wall_time();
+	start_measurement();
 	std::unordered_set<int> t;
 	for (int i = 0; i < count; i++) {
 		t.insert(i);
 	}
-	ds.set("ET", wall_time() - start);
-	std::ofstream out(out_file("out.csv"));
-	ds.write_csv(out);
-
+	end_measurement();
 	return t.size();
-	
 }

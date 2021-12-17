@@ -45,6 +45,7 @@ namespace Tests {
 
 	TEST_F(DataSetTests, dataset_test) {
 		DataSet ds;
+		ds.start_new_row();
 		ds.current_row().set("foo", 4);
 		ASSERT_THAT(ds.current_row().get_keys(), ElementsAre("foo"));
 		ds.start_new_row();
@@ -58,7 +59,18 @@ namespace Tests {
 
 		ASSERT_EQ(s.str(), "\"foo\",\"bar\"\n4,\"\"\n\"\",5\n");
 	}
-	
+
+	TEST_F(DataSetTests, clear_test) {
+		DataSet ds;
+		ASSERT_EQ(ds.size(), 0);
+		ds.start_new_row();
+		ds.current_row().set("foo", 4);
+		ASSERT_EQ(ds.size(), 1);
+		ds.clear();
+		ASSERT_EQ(ds.size(), 0);
+		ds.start_new_row();
+		ds.current_row().set("foo", 4);
+	}
 }
 
 

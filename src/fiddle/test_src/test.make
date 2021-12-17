@@ -1,7 +1,7 @@
 
 .SUFFIXES:
 
-BUILD=build
+BUILD?=build
 
 vpath %.cpp $(FIDDLE_VPATH)
 vpath %.cc $(FIDDLE_VPATH)
@@ -12,12 +12,15 @@ vpath %.C $(FIDDLE_VPATH)
 vpath %.c++ $(FIDDLE_VPATH)
 vpath %.c $(FIDDLE_VPATH)
 
+
 $(BUILD)/%.o : %.cpp
 	@mkdir -p $(BUILD)
 	echo $< > $@
 
+
 $(BUILD)/%.so: $(BUILD)/%.o $(MORE_OBJS)
 	cat $< > $@
+
 
 .PHONY:clean
 clean:
