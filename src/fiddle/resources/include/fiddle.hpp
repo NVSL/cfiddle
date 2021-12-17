@@ -12,4 +12,5 @@ std::string out_file(const std::string & name)
 	return s.str();
 }
 
+
 #endif

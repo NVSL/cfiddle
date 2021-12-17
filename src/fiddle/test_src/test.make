@@ -18,7 +18,7 @@ $(BUILD)/%.o : %.cpp
 
 $(BUILD)/%.so: $(BUILD)/%.o $(MORE_OBJS)
 	cat $< > $@
-	cp $@ $(SO_UNIQUE_NAME)
+
 .PHONY:clean
 clean:
 	rm -rf $(BUILD)

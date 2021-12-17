@@ -75,8 +75,6 @@ $(BUILD)/%.so: $(BUILD)/%.o $(MORE_OBJS)
 $(BUILD)/%.so: $(BUILD)/%.o $(MORE_OBJS)
 	@mkdir -p $(BUILD)
 	$(CXX) $^ $(LDFLAGS) -shared -o $@
-	cp $@ $(SO_UNIQUE_NAME)
-	[ -e $(SO_UNIQUE_NAME) ]
 
 #	-include $(wildcard *.d) $(wildcard $(BUILD)/*.d)
 .PHONY: fiddle-clean

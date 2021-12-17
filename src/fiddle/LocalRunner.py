@@ -5,6 +5,7 @@ import os
 from .util import environment
 import csv
 
+
 class LocalRunner(Runner):
 
     def run_one(self, runnable):
@@ -19,7 +20,7 @@ class LocalRunner(Runner):
         os.makedirs(output_directory, exist_ok=True)
 
         c_lib = ctypes.CDLL(runnable.build.lib)
-        print(runnable.build.lib)
+
         with environment(FIDDLE_OUTPUT_DIR=output_directory):
             f = getattr(c_lib, runnable.function)
             f(*args)

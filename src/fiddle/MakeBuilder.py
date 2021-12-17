@@ -2,7 +2,7 @@ from .Builder import Builder, BuildResult, BadBuildParameter, BuildFailure
 import os
 import subprocess
 import pytest
-
+from shutil import copyfile
 from .util import environment, invoke_process
 
 import pkg_resources
@@ -13,137 +13,140 @@ class MakeBuilder(Builder):
 
     def __init__(self,
                  rebuild=False,
-                 build_root=None,
                  makefile=None):
-        super().__init__(build_root=build_root)
+        super().__init__()
 
         self._makefile = makefile
         if self._makefile is None:
             self._makefile = os.path.join(DATA_PATH, "make", "fiddle.make")
 
-        self._rebuild=rebuild
-
-    def rebuild(self, rebuild=True):
         self._rebuild = rebuild
-        return self
+        self._verbose = False
+        
+        
+    def build_one(self, parameters=None):
+        build_directory = self._compute_build_directory(parameters)
 
-    
-    def makefile(self, makefile):
-        self._makefile = makefile
-        return self
+        so_make_target = self._compute_so_make_target(build_directory)
+        so_unique_name = self._compute_so_unique_name(build_directory)
 
-
-    def build_one(self, source_file, parameters=None):
-        build_directory = self._compute_build_directory(source_file, parameters)
-
-        so_make_target = self._compute_so_make_target(source_file, build_directory)
-        so_unique_name = self._compute_so_unique_name(source_file, build_directory)
-
-        vpath = ":".join([os.path.dirname(source_file), build_directory])
+        vpath = ":".join([os.path.dirname(self._source_file), build_directory])
 
         parameter_strings  = [f"{name}={value}" for name, value in parameters.items()]
         parameter_strings += [f"BUILD={build_directory}"]
         parameter_strings += [f"FIDDLE_INCLUDE={os.path.join(DATA_PATH, 'include')}"]
         parameter_strings += [f"FIDDLE_VPATH={vpath}"]
-        parameter_strings += [f"SO_UNIQUE_NAME={so_unique_name}"]
         
         base_cmd = ["make", "-f", self._makefile] + parameter_strings
         
         if self._rebuild:
-            cmd=base_cmd + ["clean"]
-            #print(" ".join(cmd))
-            success, output = invoke_process(cmd)
-            if not success:
-                raise BuildFailure(" ".join(cmd), output)
+            make_targets = ["clean"]
+        else:
+            make_targets = []
+            
+        make_targets.append(so_make_target)
 
-        cmd = base_cmd + [so_make_target]
+        if self._verbose:
+            print(base_cmd + make_targets)
+        output = self._invoke_make(base_cmd + make_targets)
+        if self._verbose:
+            print(output)
 
-        #print(" ".join(cmd))
-        success, output = invoke_process(cmd)
+        copyfile(so_make_target, so_unique_name)
 
-        #print(output)
-        if not success:
-            raise BuildFailure(" ".join(cmd), output)
-
-        functions = self.parser.parse_file(source_file)
+        functions = self.parser.parse_file(self._source_file)
             
         return BuildResult(lib=so_unique_name,
-                           source_file=source_file,
+                           source_file=self._source_file,
                            functions=functions,
-                           build_command=" ".join(cmd),
+                           build_command=self._build_manual_make_cmd(base_cmd + make_targets),
                            build_dir=build_directory,
                            output=output,
                            parameters=parameters)
 
-    def _compute_source_name_base(self, source_file):
-        _, source_name = os.path.split(source_file)
-        source_name_base, _ = os.path.splitext(source_name)
-        return source_name_base
 
-    
-    def _compute_so_make_target(self, source_file, build_directory):
-        source_name_base = self._compute_source_name_base(source_file)
-        return os.path.join(build_directory, f"{source_name_base}.so")
+    def rebuild(self, rebuild=True):
+        self._rebuild = rebuild
 
-    
-    def _compute_so_unique_name(self, source_file, build_directory):
-        source_name_base = self._compute_source_name_base(source_file)
-        number = 0
         
+    def makefile(self, makefile):
+        self._makefile = makefile
+
+        
+    def verbose(self, verbose=True):
+        self._verbose = verbose
+
+        
+    def _build_manual_make_cmd(self, cmd):
+        return " ".join(cmd)
+
+    
+    def _invoke_make(self, cmd):
+        success, output = invoke_process(cmd)
+        if not success:
+            raise BuildFailure(" ".join(cmd), output)
+        return output
+
+    
+    def _compute_so_make_target(self, build_directory):
+        return os.path.join(build_directory, f"{self._source_name_base}.so")
+
+    
+    def _compute_so_unique_name(self, build_directory):
+        number = 0
+
         while True:
-            unique_path = os.path.join(build_directory, f"{source_name_base}_{number}.so")
+            unique_path = os.path.join(build_directory, f"{self._source_name_base}_{number}.so")
             if not os.path.exists(unique_path):
                 break;
             number += 1
 
         return unique_path
 
-    
 
 build = MakeBuilder()
 
-def test_make_builder():
-    import ctypes
-    import tempfile
-    from .util import expand_args
-    builder = MakeBuilder()
+import ctypes
 
+@pytest.fixture
+def make_builder_build():
+    build = MakeBuilder()
     build.rebuild(True)
+    build.verbose(True)
+    return build
 
-    simple_test = build("test_src/test.cpp")
+
+def test_simple(make_builder_build):
+    simple_test = make_builder_build("test_src/test.cpp")
     assert os.path.exists(simple_test.lib)
     assert len(simple_test.functions) == 5
     assert ctypes.CDLL(simple_test.lib).nop() == 4
 
-    simple_test_cxx = build("test_src/test_cxx.cxx")
+    
+def test_cxx(make_builder_build):
+    simple_test_cxx = make_builder_build("test_src/test_cxx.cxx")
     assert os.path.exists(simple_test_cxx.lib)
     assert len(simple_test_cxx.functions) == 1
     assert ctypes.CDLL(simple_test_cxx.lib).nop() == 5
+
     
-    simple_test_c = build("test_src/test_c.c")
+def test_c(make_builder_build):
+    simple_test_c = make_builder_build("test_src/test_c.c")
     assert os.path.exists(simple_test_c.lib)
     assert len(simple_test_c.functions) == 1
     assert ctypes.CDLL(simple_test_c.lib).nop() == 6
+
     
-    alternate_makefile_build = MakeBuilder()
-    alternate_makefile_build.makefile("test_src/test.make")
-    alternate_makefile_build.rebuild(True)
-    alternate_result = alternate_makefile_build("test_src/test.cpp")
+def test_alt_makefile(make_builder_build):
+    make_builder_build.makefile("test_src/test.make")
+    make_builder_build.rebuild(True)
+    alternate_result = make_builder_build("test_src/test.cpp")
     with open(alternate_result.lib) as lib:
         assert lib.read() == "test_src/test.cpp\n"
 
-    with tempfile.TemporaryDirectory() as build_root:
-        alternate_root_build = MakeBuilder(build_root=build_root, rebuild=True)
-        alt_root_simple_test =  alternate_root_build("test_src/test.cpp")
-        assert os.path.exists(alt_root_simple_test.lib)
-        assert len(alt_root_simple_test.functions) == 5
-        assert ctypes.CDLL(alt_root_simple_test.lib).nop() == 4
     
-def test_complex_flags():
-    builder = MakeBuilder()
-    build.rebuild(True)
-
-    simple_test = build("test_src/test.cpp", OPTIMIZE="-O1 -fno-inline")
+def test_complex_flags(make_builder_build):
+    simple_test = make_builder_build("test_src/test.cpp", OPTIMIZE="-O1 -fno-inline")
     assert os.path.exists(simple_test.lib)
 
 

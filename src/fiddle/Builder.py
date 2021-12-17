@@ -10,6 +10,7 @@ import pytest
 class Builder:
     
     def __init__(self, parser=None, build_root=None):
+        self._source_file = None
         self.parser = parser or CProtoParser()
         self.analyses = {}
         self.build_root = build_root
@@ -17,7 +18,7 @@ class Builder:
             self.build_root = os.environ.get("FIDDLE_BUILD_ROOT", "fiddle/builds")
 
             
-    def build_one(self, source_file, parameters=None):
+    def build_one(self, parameters=None):
         raise NotImplemented
 
     
@@ -27,6 +28,9 @@ class Builder:
             if code is None:
                 raise ValueError("You must provide either a source_file or code")
             source_file = self._write_anonymous_source(code)
+
+        self._source_file = source_file
+        self._source_name_base = self._compute_source_name_base()
             
         if isinstance(source_file, BuildResult):
             source_file = source_file.source_file
@@ -52,7 +56,7 @@ class Builder:
 
         self._raise_on_invalid_parameters(parameters)
         
-        r = ListDelegator(self._add_analysis_functions(self.build_one(source_file, p)) for p in parameters)
+        r = ListDelegator(self._add_analysis_functions(self.build_one(p)) for p in parameters)
         return r[0] if singleton else r
 
     
@@ -93,10 +97,8 @@ class Builder:
         return anonymous_source_path
 
     
-    def _compute_build_directory(self, source_file, parameters):
-        _, source_name = os.path.split(source_file)
-        source_name_base, _ = os.path.splitext(source_name)
-        return os.path.join(self.build_root, "__".join([f"{p}_{v.replace(' ', '')}" for p,v in parameters.items()]) + "_" + source_name_base)
+    def _compute_build_directory(self, parameters):
+        return os.path.join(self.build_root, "__".join([f"{p}_{v.replace(' ', '')}" for p,v in parameters.items()]) + "_" + self._source_name_base)
 
 
     def register_analysis(self, analysis, as_name=None):
@@ -104,6 +106,12 @@ class Builder:
             as_name = analysis.__name__
         self.analyses[as_name] = analysis
         return self
+
+    
+    def _compute_source_name_base(self):
+        _, source_name = os.path.split(self._source_file)
+        source_name_base, _ = os.path.splitext(source_name)
+        return source_name_base
 
             
 class BuildFailure(Exception):
@@ -150,12 +158,9 @@ class CompiledFunctionDelegator:
             return attr
 
 class NopBuilder(Builder):
-    
-    def build_one(self, source_path, parameters):
-        _, source_file = os.path.split(source_path)
-        source_file_base, _ = os.path.splitext(source_file)
-        build_directory = self._compute_build_directory(source_file, parameters)
-        return BuildResult(f"{source_file}.so", source_path, build_directory, "no output", str(parameters), parameters, {f"{source_file_base}_func": "nonsense_value"})
+
+    def build_one(self,  parameters):
+        return BuildResult(f"{self._source_file}.so", self._source_file, self._compute_build_directory(parameters), "no output", str(parameters), parameters, {f"{self._source_name_base}_func": "nonsense_value"})
     
 def test_builder():
 
@@ -248,10 +253,9 @@ def test_delegator():
     assert delegated_function.return_function() == "nonsense_value"
 
 def test_foo():
-    from .MakeBuilder import MakeBuilder
-    build = MakeBuilder()
+    from .MakeBuilder import build
+    
     build.register_analysis(CompiledFunctionDelegator, as_name="function")
-
 
     if_ex = build(code=r"""
 #include<cstdint>
