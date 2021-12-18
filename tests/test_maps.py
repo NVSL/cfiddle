@@ -69,7 +69,7 @@ def test_optimization_maps():
 
     results = run(build=builds,
                   function=["ordered", "unordered"],
-                  arguments=expand_args(count=map(lambda x: 2**x, range(0, 20))))
+                  arguments=expand_args(count=map(lambda x: 2**x, range(0, 22))))
     
     return results.as_df()
 
