@@ -5,49 +5,67 @@ import pytest
 from fiddle.util import ListDelegator
 from fiddle.Builder import CompiledFunctionDelegator
 
-def source(build_result, show=None, language=None, **kwargs):
-    if language is None:
-        language = infer_language(build_result.source_file)
-    return extract_code(build_result.source_file, show=show, language=language, **kwargs)
-
-
-def asm(build_result, show=None, demangle=True, **kwargs):
-    source_base_name = build_result.extract_build_name(build_result.source_file)
-    asm_file = build_result.compute_built_filename(f"{source_base_name}.s")
-
-    with open(asm_file) as f:
-        assembly = f.read()
-
-    assembly = demangle_assembly(assembly) if demangle else assembly
-
-    return extract_code(asm_file, show=show, language="gas", **kwargs)
-
-
-def preprocessed(build_result, show=None, language=None,  **kwargs):
-    if language is None:
-        language = infer_language(build_result.source_file)
+class Source:
+    
+    def __init__(self, *argc, **kwargs):
+        pass
         
-    compiled_source_base_name = build_result.extract_build_name(build_result.source_file)
-    preprocessed_suffix = compute_preprocessed_suffix(build_result.source_file, language=language)
-    source_file_to_search = build_result.compute_built_filename(f"{compiled_source_base_name}{preprocessed_suffix}")
+    def source(self, show=None, language=None, **kwargs):
+        if language is None:
+            language = infer_language(self.source_file)
+        return extract_code(self.source_file, show=show, language=language, **kwargs)
+
+
+class Assembly:
+
+    def __init__(self, *argc, **kwargs):
+        pass
+
+    def asm(self, show=None, demangle=True, **kwargs):
+        source_base_name = self.extract_build_name(self.source_file)
+        asm_file = self.compute_built_filename(f"{source_base_name}.s")
+
+        with open(asm_file) as f:
+            assembly = f.read()
+
+        assembly = self.demangle_assembly(assembly) if demangle else assembly
+
+        return extract_code(asm_file, show=show, language="gas", **kwargs)
+
     
-    return extract_code(source_file_to_search, show=show, language=language, **kwargs)
+    def demangle_assembly(assembly):
+        p = subprocess.Popen(['c++filt'], stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+        output, output_err = p.communicate(assembly)
+        return output.decode()
 
-def function(build_result, *functions):
-    return ListDelegator([CompiledFunctionDelegator(build_result, f) for f in functions])
 
-def compute_preprocessed_suffix(filename, language):
-    if language is None:
-        language = infer_language(filename)
+class Preprocessed:
 
-    if language == "c++":
-        return ".ii"
-    elif language == "c":
-        return ".i"
-    else:
-        raise ValueError(f"Can't compute preprocessor file extension for file  '{filename}' in '{language}'.")
-
+    def __init__(self, *argc, **kwargs):
+        pass
     
+    def preprocessed(self, show=None, language=None,  **kwargs):
+        if language is None:
+            language = infer_language(self.source_file)
+
+        compiled_source_base_name = self.extract_build_name(self.source_file)
+        preprocessed_suffix = self.compute_preprocessed_suffix(self.source_file, language=language)
+        source_file_to_search = self.compute_built_filename(f"{compiled_source_base_name}{preprocessed_suffix}")
+
+        return extract_code(source_file_to_search, show=show, language=language, **kwargs)
+
+    def compute_preprocessed_suffix(self, filename, language):
+        if language is None:
+            language = infer_language(filename)
+
+        if language == "c++":
+            return ".ii"
+        elif language == "c":
+            return ".i"
+        else:
+            raise ValueError(f"Can't compute preprocessor file extension for file  '{filename}' in '{language}'.")
+
+
 def infer_language(filename):
     suffixes_to_language = {".CPP" : "c++",
                             ".cpp" : "c++",
@@ -65,7 +83,7 @@ def infer_language(filename):
     except KeyError:
         raise ValueError(f"I don't know what language {filename} is written in.")
 
-    
+
 def extract_code(filename, show=None, language=None, include_header=False):
 
     with open(filename) as f:
@@ -76,10 +94,10 @@ def extract_code(filename, show=None, language=None, include_header=False):
 
     if language is None:
         language = infer_language(filename)
-        
+
     if isinstance(show, str):
         show = construct_function_regex(language, show)
-        
+
     if len(show) == 2:
         if all([isinstance(x, str) for x in show]): 
             start_line, end_line = find_region_by_regex(lines, show)
@@ -89,19 +107,13 @@ def extract_code(filename, show=None, language=None, include_header=False):
             raise ValueError(f"{show} is not a valid specification of code to extract.")
     else:
         raise ValueError(f"{show} is not a valid specification of code to extract.")
-    
+
     src = "\n".join(lines[start_line:end_line])
 
     if include_header:
         src = build_header(filename, language,(start_line, end_line)) + src
 
     return src
-
-
-def demangle_assembly(assembly):
-    p = subprocess.Popen(['c++filt'], stderr=subprocess.PIPE, stdout=subprocess.PIPE)
-    output, output_err = p.communicate(assembly)
-    return output.decode()
 
 
 def build_header(filename, language, show):
@@ -125,7 +137,7 @@ def construct_function_regex(language, function):
     else:
         raise Exception(f"Don't know how to find functions in {language}")
 
-    
+
 def find_region_by_regex(lines, show):
     started = False
     start_line = 0
@@ -141,69 +153,7 @@ def find_region_by_regex(lines, show):
                 return start_line, end_line
     raise ValueError(f"Couldn't find code for {show}")
 
-
-
-source_for_more = r"""void more() {
-	std::cout << "more\n";
-}"""
-
-
-def test_extract_source():
-    from .MakeBuilder import MakeBuilder
-
-    build = MakeBuilder()
-    build.rebuild()
-    build.register_analysis(source)
-    build.register_analysis(asm)
-    build.register_analysis(preprocessed)
     
-    test = build("test_src/test.cpp")
+#def function(build_result, *functions):
+#    return ListDelegator([CompiledFunctionDelegator(build_result, f) for f in functions])
 
-    with open("test_src/test.cpp") as f:
-        f = f.read()
-    assert f == test.source()
-    
-    assert test.source(show="nop") == """int nop() {\n	return 4;\n}"""
-    assert test.source(show=("//HERE", "//THERE")) == """//HERE\n//aoeu\n//THERE"""
-
-    print(test.source(show="more", include_header=True))
-    print(test.source(show="more"))
-    
-    assert test.source(show="more") == source_for_more
-
-    assert test.source(show=(0,3)) == """// 0
-// 1
-// 2"""
-    
-    with pytest.raises(ValueError):
-        test.preprocessed(show="more")
-    with pytest.raises(ValueError):
-        test.source(show=("AOEU", "AOEU"))
-
-def _test_asm():
-    # for some reason this hangs on asm(), yet asm() works fine in real code.
-    from .MakeBuilder import MakeBuilder
-
-    build = MakeBuilder()
-    build.rebuild()
-    build.register_analysis(asm)
-    
-    test = build("test_src/test.cpp")
-    nop_asm = test.asm(show="nop")
-    assert nop_asm.split("\n")[0] == "nop:"
-    assert ".cfi_endproc" in nop_asm.split("\n")[-1]
-
-
-def test_CPP_flags():
-    from .MakeBuilder import MakeBuilder
-
-    build = MakeBuilder()
-    build.rebuild()
-    build.register_analysis(preprocessed)
-    test_with_more = build("test_src/test.cpp", MORE_CXXFLAGS="-DINCLUDE_MORE")
-
-    def strip_whitespace(text):
-        return "\n".join([l.strip() for l in text])
-    
-    assert strip_whitespace(test_with_more.preprocessed(include_header=False, show="more")) == strip_whitespace(source_for_more)
-    

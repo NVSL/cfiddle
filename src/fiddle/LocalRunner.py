@@ -8,32 +8,23 @@ import csv
 
 class LocalRunner(Runner):
 
-    def run_one(self, runnable):
-        return LocalInvocation(self, runnable).run()
-    
-class LocalInvocation:
-
-    def __init__(self, runner, runnable):
-        self._runner = runner
-        self._runnable = runnable
-        self._arguments = None
+    def __init__(self, build_result, runnable, result_factory=None):
+        super().__init__(build_result, runnable, result_factory=result_factory)
         self._libfiddle = ctypes.CDLL("libfiddle.so")
         
     def run(self):
         self._reset_data_collection()
         self._invoke_function()
         results = self._collect_data()
-        return InvocationResult(runnable=self._runnable, results=results)
-
+        return self._result_factory(runnable=self._runnable, results=results)
     
     def _invoke_function(self):
-        self._arguments = self._runner.bind_arguments(self._runnable.arguments, self._runnable.build.functions[self._runnable.function])
+        self._arguments = self.bind_arguments(self._runnable.arguments, self._build_result.functions[self._runnable.function])
         
-        c_lib = ctypes.CDLL(self._runnable.build.lib)
+        c_lib = ctypes.CDLL(self._build_result.lib)
         f = getattr(c_lib, self._runnable.function)
         f(*self._arguments)
 
-    
     def _reset_data_collection(self):
         self._libfiddle.clear_stats()
 
@@ -57,34 +48,9 @@ class LocalInvocation:
     
     def _build_results_path(self):
         arg_string = ", ".join(map(lambda x: str(x.value), self._arguments))
-        _, source_file_name = os.path.split(self._runnable.build.source_file)
+        _, source_file_name = os.path.split(self._build_result.source_file)
         result_file_name = f"{source_file_name}.{self._runnable.function}({arg_string}).csv"
-        return os.path.join(self._runnable.build.build_dir, result_file_name)
+        return os.path.join(self._build_result.build_dir, result_file_name)
 
-run = LocalRunner()
+#run = LocalRunner()
 
-
-def test_hello_world():
-    from fiddle.MakeBuilder import build
-    b = build("test_src/hello.cpp", code=r"""
-    #include<cstdio>
-
-    extern "C"
-    int foo(int i) {
-        fprintf(stdout, "hello world!\n");
-        return 0;
-    }
-    """, OPTIMIZE=["-O0", "-O3"])
-
-    run(build=b, function=["foo"], arguments=[dict(i=1)])
-    b = build("test_src/hello.cpp", code=r"""
-    #include<cstdio>
-
-    extern "C"
-    int foo(int i) {
-        fprintf(stdout, "goodbye world!\n");
-        return 0;
-    }
-    """, OPTIMIZE=["-O0", "-O3"])
-
-    run(build=b, function=["foo"], arguments=[dict(i=1)])

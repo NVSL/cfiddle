@@ -12,31 +12,33 @@ from .ProtoParser import Prototype, Parameter
 import inspect
 import pandas as pd
 
-Runnable = collections.namedtuple("Runnable", "build,function,arguments")
+Runnable = collections.namedtuple("Runnable", "function,arguments")
 
 #Result =  collections.namedtuple("Result", "output_directory,runnable")
 
 class Runner:
 
+    def __init__(self, build_result, runnable, result_factory=None):
+        self._runnable = runnable
+        self._build_result = build_result
+        self._result_factory = result_factory or InvocationResult
     
-    def run_one(self, runnable, **kwargs):
+    def run(self):
         raise NotImplemented
-        return result
-
     
-    def _decorate_result(self, result):
-        for a in self.analyses:
-            setattr(result, a, types.MethodType(self.analyses[a], result))
-        return result
+ #   def _decorate_result(self, result):
+ #       for a in self.analyses:
+ #           setattr(result, a, types.MethodType(self.analyses[a], result))
+ #      return result
     
 
-    def run(self, *argc, **kwargs):
-        runnable = [Runnable(*args) for args in argc] + [Runnable(**args) for args in expand_args(**kwargs)]
-        return InvocationResultsList([self.run_one(r) for r in runnable])
+#    def run(self, *argc, **kwargs):
+#        runnable = [Runnable(*args) for args in argc] + [Runnable(**args) for args in expand_args(**kwargs)]
+#        return InvocationResultsList([self.run_one(r) for r in runnable])
 
     
-    def __call__(self, *argc, **kwargs):
-        return self.run(*argc, **kwargs)
+ #   def __call__(self, *argc, **kwargs):
+ #       return self.run(*argc, **kwargs)
 
     
     def bind_arguments(self, arguments, signature):
@@ -136,31 +138,4 @@ class UnusedArgument(Exception):
 class MissingArgument(Exception):
     pass
 
-
-test_prototype = Prototype(None, None, (Parameter(type=ctypes.c_float, name="a"),
-                                        Parameter(type=ctypes.c_int, name="b")))
-
-@pytest.mark.parametrize("params,proto,result", [
-    (dict(a=1, b=2),
-     test_prototype,
-     [1,2]),
-    (dict(a=object(), b=2),
-     test_prototype,
-     TypeError),
-    (dict(a="aoeu", b=2),
-     test_prototype,
-     TypeError),
-    (dict(a="aoeu", b=2),
-     test_prototype,
-     TypeError)
-]
-)
-def test_bind_arguments(params, proto, result):
-    runner =Runner()
-    
-    if inspect.isclass(result) and issubclass(result, Exception):
-        with pytest.raises(result):
-            runner.bind_arguments(params, proto)
-    else:
-        assert list(map(lambda x : x.value, runner.bind_arguments(params, proto))) == result
 

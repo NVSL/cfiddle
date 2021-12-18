@@ -7,12 +7,72 @@ import hashlib
 import pytest
 
 
+BuildSpec = collections.namedtuple("BuildSpec", "source_file,build_parameters")
+
+_BuildResult = collections.namedtuple("BuildResult", "lib,source_file,build_dir,output,build_command,build_spec,functions")
+
+class BuildResult(_BuildResult):
+
+    def compute_built_filename(self, filename):
+        return os.path.join(self.build_dir, filename)
+
+    def extract_build_name(self, filename):
+        _, source_name = os.path.split(self.source_file)
+        source_name_base, _ = os.path.splitext(source_name)
+        return source_name_base
+
+    def get_default_function_name(self):
+        if len(self.functions) == 1:
+            return list(self.functions.values())[0].name
+        else:
+            raise ValueError(f"There's is not exactly one function ({list(self.functions.keys())}), so you need to provide one.")
+
+def build(builder, build_spec):
+    return builder.build(build_spec)
+
 class Builder:
     
-    def __init__(self, parser=None, build_root=None):
+    def __init__(self, build_spec, build_root=None, parser=None, result_factory=None):
+        self.build_spec = build_spec
+        self.source_file = build_spec.source_file
+        self.result_factory = result_factory or BuildResult
+        self.parser = parser or CProtoParser()
+        self.source_name_base = self._compute_source_name_base()
+        self.build_parameters = build_spec.build_parameters
+        self.build_root = build_root
+        if self.build_root is None:
+            self.build_root = os.environ.get("FIDDLE_BUILD_ROOT", "fiddle/builds")
+        self.build_directory = self._compute_build_directory()
+
+        
+    def build(self):
+        raise NotImplemented
+
+    
+    def _compute_build_directory(self):
+        return os.path.join(self.build_root, "__".join([f"{p}_{v.replace(' ', '')}" for p,v in self.build_parameters.items()]) + "_" + self.source_name_base)
+
+    
+    def _compute_source_name_base(self):
+        _, source_name = os.path.split(self.source_file)
+        source_name_base, _ = os.path.splitext(source_name)
+        return source_name_base
+
+class BuildFailure(Exception):
+    def __str__(self):
+        return f"Build command failed:\n\n{self.args[0]}\n\n{self.args[1]}"
+    
+class BadBuildParameter(Exception):
+    pass
+
+    
+    
+class _Builder:
+    
+    def __init__(self, parser=None, build_root=None, analyses=None):
         self._source_file = None
         self.parser = parser or CProtoParser()
-        self.analyses = {}
+        self.analyses = analyses or {}
         self.build_root = build_root
         if self.build_root is None:
             self.build_root = os.environ.get("FIDDLE_BUILD_ROOT", "fiddle/builds")
@@ -29,7 +89,7 @@ class Builder:
             source_file = self._write_anonymous_source(code)
 
         self._source_file = source_file
-        self._source_name_base = self._compute_source_name_base()
+
             
         if isinstance(source_file, BuildResult):
             source_file = source_file.source_file
@@ -108,38 +168,8 @@ class Builder:
         return self
 
     
-    def _compute_source_name_base(self):
-        _, source_name = os.path.split(self._source_file)
-        source_name_base, _ = os.path.splitext(source_name)
-        return source_name_base
 
             
-class BuildFailure(Exception):
-    def __str__(self):
-        return f"Build command failed:\n\n{self.args[0]}\n\n{self.args[1]}"
-    
-class BadBuildParameter(Exception):
-    pass
-
-_BuildResult = collections.namedtuple("BuildResult", "lib,source_file,build_dir,output,build_command,parameters,functions")
-
-class BuildResult(_BuildResult):
-
-    def compute_built_filename(self, filename):
-        return os.path.join(self.build_dir, filename)
-
-    def extract_build_name(self, filename):
-        _, source_name = os.path.split(self.source_file)
-        source_name_base, _ = os.path.splitext(source_name)
-        return source_name_base
-
-    def get_default_function_name(self):
-        if len(self.functions) == 1:
-            return list(self.functions.values())[0].name
-        else:
-            raise ValueError(f"There's is not exactly one function ({list(self.functions.keys())}), so you need to provide one.")
-    
-    
 class CompiledFunctionDelegator:
     def __init__(self, build_result, function_name=None):
         self.build_result = build_result
@@ -157,12 +187,6 @@ class CompiledFunctionDelegator:
         else:
             return attr
 
-class NopBuilder(Builder):
-
-    def build_one(self,  parameters):
-        
-        return BuildResult(f"{self._source_file}.so", self._source_file, self._compute_build_directory(parameters), "no output", str(parameters), parameters, {f"{self._source_name_base}_func": "nonsense_value"})
-    
     
 def test_builder():
 
