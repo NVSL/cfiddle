@@ -4,7 +4,6 @@ import tempfile
 import os
 from .util import environment
 import csv
-import pkg_resources
 
 
 class LocalRunner(Runner):
@@ -18,7 +17,7 @@ class LocalInvocation:
         self._runner = runner
         self._runnable = runnable
         self._arguments = None
-        self._libfiddle = ctypes.CDLL(os.path.join(PACKAGE_DATA_PATH, "libfiddle", "libfiddle.so"))
+        self._libfiddle = ctypes.CDLL("libfiddle.so")
         
     def run(self):
         self._reset_data_collection()
@@ -30,12 +29,9 @@ class LocalInvocation:
     def _invoke_function(self):
         self._arguments = self._runner.bind_arguments(self._runnable.arguments, self._runnable.build.functions[self._runnable.function])
         
-        with environment(LD_LIBRARY_PATH=os.path.join(PACKAGE_DATA_PATH, "libfiddle")):
-            print(os.environ)
-            assert os.path.exists(os.path.join(PACKAGE_DATA_PATH, "libfiddle", "libfiddle.so"))
-            c_lib = ctypes.CDLL(self._runnable.build.lib)
-            f = getattr(c_lib, self._runnable.function)
-            f(*self._arguments)
+        c_lib = ctypes.CDLL(self._runnable.build.lib)
+        f = getattr(c_lib, self._runnable.function)
+        f(*self._arguments)
 
     
     def _reset_data_collection(self):
@@ -67,7 +63,6 @@ class LocalInvocation:
 
 run = LocalRunner()
 
-PACKAGE_DATA_PATH = pkg_resources.resource_filename('fiddle', 'resources/')
 
 def test_hello_world():
     from fiddle.MakeBuilder import build

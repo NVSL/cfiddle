@@ -1,7 +1,7 @@
 from fiddle.util import expand_args
 from fiddle.LocalRunner import run
 from fiddle.MakeBuilder import build
-
+import os
 
 def dump(x):
     print("\n".join(map(str,x)))
@@ -24,8 +24,9 @@ def test_summarize():
     df = results.as_df()
     print(df)
     
-    
 def test_maps():
+    from pandas import DataFrame
+
     builds = build("test_src/std_maps.cpp", OPTIMIZE=["-O0", "-O1", "-O3", "-Og"])
 
     results = run((builds[0], "ordered", dict(count=24)),
