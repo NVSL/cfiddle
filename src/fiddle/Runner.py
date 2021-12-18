@@ -10,6 +10,7 @@ import ctypes
 from collections import OrderedDict
 from .ProtoParser import Prototype, Parameter
 import inspect
+import pandas as pd
 
 Runnable = collections.namedtuple("Runnable", "build,function,arguments")
 
@@ -77,12 +78,15 @@ class InvocationResultsList(list):
             writer.writeheader()
             [writer.writerow(r) for r in rows]
 
-    
-    def as_df(self):
-        import pandas as pd
-        keys, rows = self.to_keys_and_dicts(self)
-        return pd.DataFrame(rows, columns=keys);
 
+    def as_df(self):
+        keys, rows = self.to_keys_and_dicts(self)
+        df=  pd.DataFrame(rows, columns=keys);
+        df = self._convert_to_numeric(df)
+        return df
+
+    def _convert_to_numeric(self,df):
+        return df.apply(lambda x: pd.to_numeric(x, errors="ignore"))
     
     def as_json(self, filename):
         keys, rows = self.to_keys_and_dicts(self)
