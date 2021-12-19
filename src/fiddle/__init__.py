@@ -13,7 +13,8 @@ __all__ = [
     "build_and_run",
     "build",
     "build_one",
-    "run"
+    "run",
+    "run_one"
 ]
 
 
@@ -28,7 +29,7 @@ from .Code import code
 def build_and_run(source_file, build_parameters, function, arguments):
     executable = build_one(source_file, build_parameters)
 
-    return run(executable, function, arguments)
+    return run_one(executable, function, arguments)
 
 
 def build(source, parameters=None, **kwargs):
@@ -48,20 +49,14 @@ def build_one(*args, **kwargs):
     return r[0]
 
 
-def run(exe=None, function=None, arguments=None,
-        invocations=None,
-        **kwargs):
-    
-    if exe is not None:
-        if invocations is not None:
-            raise ValueError("You can only specify 'invocations' or 'exe', 'function', and 'arguments'")
-        if  function is None:
-            raise ValueError("You must specify 'function' with 'exe'")
-        if arguments is None:
-            arguments = {}
-        invocations = [(exe, function, arguments)]
-        
+def run(invocations, **kwargs):
     return InvocationResultsList(LocalRunner(InvocationDescription(*i), **kwargs).run() for i in invocations)
+
+
+def run_one(exe, function, arguments=None, **kwargs):
+    if arguments is None:
+        arguments = {}
+    return run([(exe, function, arguments)], **kwargs)[0]
 
 
 

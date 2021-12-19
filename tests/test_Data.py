@@ -5,7 +5,7 @@ from itertools import product
 
 def test_df_numeric_conversion():
     r = build_and_run("test_src/test_Data.cpp", {}, "go", {})
-    df = r.as_df()
+    df = InvocationResultsList([r]).as_df()
     
     # Shouldn't fail because the data aren't strings
     df["a"]  = df["a"] + 1

@@ -35,6 +35,8 @@ def test_bind_arguments(params, proto, result):
         assert list(map(lambda x : x.value, runner.bind_arguments(params, proto))) == result
 
 
-#def test_return_values(test_cpp):
-#    r = run(test_cpp, "four")
-#    assert r.return_value == 4
+def test_return_values(test_cpp):
+    r = run_one(test_cpp, "four")
+    assert r.return_value == 4
+
+

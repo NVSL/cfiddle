@@ -14,9 +14,9 @@ class LocalRunner(Runner):
         
     def run(self):
         self._reset_data_collection()
-        self._invoke_function()
+        return_value = self._invoke_function()
         results = self._collect_data()
-        return self._result_factory(invocation=self.get_invocation(), results=results)
+        return self._result_factory(invocation=self.get_invocation(), results=results, return_value=return_value)
     
     def _invoke_function(self):
         
@@ -24,7 +24,7 @@ class LocalRunner(Runner):
         
         c_lib = ctypes.CDLL(self.get_build_result().lib)
         f = getattr(c_lib, self.get_invocation().function)
-        f(*self.bound_arguments)
+        return f(*self.bound_arguments)
 
     def _reset_data_collection(self):
         self._libfiddle.clear_stats()

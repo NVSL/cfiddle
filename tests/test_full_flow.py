@@ -1,5 +1,7 @@
 from fiddle import *
+from fixtures import *
 from itertools import product
+from fiddle.Runner import InvocationResult
 
 import pandas as pd
 import numpy as np
@@ -50,7 +52,7 @@ def test_maps_experiment():
 def test_build_wrappers():
 
         
-    t = build("test_src/std_maps.cpp")
+    t = build("test_src/std_maps.cpp", rebuild=True)
     assert t[0].build_spec.build_parameters == {}
     assert len(t) == 1
 
@@ -59,51 +61,48 @@ def test_build_wrappers():
     assert isinstance(t, Executable)
     
     t = build("test_src/std_maps.cpp",
-              verbose=True, rebuild=True)
+              verbose=True)
     assert t[0].build_spec.build_parameters == {}
     assert len(t) == 1
     
     t = build(source="test_src/std_maps.cpp",
               parameters={},
-              verbose=True, rebuild=True)
+              verbose=True)
     assert t[0].build_spec.build_parameters == {}
     assert len(t) == 1
     
     t = build(source="test_src/std_maps.cpp",
               parameters=dict(OPTIMIZE="-O0"),
-              verbose=True, rebuild=True)
+              verbose=True)
     assert t[0].build_spec.build_parameters == dict(OPTIMIZE="-O0")
     assert len(t) == 1
     
     t = build(source="test_src/std_maps.cpp",
               parameters=expand_args(OPTIMIZE=["-O0", "-O3"]),
-              verbose=True, rebuild=True)
+              verbose=True)
     assert t[0].build_spec.build_parameters == dict(OPTIMIZE="-O0")
     assert t[1].build_spec.build_parameters == dict(OPTIMIZE="-O3")
     assert len(t) == 2
     
     
-def test_run_wrappers():
+def test_run_wrappers(test_cpp):
     
-    executables = build("test_src/test.cpp", rebuild=True)
+    for t in [run_one(test_cpp, "four"),
+              run_one(test_cpp, "sum", dict(a=2, b=2)),
+              run_one(exe=test_cpp, function="sum", arguments=dict(a=2, b=2))]:
+        assert isinstance(t, InvocationResult)
+        assert t.return_value == 4
+
+    t = run(invocations=[(test_cpp, "sum", dict(a=1, b=2))])
+    assert len(t) == 1
+    assert t[0].return_value == 3
     
-    t = run(executables[0], "four")
-    assert len(t) == 1
-
-    t = run(executables[0], "sum", dict(a=1, b=2))
-    assert len(t) == 1
-
-    t = run(exe=executables[0], function="sum", arguments=dict(a=1, b=2))
-    assert len(t) == 1
-
-    t = run(invocations=[(executables[0], "sum", dict(a=1, b=2))])
-    assert len(t) == 1
-    
-    t = run(invocations=product(executables,
-                                     ["sum", "product"],
-                                     expand_args(a=[1,2], b=[3,4])))
+    t = run(invocations=product([test_cpp],
+                                ["sum", "product"],
+                                expand_args(a=[1,2], b=[3,4])))
     assert len(t) == 8
-    
+    assert t[1].return_value == 5
+
 
 def test_streamline():
 

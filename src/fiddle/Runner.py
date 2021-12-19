@@ -3,6 +3,7 @@ import os
 
 InvocationDescription = collections.namedtuple("InvocationDescription", "executable,function,arguments")
 
+
 class Runner:
 
     def __init__(self, invocation, result_factory=None):
@@ -39,20 +40,19 @@ class Runner:
                 raise UnusedArgument(p)
         return r
 
-
 class InvocationResult:
 
-    def __init__(self, invocation, results):
+    def __init__(self, invocation, results, return_value):
         self.invocation = invocation
         self.results = results
-
+        self.return_value = return_value
+        
     def get_results_field_names(self):
         return self.results[0].keys()
 
     def get_results(self):
         return self.results
-        
-
+    
 
 class UnusedArgument(Exception):
     pass
