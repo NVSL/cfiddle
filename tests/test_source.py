@@ -9,6 +9,7 @@ class CombinedAnalyzerResults(Preprocessed, Source, Executable):
 
 
 def test_source():
+
     build = MakeBuilder(build_spec=ExecutableDescription("test_src/test.cpp", build_parameters={}),
                         rebuild=True,
                         verbose=True,

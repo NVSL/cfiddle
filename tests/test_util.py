@@ -30,4 +30,11 @@ from fiddle.util import *
 def test_expand_args(inp, output):
     assert expand_args(**inp) == output
 
-    
+
+def test_type_check():
+    with pytest.raises(ValueError):
+        type_check(1, str)
+    type_check(1,int)
+    with pytest.raises(ValueError):
+        type_check_list([1, str], str)
+    type_check_list([1,1], int)

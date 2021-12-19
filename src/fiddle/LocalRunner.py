@@ -49,7 +49,7 @@ class LocalRunner(Runner):
     
     def _build_results_path(self):
         arg_string = ", ".join(map(lambda x: str(x.value), self.bound_arguments))
-        _, source_file_name = os.path.split(self.get_build_result().source_file)
+        _, source_file_name = os.path.split(self.get_build_result().build_spec.source_file)
         result_file_name = f"{source_file_name}.{self.get_invocation().function}({arg_string}).csv"
         return os.path.join(self.get_build_result().build_dir, result_file_name)
 

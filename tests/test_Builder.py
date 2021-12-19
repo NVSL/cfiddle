@@ -3,7 +3,12 @@ import pytest
 
 class NopBuilder(Builder):
     def build(self):
-        return self.result_factory(f"{self.source_file}.so", self.source_file, self.build_directory, "no output", str(self.build_parameters), self.build_parameters, {f"{self.source_name_base}_func": "nonsense_value"})
+        return self.result_factory(lib=f"{self.source_file}.so",
+                                   build_dir=self.build_directory,
+                                   output="no output",
+                                   build_command="build something",
+                                   build_spec=self.build_spec, 
+                                   functions=dict())
     
 
 def test_create_spec():
@@ -49,4 +54,3 @@ def test_mixins():
     result = t.build()
     assert isinstance(result, MyResult)
     assert result.my_result() == "my_result"
-    

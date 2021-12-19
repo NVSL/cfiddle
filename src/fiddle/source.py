@@ -5,22 +5,16 @@ import pytest
 
 class Source:
     
-    def __init__(self, *argc, **kwargs):
-        pass
-        
     def source(self, show=None, language=None, **kwargs):
         if language is None:
-            language = infer_language(self.source_file)
-        return extract_code(self.source_file, show=show, language=language, **kwargs)
+            language = infer_language(self.build_spec.source_file)
+        return extract_code(self.build_spec.source_file, show=show, language=language, **kwargs)
 
 
 class Assembly:
 
-    def __init__(self, *argc, **kwargs):
-        pass
-
     def asm(self, show=None, demangle=True, **kwargs):
-        source_base_name = self.extract_build_name(self.source_file)
+        source_base_name = self.extract_build_name(self.build_spec.source_file)
         asm_file = self.compute_built_filename(f"{source_base_name}.s")
 
         with open(asm_file) as f:
@@ -39,15 +33,12 @@ class Assembly:
 
 class Preprocessed:
 
-    def __init__(self, *argc, **kwargs):
-        pass
-    
     def preprocessed(self, show=None, language=None,  **kwargs):
         if language is None:
-            language = infer_language(self.source_file)
+            language = infer_language(self.build_spec.source_file)
 
-        compiled_source_base_name = self.extract_build_name(self.source_file)
-        preprocessed_suffix = self.compute_preprocessed_suffix(self.source_file, language=language)
+        compiled_source_base_name = self.extract_build_name(self.build_spec.source_file)
+        preprocessed_suffix = self.compute_preprocessed_suffix(self.build_spec.source_file, language=language)
         source_file_to_search = self.compute_built_filename(f"{compiled_source_base_name}{preprocessed_suffix}")
 
         return extract_code(source_file_to_search, show=show, language=language, **kwargs)

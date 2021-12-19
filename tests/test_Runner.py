@@ -1,5 +1,5 @@
 from fiddle import *
-from fiddle.Runner import Runner
+from fiddle.Runner import Runner, InvocationDescription
 from fixtures import test_cpp
 import ctypes
 import pytest
@@ -40,3 +40,12 @@ def test_return_values(test_cpp):
     assert r.return_value == 4
 
 
+def test_InvocationDescription_types(test_cpp):
+    with pytest.raises(ValueError):
+        InvocationDescription(1,1,1)
+    
+    with pytest.raises(ValueError):
+        InvocationDescription(test_cpp,"",{1:1})
+
+    with pytest.raises(ValueError):
+        InvocationDescription(test_cpp,"",{1:1})

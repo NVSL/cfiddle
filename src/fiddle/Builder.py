@@ -1,23 +1,48 @@
 import collections
 from .CProtoParser import CProtoParser
-from .util import expand_args, read_file, ListDelegator
+from .util import expand_args, read_file, ListDelegator, type_check, type_check_list
 import types
 import os
 import pytest
 
-ExecutableDescription = collections.namedtuple("ExecutableDescription", "source_file,build_parameters")
 
-_Executable = collections.namedtuple("Executable", "lib,source_file,build_dir,output,build_command,build_spec,functions")
+class ExecutableDescription:
+    def __init__(self, source_file, build_parameters):
+        self.source_file = source_file
+        self.build_parameters = build_parameters
 
-class Executable(_Executable):
+        self._raise_on_invalid_types()
 
+    def _raise_on_invalid_types(self):
+        type_check(self.source_file, str)
+        type_check_list(self.build_parameters.keys(), str)
+        for v in self.build_parameters.values():
+            if not any([isinstance(v, t) for t in [int, str, float]]) or isinstance(v, bool): # bool is an int!
+                raise ValueError(f"Can't have '{v}' as build_parameter value.")
+
+
+class Executable:
+
+    def __init__(self, lib, build_dir, output, build_command, build_spec, functions):
+        self.lib = lib
+        self.build_dir = build_dir
+        self.output = output
+        self.build_command = build_command
+        self.build_spec = build_spec
+        self.functions = functions
+
+        self._raise_on_invalid_types()
+    
+    
     def compute_built_filename(self, filename):
         return os.path.join(self.build_dir, filename)
 
+    
     def extract_build_name(self, filename):
-        _, source_name = os.path.split(self.source_file)
+        _, source_name = os.path.split(self.build_spec.source_file)
         source_name_base, _ = os.path.splitext(source_name)
         return source_name_base
+
 
     def get_default_function_name(self):
         if len(self.functions) == 1:
@@ -25,6 +50,15 @@ class Executable(_Executable):
         else:
             raise ValueError(f"There's is not exactly one function ({list(self.functions.keys())}), so you need to provide one.")
 
+        
+    def _raise_on_invalid_types(self):
+        type_check(self.lib, str)
+        type_check(self.build_dir, str)
+        type_check(self.build_command, str)
+        type_check(self.build_spec, ExecutableDescription)
+        type_check(self.functions, dict)
+        type_check_list(self.functions.keys(), str)
+        
 
 class Builder:
     
@@ -35,8 +69,6 @@ class Builder:
         self.parser = parser or CProtoParser()
         self.source_name_base = self._compute_source_name_base()
         self.build_parameters = build_spec.build_parameters
-
-        self._raise_on_invalid_parameters()
 
         self.build_root = build_root
 
@@ -60,12 +92,6 @@ class Builder:
         return source_name_base
 
     
-    def _raise_on_invalid_parameters(self):
-        for k,v in self.build_parameters.items():
-            if not any([isinstance(v, t) for t in [int, str, float]]) or isinstance(v, bool): # bool is an int!
-                raise ValueError(f"Can't have '{v}' as parameter value.")
-            if not isinstance(k, str):
-                raise ValueError(f"Parameter names must be strings (not {k}).")
             
 
 class BuildFailure(Exception):

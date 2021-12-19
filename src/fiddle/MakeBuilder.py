@@ -52,9 +52,9 @@ class MakeBuilder(Builder):
         copyfile(so_make_target, so_unique_name)
 
         functions = self.parser.parse_file(self.source_file)
-            
+
+
         return self.result_factory(lib=so_unique_name,
-                                   source_file=self.source_file,
                                    functions=functions,
                                    build_command=self._build_manual_make_cmd(base_cmd + make_targets),
                                    build_dir=self.build_directory,

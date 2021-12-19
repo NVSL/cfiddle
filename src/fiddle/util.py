@@ -146,3 +146,11 @@ class CompiledFunctionDelegator:
             return attr
 
 
+def type_check(value, the_type):
+    if not isinstance(value, the_type):
+        raise ValueError(f"Expected '{the_type.__name__}' not '{type(value).__name__}' in {value}")
+
+def type_check_list(values, the_type):
+    if not all(isinstance(v, the_type) for v in values):
+        raise ValueError(f"Expected sequence of '{the_type.__name__}' not '{[type(v).__name__ for v in values]}' in {values}")
+    
