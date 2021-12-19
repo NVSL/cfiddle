@@ -27,7 +27,7 @@ test_prototype = Prototype(None, None, (Parameter(type=ctypes.c_float, name="a")
 ]
 )
 def test_bind_arguments(params, proto, result):
-    runner =Runner()
+    runner = Runner(None)
     
     if inspect.isclass(result) and issubclass(result, Exception):
         with pytest.raises(result):

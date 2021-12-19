@@ -1,6 +1,6 @@
 from fiddle.MakeBuilder import MakeBuilder
 from fiddle.LocalRunner import LocalRunner
-from fiddle.Runner import Runnable
+from fiddle.Runner import Runnable, Invocation
 from fiddle.Builder import BuildSpec
 
 def test_hello_world():
@@ -9,8 +9,10 @@ def test_hello_world():
     build_result = b.build()
 
     runnable = Runnable(function="simple_print", arguments=dict(a=1, b=2, c=3))
-    
-    runner = LocalRunner(build_result, runnable)
+
+    invocation = Invocation(build_result, runnable)
+    runner = LocalRunner(invocation)
 
     invocation_result = runner.run()
+    
     print(invocation_result.results)
