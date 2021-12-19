@@ -4,25 +4,7 @@ import os
 from contextlib import contextmanager
 from collections.abc import Iterable
 import subprocess
-
-
-def cross_product(parameters):
-    if len(parameters) == 0:
-        return []
-    if len(parameters) == 1:
-        name, values = parameters[0]
-        return [{name:v} for v in values]
-    
-    ret = []
-    rest = cross_product(parameters[:-1])
-    name, values = parameters[-1]
-    for r in rest:
-        for v in values:
-            t = copy.copy(r)
-            t[name] = v
-            ret.append(t)
-            
-    return ret
+from itertools import product
 
 
 def expand_args(**parameters):
@@ -40,8 +22,27 @@ def expand_args(**parameters):
     def listify(t):
         return t if isinstance(t, Iterable) and not isinstance(t, str) else [t]
     t = [(k, listify(v)) for k,v in parameters.items()]
-    return cross_product(t)
-        
+    return _cross_product(t)
+
+
+def _cross_product(parameters):
+    if len(parameters) == 0:
+        return []
+    if len(parameters) == 1:
+        name, values = parameters[0]
+        return [{name:v} for v in values]
+    
+    ret = []
+    rest = _cross_product(parameters[:-1])
+    name, values = parameters[-1]
+    for r in rest:
+        for v in values:
+            t = copy.copy(r)
+            t[name] = v
+            ret.append(t)
+            
+    return ret
+
 
 def invoke_process(cmd):
     try:
@@ -100,36 +101,6 @@ class ListDelegator(list):
     def create_list_of_values(self, requested_attr):
         return ListDelegator([getattr(i, requested_attr) for i in self])
 
-    
-@pytest.mark.parametrize("inp,output", [
-    (dict(), []),
-    (dict(a=1), [{"a": 1}]),
-    (dict(a="bc"), [{"a": "bc"}]),
-    (dict(a=[1,2]), [{"a": 1},
-                     {"a": 2}]),
-    (dict(a=range(1,3),
-          b=1), [{"a": 1, "b": 1},
-                 {"a": 2, "b":1}]),
-    (dict(a=(1,2), b=[3,4]), [
-        {"a": 1,
-         "b": 3},
-        {"a": 1,
-         "b": 4},
-        {"a": 2,
-         "b": 3},
-        {"a": 2,
-         "b": 4}]),
-    (dict(a=1,b=2,c=3),
-     [ {"a": 1,
-        "b": 2,
-        "c": 3}]),
-    (dict(a=[1],b=[2],c=[3]),
-     [ {"a": 1,
-        "b": 2,
-        "c": 3}])
-])
-def test_expand_args(inp, output):
-    assert expand_args(**inp) == output
 
 @contextmanager
 def working_directory(path):

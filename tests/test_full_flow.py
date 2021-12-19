@@ -1,23 +1,26 @@
-from fiddle.Builder import BuildSpec
+from fiddle.Builder import ExecutableDescription
 from fiddle.MakeBuilder import MakeBuilder
 from fiddle.LocalRunner import LocalRunner
-from fiddle.Runner import Invocation, Runnable
+from fiddle.Runner import InvocationDescription
 from fiddle.source import Assembly, Preprocessed, Source
 from fiddle.Data import InvocationResultsList
 
 import pandas as pd
 import numpy as np
 
+# ExecutableSpec
+# Executable
+# InvocationSpec = (Executable, function, arguments)
+# InvocationResult
+
 
 def test_one():
 
-    build = BuildSpec("test_src/std_maps.cpp", build_parameters=dict(OPTIMIZE="-O0"))
+    build = ExecutableDescription("test_src/std_maps.cpp", build_parameters=dict(OPTIMIZE="-O0"))
 
-    invocations_spec = Runnable(function="ordered", arguments=dict(count=1))
-    
     executable = MakeBuilder(build, verbose=True).build()
 
-    invocation = Invocation(executable, invocations_spec)
+    invocation = InvocationDescription(executable, function="ordered", arguments=dict(count=1))
 
     result = LocalRunner(invocation).run()
 
@@ -26,30 +29,22 @@ def test_one():
     
 def test_everything_explicit():
 
-    builds = [BuildSpec("test_src/std_maps.cpp", build_parameters=dict(OPTIMIZE="-O0")),
-              BuildSpec("test_src/std_maps.cpp", build_parameters=dict(OPTIMIZE="-O1"))]
+    exec_specs = [ExecutableDescription("test_src/std_maps.cpp", build_parameters=dict(OPTIMIZE="-O0")),
+                  ExecutableDescription("test_src/std_maps.cpp", build_parameters=dict(OPTIMIZE="-O1"))]
 
-    invocation_spec = [Runnable(function="ordered", arguments=dict(count=1)),
-                        Runnable(function="ordered", arguments=dict(count=2))]
-
-    executables = [MakeBuilder(b, verbose=True).build() for b in builds]
-
-    invocations = [
-        Invocation(executables[0], invocation_spec[0]),
-        Invocation(executables[0], invocation_spec[1]),
-        Invocation(executables[1], invocation_spec[0]),
-        Invocation(executables[1], invocation_spec[1]),
-    ]
-
-    results = [LocalRunner(i).run() for i in invocations]
+    executables = [MakeBuilder(es, verbose=True).build() for es in exec_specs]
+    
+    invocation_specs = [InvocationDescription(executables[0], function="ordered", arguments=dict(count=1)),
+                        InvocationDescription(executables[1], function="ordered", arguments=dict(count=2)),
+                        InvocationDescription(executables[0], function="ordered", arguments=dict(count=1)),
+                        InvocationDescription(executables[1], function="ordered", arguments=dict(count=2))]
+    
+    results = [LocalRunner(i).run() for i in invocation_specs]
 
     print(InvocationResultsList(results).as_json())
 
 
 def _test_maps_experiment():
-
-    
-    
     
     builds = build("test_src/std_maps.cpp", OPTIMIZE=["-O0", "-O1", "-O3", "-Og"])
 

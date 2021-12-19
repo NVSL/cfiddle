@@ -1,15 +1,15 @@
 from fiddle.MakeBuilder import MakeBuilder
-from fiddle.Builder import BuildSpec, BuildResult
+from fiddle.Builder import ExecutableDescription, Executable
 from fiddle.source import *
 
 
-class CombinedAnalyzerResults(Preprocessed, Source, BuildResult):
+class CombinedAnalyzerResults(Preprocessed, Source, Executable):
     def __init__(self, *argc, **kwargs):
         super().__init__(*argc, **kwargs)
 
 
 def test_source():
-    build = MakeBuilder(build_spec=BuildSpec("test_src/test.cpp", build_parameters={}),
+    build = MakeBuilder(build_spec=ExecutableDescription("test_src/test.cpp", build_parameters={}),
                         rebuild=True,
                         verbose=True,
                         result_factory=CombinedAnalyzerResults)
@@ -38,7 +38,7 @@ def test_source():
     
 def  test_preprocessed():
 
-    build = MakeBuilder(build_spec=BuildSpec("test_src/test.cpp", build_parameters={}),
+    build = MakeBuilder(build_spec=ExecutableDescription("test_src/test.cpp", build_parameters={}),
                         rebuild=True,
                         verbose=True,
                         result_factory=CombinedAnalyzerResults)
@@ -62,7 +62,7 @@ def _test_asm():
 
 
 def test_CPP_flags():
-    build = MakeBuilder(build_spec=BuildSpec("test_src/test.cpp", build_parameters=dict(MORE_CXXFLAGS="-DINCLUDE_MORE")),
+    build = MakeBuilder(build_spec=ExecutableDescription("test_src/test.cpp", build_parameters=dict(MORE_CXXFLAGS="-DINCLUDE_MORE")),
                         rebuild=True,
                         verbose=True,
                         result_factory=CombinedAnalyzerResults)

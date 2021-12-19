@@ -3,7 +3,7 @@ import pytest
 import re
 import os
 import ctypes
-from fiddle.CProtoParser import CProtoParser, UnhandledIndirectParameterType, void, parse_prototype, parse_parameter, get_ctype
+from fiddle.CProtoParser import *
 from fiddle.ProtoParser import BadParameter, UnknownType, BadParameterName, Prototype, Parameter
 
 @pytest.mark.parametrize("t,ct", [
@@ -122,3 +122,15 @@ def test_parse_unhandled_parameter(prototype):
     assert len(prototypes) == 1
 
      
+
+@pytest.mark.parametrize("string,tokens", [
+    ("unsigned int* foo", ["unsigned", "int*", "foo"]),
+    ("unsigned int& foo", ["unsigned", "int&", "foo"]),
+    ("unsigned int** foo", ["unsigned", "int**", "foo"]),
+    ("unsigned int * &  foo", ["unsigned", "int*&", "foo"]),
+    ("unsigned int foo", ["unsigned", "int", "foo"]),
+    ("unint64_t *array", ["unint64_t*", "array"])
+])
+def test_split_into_tokens(string, tokens):
+    assert split_into_tokens(string) == tokens
+    

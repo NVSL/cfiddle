@@ -6,12 +6,11 @@ import os
 import hashlib
 import pytest
 
+ExecutableDescription = collections.namedtuple("ExecutableDescription", "source_file,build_parameters")
 
-BuildSpec = collections.namedtuple("BuildSpec", "source_file,build_parameters")
+_Executable = collections.namedtuple("Executable", "lib,source_file,build_dir,output,build_command,build_spec,functions")
 
-_BuildResult = collections.namedtuple("BuildResult", "lib,source_file,build_dir,output,build_command,build_spec,functions")
-
-class BuildResult(_BuildResult):
+class Executable(_Executable):
 
     def compute_built_filename(self, filename):
         return os.path.join(self.build_dir, filename)
@@ -35,7 +34,7 @@ class Builder:
     def __init__(self, build_spec, build_root=None, parser=None, result_factory=None):
         self.build_spec = build_spec
         self.source_file = build_spec.source_file
-        self.result_factory = result_factory or BuildResult
+        self.result_factory = result_factory or Executable
         self.parser = parser or CProtoParser()
         self.source_name_base = self._compute_source_name_base()
         self.build_parameters = build_spec.build_parameters
@@ -91,7 +90,7 @@ class _Builder:
         self._source_file = source_file
 
             
-        if isinstance(source_file, BuildResult):
+        if isinstance(source_file, Executable):
             source_file = source_file.source_file
         
         if code:
@@ -168,146 +167,5 @@ class _Builder:
         return self
 
     
-
-            
-class CompiledFunctionDelegator:
-    def __init__(self, build_result, function_name=None):
-        self.build_result = build_result
-        if function_name is None:
-            function_name = build_result.get_default_function_name()
-
-        self.function_name = function_name
-
-    def __getattr__(self, name):
-        attr = getattr(self.build_result, name)
-        if callable(attr):
-            def redirect_to_build_result(*args, **kwargs):
-                return attr(self.function_name, *args, **kwargs)
-            return redirect_to_build_result
-        else:
-            return attr
-
-    
-def test_builder():
-
-    simple_singleton = NopBuilder().build("test_src/test.cpp")
-    assert isinstance(simple_singleton, BuildResult)
-    assert simple_singleton.parameters == {}
-
-    parameters = dict(foo="bar")
-
-    singleton = NopBuilder().build("test_src/test.cpp", parameters)
-    assert isinstance(singleton, BuildResult)
-    assert singleton.parameters == parameters
-
-    single_item_list = NopBuilder().build("test_src/test.cpp", parameters=[parameters])
-    assert isinstance(single_item_list, list)
-    assert len(single_item_list) == 1
-
-    empty_list = NopBuilder().build("test_src/test.cpp", parameters=[])
-    assert isinstance(empty_list, list)
-    assert len(empty_list) == 0
-
-    kwargs_singleton = NopBuilder().build("test_src/test.cpp", **parameters)
-    assert isinstance(kwargs_singleton, BuildResult)
-    assert kwargs_singleton.parameters == parameters
-
-    short_list = NopBuilder().build("test_src/test.cpp", [parameters])
-    assert isinstance(short_list, list)
-    assert len(short_list) == 1
-    assert short_list[0].parameters == parameters
-
-    kwargs_list = NopBuilder().build("test_src/test.cpp", foo=["bar","baz"], bar="foo")
-    assert isinstance(kwargs_list, list)
-    assert len(kwargs_list) == 2
-    assert all([isinstance(x, BuildResult) for x in kwargs_list])
-    assert kwargs_list[0].parameters == dict(foo="bar", bar="foo")
-    assert kwargs_list[1].parameters == dict(foo="baz", bar="foo")
-    
-    compound_list = NopBuilder()("test_src/test.cpp", parameters=[parameters, dict(b="c")], foo=["bar","baz"], bar="foo")
-    assert isinstance(compound_list, list)
-    assert len(compound_list) == 4
-    assert all([isinstance(x, BuildResult) for x in compound_list])
-    assert compound_list[0].parameters == parameters
-
-    embedded_code = NopBuilder().build(code="somecode")
-    assert os.path.exists(embedded_code.source_file)
-    assert read_file(embedded_code.source_file) == "somecode"
-
-def test_invalid_parameters():
-    with pytest.raises(ValueError):
-        singleton = NopBuilder().build("test_src/test.cpp", OPTIMIZE=None)
-    with pytest.raises(ValueError):
-        singleton = NopBuilder().build("test_src/test.cpp", OPTIMIZE=[None, ""])
-    with pytest.raises(ValueError):
-        singleton = NopBuilder().build("test_src/test.cpp", OPTIMIZE=[[], ""])
-    with pytest.raises(ValueError):
-        singleton = NopBuilder().build("test_src/test.cpp", OPTIMIZE=[True, ""])
-    with pytest.raises(ValueError):
-        singleton = NopBuilder().build("test_src/test.cpp", OPTIMIZE=[{}, ""])
-    
-def test_decoration():
-    
-    def get_parameters(build_result):
-        return build_result.parameters
-
-    def get_one_parameter(build_result, parameter):
-        return build_result.parameters[parameter]
-
-    build = NopBuilder()
-    build.register_analysis(get_parameters)
-    build.register_analysis(get_one_parameter)
-
-    parameters = dict(foo="bar")
-    singleton = build("test_src/test.cpp", parameters)
-    assert singleton.get_parameters() == parameters
-    assert singleton.get_one_parameter("foo") == "bar"
-
-    
-def test_delegator():
-    build = NopBuilder()
-    build.register_analysis(CompiledFunctionDelegator, as_name="function")
-    def return_function(build_result, function_name):
-        return build_result.functions[function_name]
-    build.register_analysis(return_function)
-    simple_singleton = build.build("test_src/test.cpp")
-
-    delegated_function = simple_singleton.function("test_func")
-
-    assert delegated_function.parameters == simple_singleton.parameters
-    assert simple_singleton.functions["test_func"] == "nonsense_value"
-    assert delegated_function.return_function() == "nonsense_value"
-
-def test_embedded_source():
-    from .MakeBuilder import build
-    
-    build.register_analysis(CompiledFunctionDelegator, as_name="function")
-
-    if_ex = build(code=r"""
-#include<cstdint>
-#include<cstdlib>
-
-extern "C" 
-int if_ex(uint64_t array, unsigned long int size) {
-	if (size == 0) {
-		return NULL;
-	}
-	return array+size;
-}
-""")
-
-    if_ex = if_ex.function()
-
-
-def test_alternate_build_directory():
-    from .util import environment
-    import tempfile
-    
-    with tempfile.TemporaryDirectory() as d:
-        build_root=os.path.join(d,"not_there")
-        with environment(FIDDLE_BUILD_ROOT=build_root):
-            build = NopBuilder()
-            build(code="")
-        assert os.path.exists(build_root)
 
             

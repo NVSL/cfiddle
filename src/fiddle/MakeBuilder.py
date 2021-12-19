@@ -1,4 +1,4 @@
-from .Builder import Builder, BuildResult, BadBuildParameter, BuildFailure
+from .Builder import Builder, Executable, BadBuildParameter, BuildFailure
 import os
 import subprocess
 import pytest

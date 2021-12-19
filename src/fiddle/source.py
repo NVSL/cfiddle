@@ -2,8 +2,6 @@ import re
 import os
 import subprocess
 import pytest
-from fiddle.util import ListDelegator
-from fiddle.Builder import CompiledFunctionDelegator
 
 class Source:
     
@@ -131,9 +129,9 @@ def build_header(filename, language, show):
 
 def construct_function_regex(language, function):
     if language == "c++":
-        return (f"[\s\*]{re.escape(function)}\s*\(", "^\}")
+        return (fr"[\s\*]{re.escape(function)}\s*\(", r"^\}")
     elif language == "gas":
-        return (f"^{re.escape(function)}:\s*", ".cfi_endproc")
+        return (fr"^{re.escape(function)}:\s*", ".cfi_endproc")
     else:
         raise Exception(f"Don't know how to find functions in {language}")
 
@@ -154,6 +152,3 @@ def find_region_by_regex(lines, show):
     raise ValueError(f"Couldn't find code for {show}")
 
     
-#def function(build_result, *functions):
-#    return ListDelegator([CompiledFunctionDelegator(build_result, f) for f in functions])
-

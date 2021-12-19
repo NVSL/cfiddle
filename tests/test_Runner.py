@@ -1,12 +1,8 @@
-from fiddle.Runner import Runnable, Runner
+from fiddle.Runner import Runner
 from fiddle.ProtoParser import Prototype, Parameter
 import ctypes
 import pytest
 import inspect
-
-def test_create_runnable():
-
-    runnable = Runnable("funtion", dict())
 
 test_prototype = Prototype(None, None, (Parameter(type=ctypes.c_float, name="a"),
                                         Parameter(type=ctypes.c_int, name="b")))

@@ -19,10 +19,11 @@ class LocalRunner(Runner):
         return self._result_factory(invocation=self.get_invocation(), results=results)
     
     def _invoke_function(self):
-        self.bound_arguments = self.bind_arguments(self.get_runnable().arguments, self.get_build_result().functions[self.get_runnable().function])
+        
+        self.bound_arguments = self.bind_arguments(self.get_invocation().arguments, self.get_build_result().functions[self.get_invocation().function])
         
         c_lib = ctypes.CDLL(self.get_build_result().lib)
-        f = getattr(c_lib, self.get_runnable().function)
+        f = getattr(c_lib, self.get_invocation().function)
         f(*self.bound_arguments)
 
     def _reset_data_collection(self):
@@ -49,7 +50,7 @@ class LocalRunner(Runner):
     def _build_results_path(self):
         arg_string = ", ".join(map(lambda x: str(x.value), self.bound_arguments))
         _, source_file_name = os.path.split(self.get_build_result().source_file)
-        result_file_name = f"{source_file_name}.{self.get_runnable().function}({arg_string}).csv"
+        result_file_name = f"{source_file_name}.{self.get_invocation().function}({arg_string}).csv"
         return os.path.join(self.get_build_result().build_dir, result_file_name)
 
 #run = LocalRunner()

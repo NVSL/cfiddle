@@ -42,7 +42,7 @@ class InvocationResultsList(list):
         ordered_keys.merge_in_keys(["function"])
 
         for r in invocation_results:
-            ordered_keys.merge_in_keys(r.invocation.invocation_spec.arguments)
+            ordered_keys.merge_in_keys(r.invocation.arguments)
 
         for r in invocation_results:
             ordered_keys.merge_in_keys(r.get_results_field_names())
@@ -56,8 +56,8 @@ class InvocationResultsList(list):
 
 
     def __build_merged_rows(self,ordered_keys, run_result):
-        this_result_fields = {** run_result.invocation.executable.build_spec.build_parameters, **run_result.invocation.invocation_spec.arguments}
-        return [{**row, **this_result_fields, "function": run_result.invocation.invocation_spec.function} for row in run_result.get_results()]
+        this_result_fields = {** run_result.invocation.executable.build_spec.build_parameters, **run_result.invocation.arguments}
+        return [{**row, **this_result_fields, "function": run_result.invocation.function} for row in run_result.get_results()]
 
     
     def _convert_to_numeric(self,df):

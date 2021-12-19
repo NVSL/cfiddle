@@ -1,19 +1,13 @@
 import collections
 import os
 
-Runnable = collections.namedtuple("Runnable", "function,arguments")
-
-Invocation = collections.namedtuple("Invocation", "executable,invocation_spec")
+InvocationDescription = collections.namedtuple("InvocationDescription", "executable,function,arguments")
 
 class Runner:
 
     def __init__(self, invocation, result_factory=None):
         self._invocation = invocation
         self._result_factory = result_factory or InvocationResult
-
-    
-    def get_runnable(self):
-        return self._invocation.invocation_spec
 
     
     def get_build_result(self):
