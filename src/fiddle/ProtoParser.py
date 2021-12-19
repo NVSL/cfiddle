@@ -9,6 +9,7 @@ class BadParameter(Exception):
 
 class UnknownType(Exception):
     pass
+
 class BadParameterName(Exception):
     pass
 

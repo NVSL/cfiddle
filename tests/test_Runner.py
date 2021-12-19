@@ -1,8 +1,11 @@
+from fiddle import *
 from fiddle.Runner import Runner
-from fiddle.ProtoParser import Prototype, Parameter
+from fixtures import test_cpp
 import ctypes
 import pytest
 import inspect
+
+from fiddle.ProtoParser import Parameter, Prototype
 
 test_prototype = Prototype(None, None, (Parameter(type=ctypes.c_float, name="a"),
                                         Parameter(type=ctypes.c_int, name="b")))
@@ -32,3 +35,6 @@ def test_bind_arguments(params, proto, result):
         assert list(map(lambda x : x.value, runner.bind_arguments(params, proto))) == result
 
 
+#def test_return_values(test_cpp):
+#    r = run(test_cpp, "four")
+#    assert r.return_value == 4

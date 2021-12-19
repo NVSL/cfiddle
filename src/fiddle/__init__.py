@@ -1,13 +1,29 @@
 import os
 import pkg_resources
 
+__all__ = [
+    "InvocationResultsList",
+    "ExecutableDescription",
+    "Executable",
+    "MakeBuilder",
+    "InvocationDescription",
+    "LocalRunner",
+    "expand_args",
+    "code",
+    "build_and_run",
+    "build",
+    "build_one",
+    "run"
+]
+
+
 from .Data import InvocationResultsList
 from .Builder import ExecutableDescription, Executable
 from .MakeBuilder import MakeBuilder
 from .Runner import InvocationDescription
 from .LocalRunner import LocalRunner
 from .util import expand_args
-
+from .Code import code
 
 def build_and_run(source_file, build_parameters, function, arguments):
     executable = build_one(source_file, build_parameters)

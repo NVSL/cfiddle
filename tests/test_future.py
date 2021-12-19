@@ -84,14 +84,3 @@ def test_delegator():
     assert simple_singleton.functions["test_func"] == "nonsense_value"
     assert delegated_function.return_function() == "nonsense_value"
 
-    
-def _test_code():
-    build_and_run(code(r"""
-extern "C" 
-int four() {
-    return 4;
-}
-"""), {}, "four", {})
-    
-
-

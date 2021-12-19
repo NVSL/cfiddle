@@ -3,7 +3,6 @@ from .CProtoParser import CProtoParser
 from .util import expand_args, read_file, ListDelegator
 import types
 import os
-import hashlib
 import pytest
 
 ExecutableDescription = collections.namedtuple("ExecutableDescription", "source_file,build_parameters")
@@ -145,14 +144,9 @@ class _Builder:
                 r.write(source)
 
                 
-    def _write_anonymous_source(self, code):
-        hash_value = hashlib.md5(code.encode('utf-8')).hexdigest()
-        os.makedirs(self.build_root, exist_ok=True)
-        anonymous_source_path = os.path.join(self.build_root, f"{hash_value}.cpp")
-        with open(anonymous_source_path, "w") as f:
-            f.write(code)
-        return anonymous_source_path
 
+
+                
     
     def _compute_build_directory(self, parameters):
         return os.path.join(self.build_root, "__".join([f"{p}_{v.replace(' ', '')}" for p,v in parameters.items()]) + "_" + self._source_name_base)
