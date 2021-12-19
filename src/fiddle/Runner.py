@@ -60,4 +60,3 @@ class UnusedArgument(Exception):
 class MissingArgument(Exception):
     pass
 
-

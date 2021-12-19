@@ -126,3 +126,22 @@ def environment(**kwds):
 def read_file(f, *argc, **kwargs):
     with open(f, *argc, **kwargs) as f:
         return f.read()
+
+
+class CompiledFunctionDelegator:
+    def __init__(self, build_result, function_name=None):
+        self.build_result = build_result
+        if function_name is None:
+            function_name = build_result.get_default_function_name()
+
+        self.function_name = function_name
+
+    def __getattr__(self, name):
+        attr = getattr(self.build_result, name)
+        if callable(attr):
+            def redirect_to_build_result(*args, **kwargs):
+                return attr(self.function_name, *args, **kwargs)
+            return redirect_to_build_result
+        else:
+            return attr
+

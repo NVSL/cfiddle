@@ -1,25 +1,52 @@
 import os
 import pkg_resources
 
-from .Builder import ExecutableDescription
-from .MakeBuilder import MakeBuilder
-from .LocalRunner import LocalRunner
-from .Runner import InvocationDescription
 from .Data import InvocationResultsList
+from .Builder import ExecutableDescription, Executable
+from .MakeBuilder import MakeBuilder
+from .Runner import InvocationDescription
+from .LocalRunner import LocalRunner
+from .util import expand_args
 
 
 def build_and_run(source_file, build_parameters, function, arguments):
-    executable = build(source_file, build_parameters)
+    executable = build_one(source_file, build_parameters)
 
-    invocation = InvocationDescription(executable, function=function, arguments=arguments)
+    return run(executable, function, arguments)
 
-    return LocalRunner(invocation).run()
 
-def build(source_file, build_parameters):
+def build(source, parameters=None, **kwargs):
 
-    build = ExecutableDescription(source_file, build_parameters=build_parameters)
+    if parameters is None:
+       parameters = {}
 
-    return MakeBuilder(build, verbose=True).build()
+    if isinstance(parameters, dict):
+        parameters = [parameters]
+
+    return [MakeBuilder(ExecutableDescription(source, build_parameters=p), **kwargs).build() for p in parameters]
+
+def build_one(*args, **kwargs):
+    r = build(*args, **kwargs)
+    if len(r) != 1:
+        ValueError("You specified more than one build.")
+    return r[0]
+
+
+def run(exe=None, function=None, arguments=None,
+        invocations=None,
+        **kwargs):
+    
+    if exe is not None:
+        if invocations is not None:
+            raise ValueError("You can only specify 'invocations' or 'exe', 'function', and 'arguments'")
+        if  function is None:
+            raise ValueError("You must specify 'function' with 'exe'")
+        if arguments is None:
+            arguments = {}
+        invocations = [(exe, function, arguments)]
+        
+    return InvocationResultsList(LocalRunner(InvocationDescription(*i), **kwargs).run() for i in invocations)
+
 
 
 def setup_ld_path():

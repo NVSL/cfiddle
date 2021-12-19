@@ -19,6 +19,17 @@ void simple_print(int a, int b, int c) {
 	std::cout.flush();
 }
 
+
+extern "C"
+int sum(int a, int b) {
+	return a + b;
+}
+
+extern "C"
+int product(int a, int b) {
+	return a * b;
+}
+
 extern "C"
 void simple_print_f(float a, float b, float c) {
 	std::cout << "float " << "a=" << a << "; b = " << b << "; c = " << c << "\n";
@@ -27,6 +38,11 @@ void simple_print_f(float a, float b, float c) {
 
 extern "C"
 int nop() {
+	return 4;
+}
+
+extern "C"
+int four() {
 	return 4;
 }
 

@@ -1,21 +1,13 @@
 import tempfile
-
-from fiddle import build_and_run, build
-from fiddle.Data import InvocationResultsList
-from fiddle.Builder import ExecutableDescription
-from fiddle.MakeBuilder import MakeBuilder
-from fiddle.Runner import InvocationDescription
-from fiddle.LocalRunner import LocalRunner
-
+from fiddle import *
 from itertools import product
-from fiddle.util import expand_args
 
 
 def test_df_numeric_conversion():
     r = build_and_run("test_src/test_Data.cpp", {}, "go", {})
-    df = InvocationResultsList([r]).as_df()
+    df = r.as_df()
     
-    # Shouldn't fail
+    # Shouldn't fail because the data aren't strings
     df["a"]  = df["a"] + 1
     df["b"]  = df["b"] + 1.0
     
@@ -24,7 +16,7 @@ def test_csv():
     import csv
     
     exec_specs = [ExecutableDescription(*es) for es in product(["test_src/write_dataset.cpp"], expand_args(TEST=["A", "B"]))]
-    executables = [MakeBuilder(es, verbose=True).build() for es in exec_specs]
+    executables = [MakeBuilder(es, rebuild=True, verbose=True).build() for es in exec_specs]
     
     with tempfile.NamedTemporaryFile() as combined:
         
