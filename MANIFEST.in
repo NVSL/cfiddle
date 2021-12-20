@@ -1,2 +1,1 @@
-include resources
-recursive-include  *.py
+recursive-include src/fiddle/resources *

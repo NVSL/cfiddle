@@ -34,8 +34,8 @@ class build(_build):
               'Building libfiddle',
               level=INFO)
           subprocess.check_call(["make"])
-
-
+          
+          
 setup(
     name="fiddle",
     version="0.1",
@@ -43,17 +43,13 @@ setup(
         'fiddle': ['resources/fiddle.make'],
     },
     install_requires = [
-        "click==8",
         "pytest",
-        "pytest-timeout",
-        "pytest-cov",
         "r2pipe",
         "pydot",
         "networkx",
         "gprof2dot",
         "pandas"
-        
-     ],
+    ],
     packages=find_packages('src'),
     package_dir={'': 'src'},
     cmdclass={
