@@ -27,6 +27,10 @@ def test_push_pop():
     
     with fiddle_config(Executable_type=MyExecutable):
         assert isinstance(build_one("test_src/test.cpp"), MyExecutable)
+
+    with pytest.raises(ValueError):
+        pop_config()
+
     assert not isinstance(build_one("test_src/test.cpp"), MyExecutable)
         
 
