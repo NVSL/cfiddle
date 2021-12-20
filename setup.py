@@ -48,7 +48,8 @@ setup(
         "pydot",
         "networkx",
         "gprof2dot",
-        "pandas"
+        "pandas",
+        "IPython"
     ],
     packages=find_packages('src'),
     package_dir={'': 'src'},
