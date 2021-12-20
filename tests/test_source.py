@@ -3,20 +3,14 @@ from fiddle.Builder import ExecutableDescription, Executable
 from fiddle.source import *
 
 
-class CombinedAnalyzerResults(Preprocessed, Source, Executable):
-    def __init__(self, *argc, **kwargs):
-        super().__init__(*argc, **kwargs)
-
-
 def test_source():
 
     build = MakeBuilder(build_spec=ExecutableDescription("test_src/test.cpp", build_parameters={}),
                         rebuild=True,
-                        verbose=True,
-                        result_factory=CombinedAnalyzerResults)
+                        verbose=True)
     
     test = build.build()
-    assert isinstance(test, CombinedAnalyzerResults)
+    assert isinstance(test, FullyInstrumentedExecutable)
     
     with open("test_src/test.cpp") as f:
         f = f.read()
@@ -41,8 +35,7 @@ def  test_preprocessed():
 
     build = MakeBuilder(build_spec=ExecutableDescription("test_src/test.cpp", build_parameters={}),
                         rebuild=True,
-                        verbose=True,
-                        result_factory=CombinedAnalyzerResults)
+                        verbose=True)
     test = build.build()
     
     with pytest.raises(ValueError):
@@ -63,10 +56,10 @@ def _test_asm():
 
 
 def test_CPP_flags():
+
     build = MakeBuilder(build_spec=ExecutableDescription("test_src/test.cpp", build_parameters=dict(MORE_CXXFLAGS="-DINCLUDE_MORE")),
                         rebuild=True,
-                        verbose=True,
-                        result_factory=CombinedAnalyzerResults)
+                        verbose=True)
     test = build.build()
 
     def strip_whitespace(text):

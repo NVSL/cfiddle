@@ -21,10 +21,11 @@ __all__ = [
 from .Data import InvocationResultsList
 from .Builder import ExecutableDescription, Executable
 from .MakeBuilder import MakeBuilder
-from .Runner import InvocationDescription
+from .Runner import InvocationDescription, InvocationResult
 from .LocalRunner import LocalRunner
 from .util import expand_args
 from .Code import code
+from .config import get_config, set_config
 
 def build_and_run(source_file, build_parameters, function, arguments):
     executable = build_one(source_file, build_parameters)
@@ -40,7 +41,9 @@ def build(source, parameters=None, **kwargs):
     if isinstance(parameters, dict):
         parameters = [parameters]
 
-    return [MakeBuilder(ExecutableDescription(source, build_parameters=p), **kwargs).build() for p in parameters]
+    Builder = get_config("Builder_type")
+    ExeDesc = get_config("ExecutableDescription_type")
+    return [Builder(ExeDesc(source, build_parameters=p), **kwargs).build() for p in parameters]
 
 def build_one(*args, **kwargs):
     r = build(*args, **kwargs)
@@ -50,14 +53,16 @@ def build_one(*args, **kwargs):
 
 
 def run(invocations, **kwargs):
-    return InvocationResultsList(LocalRunner(InvocationDescription(*i), **kwargs).run() for i in invocations)
+    IRList = get_config("InvocationResultsList_type")
+    Runner = get_config("Runner_type")
+    InvDesc = get_config("InvocationDescription_type")
+    return IRList(Runner(InvDesc(*i), **kwargs).run() for i in invocations)
 
 
 def run_one(exe, function, arguments=None, **kwargs):
     if arguments is None:
         arguments = {}
     return run([(exe, function, arguments)], **kwargs)[0]
-
 
 
 def setup_ld_path():

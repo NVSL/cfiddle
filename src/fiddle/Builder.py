@@ -5,7 +5,6 @@ import types
 import os
 import pytest
 
-
 class ExecutableDescription:
     def __init__(self, source_file, build_parameters):
         self.source_file = source_file
@@ -63,10 +62,12 @@ class Executable:
 class Builder:
     
     def __init__(self, build_spec, build_root=None, parser=None, result_factory=None):
+        from .config import get_config
+        
         self.build_spec = build_spec
         self.source_file = build_spec.source_file
-        self.result_factory = result_factory or Executable
-        self.parser = parser or CProtoParser()
+        self.result_factory = result_factory or get_config("Executable_type")
+        self.parser = parser or get_config("ProtoParse_type")()
         self.source_name_base = self._compute_source_name_base()
         self.build_parameters = build_spec.build_parameters
 
@@ -91,8 +92,6 @@ class Builder:
         source_name_base, _ = os.path.splitext(source_name)
         return source_name_base
 
-    
-            
 
 class BuildFailure(Exception):
     def __str__(self):

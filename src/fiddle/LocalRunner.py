@@ -53,5 +53,3 @@ class LocalRunner(Runner):
         result_file_name = f"{source_file_name}.{self.get_invocation().function}({arg_string}).csv"
         return os.path.join(self.get_build_result().build_dir, result_file_name)
 
-#run = LocalRunner()
-

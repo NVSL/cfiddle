@@ -29,6 +29,10 @@ def source(build_result, *argc, **kwargs):
     raw_source = fiddle.source.source(build_result, *argc, **kwargs)
     return Code_hacked(raw_source, language=language)
 
+class FullyInstrumentedExecutable(Preprocessed, Source, Executable):
+    def __init__(self, *argc, **kwargs):
+        super().__init__(*argc, **kwargs)
+
 
 # This is a hack for jupyter lab
 def Code_hacked(code, language):

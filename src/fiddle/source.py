@@ -3,6 +3,8 @@ import os
 import subprocess
 import pytest
 
+from .Builder import Executable
+
 class Source:
     
     def source(self, show=None, language=None, **kwargs):
@@ -53,6 +55,11 @@ class Preprocessed:
             return ".i"
         else:
             raise ValueError(f"Can't compute preprocessor file extension for file  '{filename}' in '{language}'.")
+
+        
+class FullyInstrumentedExecutable(Preprocessed, Source, Executable):
+    def __init__(self, *argc, **kwargs):
+        super().__init__(*argc, **kwargs)
 
 
 def infer_language(filename):

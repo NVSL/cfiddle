@@ -22,8 +22,9 @@ class InvocationDescription:
 class Runner:
 
     def __init__(self, invocation, result_factory=None):
+        from .config import get_config
         self._invocation = invocation
-        self._result_factory = result_factory or InvocationResult
+        self._result_factory = result_factory or get_config("InvocationResult_type")
 
     
     def get_build_result(self):
