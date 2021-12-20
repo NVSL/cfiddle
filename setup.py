@@ -40,7 +40,7 @@ setup(
     name="fiddle",
     version="0.1",
     package_data={
-        'fiddle': ['resources/fiddle.make'],
+        'fiddle': ['resources/*/*'],
     },
     install_requires = [
         "pytest",

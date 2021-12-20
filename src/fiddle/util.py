@@ -52,23 +52,6 @@ def invoke_process(cmd):
         return False, e.output.decode()
 
     
-import time
-from IPython.display import clear_output
-
-def changes_in(filename):
-    old_last_change = None
-    while True:
-        try:
-            current_last_change = os.path.getmtime(filename)
-            if current_last_change != old_last_change:
-                old_last_change = current_last_change
-                clear_output(wait=True)
-                yield None
-            else:
-                time.sleep(0.5)
-        except KeyboardInterrupt:
-            return
-            
 class ListDelegator(list):
     
     def __getattr__(self, requested_attribute):     
