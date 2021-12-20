@@ -1,58 +1,41 @@
-from fiddle.MakeBuilder import MakeBuilder
-from fiddle.Builder import ExecutableDescription, Executable
-from fiddle.source import *
+from fiddle import *
+from fixtures import test_cpp
+from fiddle.source import FullyInstrumentedExecutable
+import pytest
 
-
-def test_source():
-
-    build = MakeBuilder(build_spec=ExecutableDescription("test_src/test.cpp", build_parameters={}),
-                        rebuild=True,
-                        verbose=True)
+def test_source(test_cpp):
     
-    test = build.build()
-    assert isinstance(test, FullyInstrumentedExecutable)
+    assert isinstance(test_cpp, FullyInstrumentedExecutable)
     
     with open("test_src/test.cpp") as f:
         f = f.read()
-    assert f == test.source()
+    assert f == test_cpp.source()
     
-    assert test.source(show="nop") == """int nop() {\n	return 4;\n}"""
-    assert test.source(show=("//HERE", "//THERE")) == """//HERE\n//aoeu\n//THERE"""
+    assert test_cpp.source(show="nop") == """int nop() {\n	return 4;\n}"""
+    assert test_cpp.source(show=("//HERE", "//THERE")) == """//HERE\n//aoeu\n//THERE"""
 
-    print(test.source(show="more", include_header=True))
-    print(test.source(show="more"))
+    print(test_cpp.source(show="more", include_header=True))
+    print(test_cpp.source(show="more"))
     
-    assert test.source(show="more") == source_for_more
+    assert test_cpp.source(show="more") == source_for_more
 
-    assert test.source(show=(0,3)) == """// 0
+    assert test_cpp.source(show=(0,3)) == """// 0
 // 1
 // 2"""
 
     with pytest.raises(ValueError):
-        test.source(show=("AOEU", "AOEU"))
-    
-def  test_preprocessed():
+        test_cpp.source(show=("AOEU", "AOEU"))
 
-    build = MakeBuilder(build_spec=ExecutableDescription("test_src/test.cpp", build_parameters={}),
-                        rebuild=True,
-                        verbose=True)
-    test = build.build()
-    
+        
+def  test_preprocessed(test_cpp):
     with pytest.raises(ValueError):
-        test.preprocessed(show="more")
+        test_cpp.preprocessed(show="more")
 
-def _test_asm():
-    # for some reason this hangs on asm(), yet asm() works fine in real code.
-    from .MakeBuilder import MakeBuilder
-
-    build = MakeBuilder()
-    build.rebuild()
-    build.register_analysis(asm)
-    
-    test = build("test_src/test.cpp")
-    nop_asm = test.asm(show="nop")
-    assert nop_asm.split("\n")[0] == "nop:"
-    assert ".cfi_endproc" in nop_asm.split("\n")[-1]
+        
+def test_asm(test_cpp):
+    asm = test_cpp.asm(show="nop")
+    assert asm.split("\n")[0] == "nop:"
+    assert ".cfi_endproc" in asm.split("\n")[-1]
 
 
 def test_CPP_flags():

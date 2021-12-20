@@ -27,7 +27,7 @@ class Assembly:
         return extract_code(asm_file, show=show, language="gas", **kwargs)
 
     
-    def demangle_assembly(assembly):
+    def demangle_assembly(self, assembly):
         p = subprocess.Popen(['c++filt'], stderr=subprocess.PIPE, stdout=subprocess.PIPE)
         output, output_err = p.communicate(assembly)
         return output.decode()
@@ -57,7 +57,7 @@ class Preprocessed:
             raise ValueError(f"Can't compute preprocessor file extension for file  '{filename}' in '{language}'.")
 
         
-class FullyInstrumentedExecutable(Preprocessed, Source, Executable):
+class FullyInstrumentedExecutable(Preprocessed, Source, Assembly, Executable):
     def __init__(self, *argc, **kwargs):
         super().__init__(*argc, **kwargs)
 

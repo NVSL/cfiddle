@@ -47,7 +47,7 @@ def test_maps_experiment():
     results = InvocationResultsList(LocalRunner(i).run() for i in invocations)
     
     print(results.as_df())
-    
+    return results.as_df()
 
 def test_build_wrappers():
 

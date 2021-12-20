@@ -1,35 +1,37 @@
-import re
-import os
-import subprocess
-import pytest
-import fiddle.source# import asm, preprocessed, source
-from IPython.display import Image, IFrame, Code
+import fiddle.source
+#from IPython#.display
 import IPython
+import fiddle.source
+from fiddle import Executable
 
-def html_parameters(parameter_set):
-    return "<br/>".join([f"{p} = {v}" for p,v in parameter_set.items()])
+class Source(fiddle.source.Source):
 
-def asm(build_result, *argc, **kwargs):
-    asm_source = fiddle.source.asm(build_result, *argc, **kwargs)
-    return Code_hacked(asm_source, language="gas")
+    def source(self, *argc, **kwargs):
+        language = kwargs.get("language", super().infer_language(self.build_result.source_file))
+        source = super().source(*argc, **kwargs)
+        return Code_hacked(source, language=language)
 
-def preprocessed(build_result, *argc, **kwargs):
-    language = kwargs.get("language")
-    if language is None:
-        language = fiddle.source.infer_language(build_result.source_file)
+    def raw_source(self, *argc, **kwargs):
+        return super().source(*argc, **kwargs)
+    
+class Assembly(fiddle.source.Assembly):
+    def asm(self, *argc, **kwargs):
+        return Code_hacked(super().asm(*argc, **kwargs), language="gas")
 
-    preprocessed_source = fiddle.source.preprocessed_source(build_result, *argc, **kwargs)
-    return Code_hacked(preprocessed_source, language=language)
+    def raw_asm(self,*argc, **kwargs):
+        return super().asm(*argc, **kwargs)
 
-def source(build_result, *argc, **kwargs):
-    language = kwargs.get("language")
-    if language is None:
-        language = fiddle.source.infer_language(build_result.source_file)
+class Preprocessed(fiddle.source.Preprocessed):
+    
+    def preprocessed(self, *argc, **kwargs):
+        language = kwargs.get("language", super().infer_language(self.build_result.source_file))
+        preprocessed_source = super().preprocessed_source(*argc, **kwargs)
+        return Code_hacked(preprocessed_source, language=language)
 
-    raw_source = fiddle.source.source(build_result, *argc, **kwargs)
-    return Code_hacked(raw_source, language=language)
+    def raw_preprocessed(self, *argc, **kwargs):
+        return super().preprocessed_source(*argc, **kwargs)
 
-class FullyInstrumentedExecutable(Preprocessed, Source, Executable):
+class FullyInstrumentedExecutable(Preprocessed, Source, Assembly, Executable):
     def __init__(self, *argc, **kwargs):
         super().__init__(*argc, **kwargs)
 
@@ -51,24 +53,3 @@ def Code_hacked(code, language):
     # in addition to 'output_html'.
     IPython.display.Code._repr_html_ = _jupyterlab_repr_html_
     return IPython.display.Code(data=code, language=language)
-
-def test_foo():
-    import fiddle.MakeBuilder
-    from fiddle.Builder import CompiledFunctionDelegator
-    build = fiddle.MakeBuilder.MakeBuilder()
-    build.register_analysis(fiddle.jupyter.source.source)
-    build.register_analysis(fiddle.jupyter.source.asm)
-#    build.register_analysis(fiddle.jupyter.cfg.cfg)
-    build.register_analysis(fiddle.source.source, as_name="raw_source")
-    build.register_analysis(fiddle.source.asm, as_name="raw_asm")
-    build.register_analysis(CompiledFunctionDelegator, as_name="function")
-
-    cse = build(code=r"""
-
-    extern "C" int foo(register int a, register int b) {
-       register int c = a * b;
-       return a * b + c;
-    }
-
-    """, OPTIMIZE=["-O0", "-O1"]).function()
-
