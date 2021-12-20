@@ -13,7 +13,7 @@ def test_source(test_cpp):
     
     assert test_cpp.source(show="nop") == """int nop() {\n	return 4;\n}"""
     assert test_cpp.source(show=("//HERE", "//THERE")) == """//HERE\n//aoeu\n//THERE"""
-
+    
     print(test_cpp.source(show="more", include_header=True))
     print(test_cpp.source(show="more"))
     

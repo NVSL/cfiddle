@@ -15,7 +15,7 @@ def test_df_numeric_conversion():
 def test_csv():
     import csv
     
-    exec_specs = [ExecutableDescription(*es) for es in product(["test_src/write_dataset.cpp"], expand_args(TEST=["A", "B"]))]
+    exec_specs = [ExecutableDescription(*es) for es in product(["test_src/write_dataset.cpp"], map_product(TEST=["A", "B"]))]
     executables = [MakeBuilder(es, rebuild=True, verbose=True).build() for es in exec_specs]
     
     with tempfile.NamedTemporaryFile() as combined:

@@ -8,7 +8,7 @@ __all__ = [
     "MakeBuilder",
     "InvocationDescription",
     "LocalRunner",
-    "expand_args",
+    "map_product",
     "code",
     "build_and_run",
     "build",
@@ -23,7 +23,7 @@ from .Builder import ExecutableDescription, Executable
 from .MakeBuilder import MakeBuilder
 from .Runner import InvocationDescription, InvocationResult
 from .LocalRunner import LocalRunner
-from .util import expand_args
+from .util import map_product
 from .Code import code
 from .config import get_config, set_config
 

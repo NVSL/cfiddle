@@ -40,9 +40,9 @@ def test_everything_explicit():
 def test_maps_experiment():
 
     executables = [MakeBuilder(ExecutableDescription("test_src/std_maps.cpp", build_parameters=p), verbose=True, rebuild=True).build()
-                               for p in expand_args(OPTIMIZE=["-O0", "-O3"])]
+                               for p in map_product(OPTIMIZE=["-O0", "-O3"])]
 
-    invocations = [InvocationDescription(*i) for i in product(executables, ["ordered", "unordered"],expand_args(count=map(lambda x: 2**x, range(0,10))))]
+    invocations = [InvocationDescription(*i) for i in product(executables, ["ordered", "unordered"],map_product(count=map(lambda x: 2**x, range(0,10))))]
 
     results = InvocationResultsList(LocalRunner(i).run() for i in invocations)
     
@@ -78,7 +78,7 @@ def test_build_wrappers():
     assert len(t) == 1
     
     t = build(source="test_src/std_maps.cpp",
-              parameters=expand_args(OPTIMIZE=["-O0", "-O3"]),
+              parameters=map_product(OPTIMIZE=["-O0", "-O3"]),
               verbose=True)
     assert t[0].build_spec.build_parameters == dict(OPTIMIZE="-O0")
     assert t[1].build_spec.build_parameters == dict(OPTIMIZE="-O3")
@@ -99,7 +99,7 @@ def test_run_wrappers(test_cpp):
     
     t = run(invocations=product([test_cpp],
                                 ["sum", "product"],
-                                expand_args(a=[1,2], b=[3,4])))
+                                map_product(a=[1,2], b=[3,4])))
     assert len(t) == 8
     assert t[1].return_value == 5
 
@@ -107,12 +107,12 @@ def test_run_wrappers(test_cpp):
 def test_streamline():
 
     executables = build(source="test_src/std_maps.cpp",
-                        parameters=expand_args(OPTIMIZE=["-O0", "-O3"]),
+                        parameters=map_product(OPTIMIZE=["-O0", "-O3"]),
                         verbose=True, rebuild=True)
 
     results = run(invocations=product(executables,
                                       ["ordered", "unordered"],
-                                      expand_args(count=map(lambda x: 2**x, range(0,10)))))
+                                      map_product(count=map(lambda x: 2**x, range(0,10)))))
     print(results.as_df())
     
 
@@ -122,7 +122,7 @@ def _test_summarize():
     
     results = run(build=builds,
                   function=["ordered", "unordered"],
-                  arguments=expand_args(count=map(lambda x: 2**x, range(0,2))))
+                  arguments=map_product(count=map(lambda x: 2**x, range(0,2))))
     
 
     results.as_csv("out.csv")
@@ -142,5 +142,5 @@ def test_factoring_out_loops():
         for function in ["ordered", "unordered"]:
             run(invocations=product([build],
                                     [function],
-                                    expand_args(count=map(lambda x: 2**x, range(0, 4)))))
+                                    map_product(count=map(lambda x: 2**x, range(0, 4)))))
 

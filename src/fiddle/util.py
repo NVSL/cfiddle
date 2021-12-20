@@ -7,11 +7,11 @@ import subprocess
 from itertools import product
 
 
-def expand_args(**parameters):
+def map_product(**parameters):
     """
     Generate a set of parameter assignments from a dict or parameter names and values.
 
-    expand_args(dict(a=range(1,3),
+    map_product(dict(a=range(1,3),
                 b=1)
 
     yields:

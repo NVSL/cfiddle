@@ -33,6 +33,7 @@ def get_config(k):
     global fiddle_config_stack
     return fiddle_config_stack[-1][k]
 
+
 @contextmanager
 def fiddle_config(**kwargs):
     push_config()

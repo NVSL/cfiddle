@@ -1,6 +1,6 @@
 import collections
 from .CProtoParser import CProtoParser
-from .util import expand_args, read_file, ListDelegator, type_check, type_check_list
+from .util import map_product, read_file, ListDelegator, type_check, type_check_list
 import types
 import os
 import pytest

@@ -27,8 +27,8 @@ from fiddle.util import *
         "b": 2,
         "c": 3}])
 ])
-def test_expand_args(inp, output):
-    assert expand_args(**inp) == output
+def test_map_product(inp, output):
+    assert map_product(**inp) == output
 
 
 def test_type_check():
