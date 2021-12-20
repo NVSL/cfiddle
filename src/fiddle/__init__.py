@@ -9,15 +9,17 @@ __all__ = [
     "InvocationDescription",
     "LocalRunner",
     "map_product",
+    "product",
     "code",
     "build_and_run",
     "build",
     "build_one",
     "run",
-    "run_one"
+    "run_one",
+    "configure_for_jupyter",
 ]
 
-
+from itertools import product
 from .Data import InvocationResultsList
 from .Builder import ExecutableDescription, Executable
 from .MakeBuilder import MakeBuilder
@@ -26,7 +28,8 @@ from .LocalRunner import LocalRunner
 from .util import map_product
 from .Code import code
 from .config import get_config, set_config
-
+from .jupyter import configure_for_jupyter
+    
 def build_and_run(source_file, build_parameters, function, arguments):
     executable = build_one(source_file, build_parameters)
 
@@ -44,6 +47,7 @@ def build(source, parameters=None, **kwargs):
     Builder = get_config("Builder_type")
     ExeDesc = get_config("ExecutableDescription_type")
     return [Builder(ExeDesc(source, build_parameters=p), **kwargs).build() for p in parameters]
+
 
 def build_one(*args, **kwargs):
     r = build(*args, **kwargs)
@@ -65,8 +69,11 @@ def run_one(exe, function, arguments=None, **kwargs):
     return run([(exe, function, arguments)], **kwargs)[0]
 
 
+
 def setup_ld_path():
     PACKAGE_DATA_PATH = pkg_resources.resource_filename('fiddle', 'resources/')
     ld_paths = os.environ["LD_LIBRARY_PATH"].split(":");
     ld_paths += os.path.join(PACKAGE_DATA_PATH, "libfiddle")
     os.environ["LD_LIBRARY_PATH"] = ":".join(ld_paths)
+
+
