@@ -1,6 +1,10 @@
 import fiddle.source
-#from IPython#.display
-import IPython
+
+try:
+    import IPython
+except ImportError:
+    pass
+
 import fiddle.source
 from fiddle import Executable
 
