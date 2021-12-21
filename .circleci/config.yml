@@ -36,6 +36,7 @@ jobs:
 
       - run: sudo apt-get update
       - run: sudo apt-get install -y libboost-dev
+      - run: python setup.py build
       - run:
           name: Run tests
           # This assumes pytest is installed via the install-package step above
