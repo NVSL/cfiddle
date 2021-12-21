@@ -37,7 +37,7 @@ jobs:
       - run: sudo apt-get update
       - run: sudo apt-get install -y libboost-dev
       - run: python setup.py build
-     - run:
+      - run:
           name: Run tests
           command: pip install .; `set-fiddle-ld-path`; env; cd tests; pytest .
       - run:
