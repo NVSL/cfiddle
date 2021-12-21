@@ -1,5 +1,7 @@
 # Fiddle: A Tool For Studying Small Compiled rograms
 
+[![CircleCI](https://circleci.com/gh/circleci/circleci-docs.svg?style=svg)](https://circleci.com/gh/circleci/circleci-docs)
+
 fiddle
 FInDing how coDe Layers Execute
 phidget
