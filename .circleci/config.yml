@@ -27,8 +27,6 @@ jobs:
     # Here we're making sure we use just use the system-wide pip. By default it uses the project root's requirements.txt.
     # Then run your tests!
     # CircleCI will report the results back to your VCS provider.
-    environment:
-      LD_LIBRARY_PATH : /home/circleci/project/build_release/dist_test/lib/python3.8/site-packages/fiddle/resources/libfiddle
     steps:
       - checkout
       - python/install-packages:
@@ -39,13 +37,12 @@ jobs:
       - run: sudo apt-get update
       - run: sudo apt-get install -y libboost-dev
       - run: python setup.py build
-#      - run:
-#          name: Run tests
-#          # This assumes pytest is installed via the install-package step above
-#          command: pip install .; cd tests; pytest .
+     - run:
+          name: Run tests
+          command: pip install .; `set-fiddle-ld-path`; env; cd tests; pytest .
       - run:
           name: Test Packaging
-          command: make dist
+          command: `set-fiddle-ld-path`; make dist
  
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows

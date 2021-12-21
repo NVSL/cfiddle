@@ -45,5 +45,10 @@ setup(
     package_dir={'': 'src'},
     cmdclass={
         'build': build,
+    },
+    entry_points={
+        'console_scripts' :[
+            'set-fiddle-ld-path=fiddle:set_ld_path_in_shell'
+        ]
     }
 )

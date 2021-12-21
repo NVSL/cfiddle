@@ -79,7 +79,10 @@ def setup_ld_path():
         ld_paths = []
     ld_paths.append(os.path.join(PACKAGE_DATA_PATH, "libfiddle"))
     os.environ["LD_LIBRARY_PATH"] = ":".join(ld_paths)
-    print(f"os.environ['LD_LIBRARY_PATH'] = {os.environ['LD_LIBRARY_PATH']}")
+    return os.environ["LD_LIBRARY_PATH"]
+
+def set_ld_path_in_shell():
+    print(f"export LD_LIBRARY_PATH={setup_ld_path()}")
     
 def sanity_test():
     return run_one(build_one(code('extern "C" int foo() {return 4;}')), "foo").return_value
