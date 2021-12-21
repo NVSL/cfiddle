@@ -1,19 +1,8 @@
 from setuptools import setup, find_packages
 import subprocess
-
 import os, sys
-try:
-    from setuptools import setup
-    from setuptools.command.build import build as _build
-    from setuptools.command.install import install as _install
-    from setuptools.command.sdist import sdist as _sdist
-    from setuptools.log import INFO
-except ImportError:
-    from distutils.core import setup
-    from distutils.command.build import build as _build
-    from distutils.command.sdist import sdist as _sdist
-    from distutils.log import INFO
-
+from distutils.command.build import build as _build
+from distutils.log import INFO
 from contextlib import contextmanager
 
 @contextmanager
@@ -25,17 +14,18 @@ def working_directory(path):
     finally:
         os.chdir(here)
 
-
 class build(_build):
-  def run(self):
-      _build.run(self)
-      with working_directory("src/fiddle/resources/libfiddle"):
-          self.announce(
-              'Building libfiddle',
-              level=INFO)
-          subprocess.check_call(["make"])
-          
-          
+    def run(self):
+        super().run()
+        # I figured this out by looking closely at the output of pip installing
+        # a sdist.  It showed where the files had been copied too, so I build
+        # it using that copy of the source code.  No idea if this is a stable interface.
+        with working_directory(os.path.join(self.build_lib, "fiddle/resources/libfiddle")) as path:
+            self.announce(
+                f'Building libfiddle in {path}',
+                level=INFO)
+            subprocess.check_call(["make","default"])
+
 setup(
     name="fiddle",
     version="0.1",
@@ -54,6 +44,6 @@ setup(
     packages=find_packages('src'),
     package_dir={'': 'src'},
     cmdclass={
-        'build': build
+        'build': build,
     }
 )
