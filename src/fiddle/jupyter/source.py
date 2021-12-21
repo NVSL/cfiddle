@@ -35,7 +35,7 @@ class Preprocessed(fiddle.source.Preprocessed):
     def raw_preprocessed(self, *argc, **kwargs):
         return super().preprocessed_source(*argc, **kwargs)
 
-class FullyInstrumentedExecutable(Preprocessed, Source, Assembly, Executable):
+class FullyInstrumentedExecutable(Preprocessed, Source, Assembly,Executable):
     def __init__(self, *argc, **kwargs):
         super().__init__(*argc, **kwargs)
 

@@ -6,6 +6,7 @@ import tempfile
 
 from .Builder import Executable
 from .util import invoke_process
+from .CFG.cfg import CFG
 
 class Source:
     
@@ -64,7 +65,8 @@ class Preprocessed:
             raise ValueError(f"Can't compute preprocessor file extension for file  '{filename}' in '{language}'.")
 
         
-class FullyInstrumentedExecutable(Preprocessed, Source, Assembly, Executable):
+class FullyInstrumentedExecutable(Preprocessed, Source, Assembly, CFG, Executable):
+    
     def __init__(self, *argc, **kwargs):
         super().__init__(*argc, **kwargs)
 
