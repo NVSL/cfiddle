@@ -1,4 +1,4 @@
-# Fiddle: A Tool For Studying Small Programs
+# Fiddle: A Tool For Studying Small Compiled rograms
 
 fiddle
 FInDing how coDe Layers Execute
