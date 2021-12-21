@@ -33,11 +33,11 @@ setup(
         'fiddle': ['resources/*/*'],
     },
     install_requires = [
+        "click",
         "pytest",
         "r2pipe",
         "pydot",
         "networkx",
-        "gprof2dot",
         "pandas",
         "IPython"
     ],

@@ -1,4 +1,5 @@
 from fiddle.util import *
+import tempfile
 
 @pytest.mark.parametrize("inp,output", [
     (dict(), []),
@@ -51,6 +52,26 @@ def test_unset():
             assert "foo" not in os.environ
 
 
-    
+def test_invoke_process():
+    success, output = invoke_process(["echo", "hello"])
+    assert output == "hello\n"
 
+    success, output = invoke_process(["false"])
+    assert success == False
+
+    with tempfile.NamedTemporaryFile() as f:
+        f.write("hello".encode())
+        f.flush()
+        with open(f.name) as inp:
+            success, output = invoke_process(["cat"], stdin=inp)
+            assert success == True
+            assert output == "hello"
+            
+
+def test_working_directory():
+    with tempfile.TemporaryDirectory() as d:
+        before = os.getcwd()
+        with working_directory(d):
+            assert os.getcwd() == d
+        assert os.getcwd() == before
         

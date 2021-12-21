@@ -44,9 +44,9 @@ def _cross_product(parameters):
     return ret
 
 
-def invoke_process(cmd):
+def invoke_process(cmd, stdin=None):
     try:
-        p = subprocess.run(cmd, check=True, stderr=subprocess.STDOUT, stdout=subprocess.PIPE)
+        p = subprocess.run(cmd, check=True, stderr=subprocess.STDOUT, stdout=subprocess.PIPE, stdin=stdin)
         return True, p.stdout.decode()
     except subprocess.CalledProcessError as e:
         return False, e.output.decode()
@@ -89,9 +89,7 @@ class ListDelegator(list):
 def working_directory(path):
     here = os.getcwd()
     try:
-        log.debug(f"changing to {path}")
         os.chdir(path)
-        log.debug(f"in {os.getcwd()}")
         yield path
     finally:
         os.chdir(here)
