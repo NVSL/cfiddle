@@ -27,6 +27,8 @@ jobs:
     # Here we're making sure we use just use the system-wide pip. By default it uses the project root's requirements.txt.
     # Then run your tests!
     # CircleCI will report the results back to your VCS provider.
+    environment:
+      LD_LIBRARY_PATH : /home/circleci/project/build_release/dist_test/lib/python3.8/site-packages/fiddle/resources/libfiddle
     steps:
       - checkout
       - python/install-packages:
