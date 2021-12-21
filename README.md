@@ -24,6 +24,7 @@ It's features include:
 4. Easy, unified parameter and data gathering across building and running code.
 5. Integration with [Pandas](https://pandas.pydata.org/) for data processing and plotting.
 6. Works great with [Jupyter Notebook/Lab](https://jupyter.org/).
+7. Support for Python 3.6 and higher.
 
 The best way to learn about Fiddle is to try it.  You can [run it at
 mybinder.org](https://mybinder.org).  Or run it locally with Docker:
