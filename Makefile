@@ -15,7 +15,7 @@ do-dist:
 	python -m build
 	pip install dist/fiddle-0.1.tar.gz
 	find  dist_test/lib/python*/site-packages/fiddle
-	(cd tests; pytest .)
+	(cd tests; pytest . -vv -s)
 
 .PHONY:test
 test: dist-test package-test
