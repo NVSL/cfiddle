@@ -2,8 +2,10 @@ import re
 import os
 import subprocess
 import pytest
+import tempfile
 
 from .Builder import Executable
+from .util import invoke_process
 
 class Source:
     
@@ -28,9 +30,14 @@ class Assembly:
 
     
     def demangle_assembly(self, assembly):
-        p = subprocess.Popen(['c++filt'], stderr=subprocess.PIPE, stdout=subprocess.PIPE)
-        output, output_err = p.communicate(assembly)
-        return output.decode()
+        with tempfile.NamedTemporaryFile() as asm_file:
+            asm_file.write(assembly.encode())
+            asm_file.flush()
+            with open(asm_file.name, "r"):
+                success, demangled = invoke_process(['c++filt'], stdin=asm_file)
+            if not success:
+                raise Exception("Demangling failed.")
+        return demangled
 
 
 class Preprocessed:
