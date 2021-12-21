@@ -14,6 +14,7 @@ do-dist:
 	pip install --upgrade pytest wheel build 
 	python -m build
 	pip install dist/fiddle-0.1.tar.gz
+	find  dist_test/lib/python3.9/site-packages/fiddle
 	(cd tests; pytest .)
 
 .PHONY:test

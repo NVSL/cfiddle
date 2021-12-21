@@ -37,10 +37,10 @@ jobs:
       - run: sudo apt-get update
       - run: sudo apt-get install -y libboost-dev
       - run: python setup.py build
-#      - run:
-#          name: Run tests
+      - run:
+          name: Run tests
           # This assumes pytest is installed via the install-package step above
-#          command: pip install .; cd tests; pytest .
+          command: pip install .; cd tests; pytest .
       - run:
           name: Test Packaging
           command: make dist
