@@ -2,13 +2,14 @@ BUILD=.
 FIDDLE_INCLUDE=../include
 include ../make/fiddle.make
 
-SRCS=./fiddle.cpp	
+SRCS=./fiddle.cpp
 
 OBJS=$(SRCS:.cpp=.o)
 
+default: libfiddle.so
+FULL_SO_PATH=$(realpath ./)
 test:
 	echo $(OBJS)
-default: libfiddle.so
 libfiddle.a: $(OBJS)
 	ar rcs $@ $^
 
@@ -16,3 +17,4 @@ libfiddle.a: $(OBJS)
 
 libfiddle.so: $(OBJS)
 	$(CXX) $^ -shared -o $@
+	@echo Built $(FULL_SO_PATH)/$@

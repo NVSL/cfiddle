@@ -6,6 +6,8 @@ from fiddle.Runner import InvocationResult
 import pandas as pd
 import numpy as np
 
+def test_simplest():
+    assert sanity_test() == 4
 
 def test_one():
 

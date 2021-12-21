@@ -17,6 +17,7 @@ __all__ = [
     "run",
     "run_one",
     "configure_for_jupyter",
+    "sanity_test"
 ]
 
 from itertools import product
@@ -76,4 +77,7 @@ def setup_ld_path():
     ld_paths += os.path.join(PACKAGE_DATA_PATH, "libfiddle")
     os.environ["LD_LIBRARY_PATH"] = ":".join(ld_paths)
 
+def sanity_test():
+    return run_one(build_one(code('extern "C" int foo() {return 4;}')), "foo").return_value
 
+setup_ld_path()
