@@ -9,7 +9,30 @@ support a course at UC San Diego about performance and the interaction between
 software and hardware.
 
 Fiddle's main goal is to make it easy to ask answer interesting questions about
-what happens to programs as they go from source code to running program.
+what happens to programs as they go from source code to running program.  It is
+extensible and built to work with [Jupyter Notebook/Jupyter
+Lab](https://jupyter.org/) to support easy interactive exploration.
+
+If you've ever used the excellent [Compiler Explorer](https://godbolt.org/), the idea is
+similar, but with more flexibilty and built-in performance measurement tools.
+
+It's features include:
+
+1. Support for compiled languages like C and C++.
+2. [Control Flow Graph (CFG)](https://en.wikipedia.org/wiki/Control-flow_graph) generation from compiled code.
+3. Easy support for varying build-time and run-time paremeters.
+4. Easy, unified parameter and data gathering across building and running code.
+5. Integration with [Pandas](https://pandas.pydata.org/) for data processing and plotting.
+6. Works great with [Jupyter Notebook/Lab](https://jupyter.org/).
+
+The best way to learn about Fiddle is to try it.  You can [run it at
+mybinder.org](https://mybinder.org).  Or run it locally with Docker:
+
+```
+
+```
+
+There are some examples of what Fiddle can below, 
 
 Here are some examples:
 
@@ -37,7 +60,6 @@ print(build_one(sample).asm("loop"))
 Will generate:
 
 ```gas
-
 loop:
 .LFB0:
 	.cfi_startproc
@@ -73,13 +95,10 @@ build_one(sample).cfg("loop")
 ## What Does `-O3` Do To That Loop?
 
 ```python
-
-build_one(sample, parameters=dict(OPTIMIZE="-O3")).asm("loop")
-print(build_one(sample).asm("loop"))
+print(build_one(sample, parameters=dict(OPTIMIZE="-O3")).asm("loop"))
 ```
 
 ```gas
-
 loop:
 .LFB0:
 	.cfi_startproc
