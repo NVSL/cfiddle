@@ -14,19 +14,11 @@ orbs:
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/2.0/configuration-reference/#jobs
 jobs:
-  build-and-test: # This is the name of the job, feel free to change it to better match what you're trying to do!
-    # These next lines defines a Docker executors: https://circleci.com/docs/2.0/executor-types/
-    # You can specify an image from Dockerhub or use one of the convenience images from CircleCI's Developer Hub
-    # A list of available CircleCI Docker convenience images are available here: https://circleci.com/developer/images/image/cimg/python
-    # The executor is the environment in which the steps below will be executed - below will use a python 3.8 container
-    # Change the version below to your required version of python
+  python-39: &test-template
+
     docker:
       - image: cimg/python:3.8
-    # Checkout the code as the first step. This is a dedicated CircleCI step.
-    # The python orb's install-packages step will install the dependencies from a Pipfile via Pipenv by default.
-    # Here we're making sure we use just use the system-wide pip. By default it uses the project root's requirements.txt.
-    # Then run your tests!
-    # CircleCI will report the results back to your VCS provider.
+
     steps:
       - checkout
       - python/install-packages:
@@ -43,11 +35,36 @@ jobs:
       - run:
           name: Test Packaging
           command: $(set-fiddle-ld-path); make dist
- 
+  python-310:
+    <<: *test-template
+    docker:
+      - image: circleci/python:3.10
+  python-38:
+    <<: *test-template
+    docker:
+      - image: circleci/python:3.8
+  python-37:
+    <<: *test-template
+    docker:
+      - image: circleci/python:3.7
+  python-36:
+    <<: *test-template
+    docker:
+      - image: circleci/python:3.6
+  python-35:
+    <<: *test-template
+    docker:
+      - image: circleci/python:3.5
+      
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
-  sample: # This is the name of the workflow, feel free to change it to better match your workflow.
+  fiddle-test: # This is the name of the workflow, feel free to change it to better match your workflow.
     # Inside the workflow, you define the jobs you want to run.
     jobs:
-      - build-and-test
+      - python-39
+      - python-310
+      - python-38
+      - python-37
+      - python-36
+      - python-35

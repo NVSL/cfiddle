@@ -1,4 +1,4 @@
-# Fiddle: A Tool For Studying Small Compiled rograms
+ # Fiddle: A Tool For Studying Small Compiled rograms
 
 [![CircleCI](https://circleci.com/gh/circleci/circleci-docs.svg?style=svg)](https://circleci.com/gh/circleci/circleci-docs)
 
