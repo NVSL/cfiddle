@@ -89,9 +89,7 @@ class ListDelegator(list):
 def working_directory(path):
     here = os.getcwd()
     try:
-        log.debug(f"changing to {path}")
         os.chdir(path)
-        log.debug(f"in {os.getcwd()}")
         yield path
     finally:
         os.chdir(here)

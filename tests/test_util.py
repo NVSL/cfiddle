@@ -68,5 +68,10 @@ def test_invoke_process():
             assert output == "hello"
             
 
-    
-    
+def test_working_directory():
+    with tempfile.TemporaryDirectory() as d:
+        before = os.getcwd()
+        with working_directory(d):
+            assert os.getcwd() == d
+        assert os.getcwd() == before
+        
