@@ -73,12 +73,18 @@ def run_one(exe, function, arguments=None, **kwargs):
 
 def setup_ld_path():
     PACKAGE_DATA_PATH = pkg_resources.resource_filename('fiddle', 'resources/')
-    ld_paths = os.environ.get("LD_LIBRARY_PATH", "").split(":");
-    ld_paths += os.path.join(PACKAGE_DATA_PATH, "libfiddle")
+    if "LD_LIBRARY_PATH" in os.environ:
+        ld_paths = os.environ["LD_LIBRARY_PATH"].split(":")
+    else:
+        ld_paths = []
+    ld_paths.append(os.path.join(PACKAGE_DATA_PATH, "libfiddle"))
     os.environ["LD_LIBRARY_PATH"] = ":".join(ld_paths)
     print(f"os.environ['LD_LIBRARY_PATH'] = {os.environ['LD_LIBRARY_PATH']}")
     
 def sanity_test():
     return run_one(build_one(code('extern "C" int foo() {return 4;}')), "foo").return_value
 
+PACKAGE_DATA_PATH = pkg_resources.resource_filename('fiddle', 'resources/')
+
 setup_ld_path()
+

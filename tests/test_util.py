@@ -38,3 +38,19 @@ def test_type_check():
     with pytest.raises(ValueError):
         type_check_list([1, str], str)
     type_check_list([1,1], int)
+
+
+def test_unset():
+    with environment(foo="a"):
+        assert os.environ["foo"] == "a"
+    assert "foo" not in os.environ
+
+    with environment(foo="a"):
+        assert os.environ["foo"] == "a"
+        with environment(foo=None):
+            assert "foo" not in os.environ
+
+
+    
+
+        

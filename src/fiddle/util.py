@@ -99,7 +99,12 @@ def working_directory(path):
 @contextmanager
 def environment(**kwds):
     env = copy.deepcopy(os.environ)
-    os.environ.update(**kwds)
+    for k,v in kwds.items():
+        if v is None:
+            del os.environ[k]
+        else:
+            os.environ[k] = v
+
     try:
         yield None
     finally:
