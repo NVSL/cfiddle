@@ -14,9 +14,11 @@ orbs:
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/2.0/configuration-reference/#jobs
 jobs:
+  python-39: &test-template
+
     docker:
       - image: cimg/python:3.8
-    # The python orb's install-packages step will install the dependencies from a Pipfile via Pipenv by default.
+
     steps:
       - checkout
       - python/install-packages:
