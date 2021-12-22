@@ -11,13 +11,14 @@ from .source import FullyInstrumentedExecutable
 from contextlib import contextmanager
 
 default_config = dict(Executable_type=FullyInstrumentedExecutable,
-                     InvocationResult_type=InvocationResult,
-                     Builder_type=MakeBuilder,
-                     Runner_type=LocalRunner,
-                     InvocationResultsList_type=InvocationResultsList,
-                     ExecutableDescription_type=ExecutableDescription,
-                     InvocationDescription_type=InvocationDescription,
-                     ProtoParse_type=CProtoParser)
+                      InvocationResult_type=InvocationResult,
+                      Builder_type=MakeBuilder,
+                      Runner_type=LocalRunner,
+                      InvocationResultsList_type=InvocationResultsList,
+                      ExecutableDescription_type=ExecutableDescription,
+                      InvocationDescription_type=InvocationDescription,
+                      ProtoParse_type=CProtoParser,
+                      FIDDLE_BUILD_ROOT=".fiddle/builds")
 
 
 fiddle_config_stack = []

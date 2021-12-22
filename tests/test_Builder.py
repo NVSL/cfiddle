@@ -1,4 +1,5 @@
 from fiddle.Builder import Builder, ExecutableDescription, Executable
+from fiddle.config import get_config
 import pytest
 
 class NopBuilder(Builder):
@@ -27,8 +28,8 @@ def test_builder_construction(test_cpp_nop_builder):
     assert test_cpp_nop_builder.source_file == "test_src/test.cpp"
     assert test_cpp_nop_builder.source_name_base == "test"
     assert test_cpp_nop_builder.build_parameters == dict(OPTIMIZE="-O1")
-    assert test_cpp_nop_builder.build_root == "fiddle/builds"
-    assert test_cpp_nop_builder.build_directory.startswith("fiddle/builds")
+    assert test_cpp_nop_builder.build_root == get_config("FIDDLE_BUILD_ROOT")
+    assert test_cpp_nop_builder.build_directory.startswith(get_config("FIDDLE_BUILD_ROOT"))
     assert "OPTIMIZE" in test_cpp_nop_builder.build_directory 
     assert "O1" in test_cpp_nop_builder.build_directory
 
