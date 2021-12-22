@@ -27,7 +27,7 @@ ENV LD_LIBRARY_PATH  /opt/conda/lib/python3.9/site-packages/fiddle/resources/lib
 
 
 
-COPY  *.ipynb ${HOME}
+COPY  examples ${HOME}
 RUN mkdir -p .jupyter
 COPY  jupyter_notebook_config.py .jupyter/
 

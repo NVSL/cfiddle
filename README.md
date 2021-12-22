@@ -1,7 +1,7 @@
  # Fiddle: A Tool For Studying Small Compiled rograms
 
 [![CircleCI](https://circleci.com/gh/circleci/circleci-docs.svg?style=svg)](https://circleci.com/gh/circleci/circleci-docs)
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/NVSL/fiddle-binder/main?labpath=test_maps.ipynb)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/NVSL/fiddle/main?labpath=examples%2Fstd_maps.ipynb)
 
 Fiddle is a set of tools for studying the compilation and execution of smallish
 "toy" programs written in C or C++.  It is a learning tool and was developed to
@@ -27,7 +27,7 @@ It's features include:
 7. Support for Python 3.6 and higher.
 
 The best way to learn about Fiddle is to try it.  You can [run it at
-mybinder.org](https://mybinder.org/v2/gh/NVSL/fiddle-binder/main).  Or run it locally with Docker:
+mybinder.org](https://mybinder.org/v2/gh/NVSL/fiddle/main?labpath=examples%2Fstd_maps.ipynb).  Or run it locally with Docker:
 
 ```
 
