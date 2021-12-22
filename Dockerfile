@@ -5,7 +5,7 @@ ARG NB_UID
 ENV USER ${NB_USER}
 ENV HOME /home/${NB_USER}
 USER root
-#USER ${NB_USER}
+
 #RUN adduser --disabled-password \
 #    --gecos "Default user" \
 #    --uid ${NB_UID} \
@@ -21,7 +21,10 @@ RUN curl -L https://github.com/radareorg/radare2/releases/download/5.3.1/radare2
 RUN apt install /tmp/radare2_5.3.1_amd64.deb  /tmp/radare2-dev_5.3.1_amd64.deb
 
 RUN pip install wheel			   
-RUN git clone https://github.com/NVSL/fiddle.git && cd fiddle; pip install .
+
+USER ${NB_USER}
+
+RUN git clone https://github.com/NVSL/fiddle.git && cd fiddle; pip install -e .
 #RUN cp -a fiddle/examples ${HOME}/examples
 ENV LD_LIBRARY_PATH  /opt/conda/lib/python3.9/site-packages/fiddle/resources/libfiddle
 
