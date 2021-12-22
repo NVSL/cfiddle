@@ -22,8 +22,7 @@ RUN apt install /tmp/radare2_5.3.1_amd64.deb  /tmp/radare2-dev_5.3.1_amd64.deb
 
 RUN pip install wheel			   
 RUN git clone https://github.com/NVSL/fiddle.git && cd fiddle; pip install .
-COPY fiddle/examples ${HOME}/examples
-RUN rm -rf fiddle
+#RUN cp -a fiddle/examples ${HOME}/examples
 ENV LD_LIBRARY_PATH  /opt/conda/lib/python3.9/site-packages/fiddle/resources/libfiddle
 
 RUN mkdir -p .jupyter
