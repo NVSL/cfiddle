@@ -11,3 +11,5 @@ def test_jupyter():
         r = build_one("test_src/test.cpp")
         assert isinstance(r, fiddle.jupyter.source.FullyInstrumentedExecutable)
         assert isinstance(r.asm(), IPython.display.Code)
+        assert isinstance(r.source(), IPython.display.Code)
+        assert isinstance(r.preprocessed(), IPython.display.Code)

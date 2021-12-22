@@ -11,7 +11,7 @@ from fiddle import Executable
 class Source(fiddle.source.Source):
 
     def source(self, *argc, **kwargs):
-        language = kwargs.get("language", super().infer_language(self.build_result.source_file))
+        language = kwargs.get("language", fiddle.source.infer_language(self.build_spec.source_file))
         source = super().source(*argc, **kwargs)
         return Code_hacked(source, language=language)
 
@@ -28,8 +28,8 @@ class Assembly(fiddle.source.Assembly):
 class Preprocessed(fiddle.source.Preprocessed):
     
     def preprocessed(self, *argc, **kwargs):
-        language = kwargs.get("language", super().infer_language(self.build_result.source_file))
-        preprocessed_source = super().preprocessed_source(*argc, **kwargs)
+        language = kwargs.get("language", fiddle.source.infer_language(self.build_spec.source_file))
+        preprocessed_source = super().preprocessed(*argc, **kwargs)
         return Code_hacked(preprocessed_source, language=language)
 
     def raw_preprocessed(self, *argc, **kwargs):
