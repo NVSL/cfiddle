@@ -2,6 +2,7 @@
 #define FIDDLE_INCLUDED
 #include"DataSet.hpp"
 #include"walltime.h"
+#include"fastrand.h"
 
 double start_time = 0.0;
 
