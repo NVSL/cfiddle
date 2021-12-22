@@ -24,7 +24,7 @@ RUN pip install wheel
 
 USER ${NB_USER}
 
-RUN git clone https://github.com/NVSL/fiddle.git && cd fiddle; pip install -e .
+RUN git clone https://github.com/NVSL/fiddle.git && cd fiddle; pip install  .
 #RUN cp -a fiddle/examples ${HOME}/examples
 ENV LD_LIBRARY_PATH  /opt/conda/lib/python3.9/site-packages/fiddle/resources/libfiddle
 
