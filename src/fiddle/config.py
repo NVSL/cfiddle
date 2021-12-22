@@ -10,6 +10,7 @@ from .source import FullyInstrumentedExecutable
 
 from contextlib import contextmanager
 
+
 default_config = dict(Executable_type=FullyInstrumentedExecutable,
                       InvocationResult_type=InvocationResult,
                       Builder_type=MakeBuilder,
@@ -31,6 +32,7 @@ def set_config(k,v):
 
     
 def get_config(k):
+    # TODO several places check the environment first and then look here. We sohuld factor that out.
     global fiddle_config_stack
     return fiddle_config_stack[-1][k]
 
