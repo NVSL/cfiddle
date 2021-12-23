@@ -12,7 +12,7 @@ do-dist:
 #	pip install --upgrade pytest wheel build ; pip install dist/fiddle-0.1-py3-none-any.whl; cd tests; pytest .
 	pip install --upgrade pytest wheel build 
 	python -m build
-	pip install dist/fiddle-0.1.tar.gz
+#pip install dist/fiddle-0.1.tar.gz
 
 .PHONY:
 test-dist:
