@@ -27,8 +27,8 @@ class build(_build):
             subprocess.check_call(["make","default"])
 
 setup(
-    name="fiddle",
-    version="0.1",
+    name="nvsl-fiddle",
+    version="0.3",
     package_data={
         'fiddle': ['resources/*/*'],
     },
@@ -40,6 +40,25 @@ setup(
         "networkx",
         "pandas",
         "IPython"
+    ],
+    description="Fiddle makes it easy to ask and answers questions about the compilation and execution of smallish programs written in C or C++.",
+    long_description=open("README.md").read(),
+    long_description_content_type="text/markdown",
+    classifiers=[
+        'Development Status :: 3 - Alpha',
+        'Intended Audience :: Developers',      # Define that your audience are developers
+        'Intended Audience :: Education',
+        'Topic :: Education',
+        'Topic :: Education :: Computer Aided Instruction (CAI)',
+        'Topic :: Software Development :: Compilers',
+        'Framework :: Jupyter',
+        #        'License :: OSI Approved :: MIT License',   # Again, pick a license
+        'Programming Language :: Python :: 3',      #Specify which pyhton versions that you want to support
+        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
     ],
     packages=find_packages('src'),
     package_dir={'': 'src'},
