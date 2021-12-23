@@ -2,16 +2,16 @@
 
 [![CircleCI](https://circleci.com/gh/circleci/circleci-docs.svg?style=svg)](https://circleci.com/gh/circleci/circleci-docs)
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/NVSL/fiddle/main?labpath=fiddle%2Fexamples%2Fstd_maps.ipynb)
+	
+Fiddle makes it easy to ask and answers questions about the compilation and
+execution of smallish programs written in C or C++.",Fiddle is a tool for
+studying the compilation and execution of smallish programs written in C or
+C++.
 
-Fiddle is a set of tools for studying the compilation and execution of smallish
-"toy" programs written in C or C++.  It is a learning tool and was developed to
-support a course at UC San Diego about performance and the interaction between
-software and hardware.
-
-Fiddle's main goal is to make it easy to ask answer interesting questions about
-what happens to programs as they go from source code to running program.  It is
-extensible and built to work with [Jupyter Notebook/Jupyter
-Lab](https://jupyter.org/) to support easy interactive exploration.
+It makes it easy to ask and answer interesting questions about what happens to
+programs as they go from source code to running program.  Fiddle can run on its
+own, but it is built to work with [Jupyter Notebook/Jupyter
+Lab](https://jupyter.org/) to support interactive exploration.
 
 If you've ever used the excellent [Compiler Explorer](https://godbolt.org/), the idea is
 similar, but with more flexibilty and built-in performance measurement tools.
@@ -22,12 +22,11 @@ It's features include:
 2. [Control Flow Graph (CFG)](https://en.wikipedia.org/wiki/Control-flow_graph) generation from compiled code.
 3. Easy support for varying build-time and run-time paremeters.
 4. Easy, unified parameter and data gathering across building and running code.
-5. Integration with [Pandas](https://pandas.pydata.org/) for data processing and plotting.
-6. Works great with [Jupyter Notebook/Lab](https://jupyter.org/).
-7. Support for Python 3.6 and higher.
+5. Works great with [Pandas](https://pandas.pydata.org/) and  [Jupyter Notebook/Lab](https://jupyter.org/).
 
 The best way to learn about Fiddle is to try it.  You can [run the
 examples](https://mybinder.org/v2/gh/NVSL/fiddle/main?labpath=fiddle%2Fexamples%2Fstd_maps.ipynb).
+
 Or run it locally with Docker:
 
 ```
