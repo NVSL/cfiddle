@@ -38,8 +38,8 @@ jobs:
       - run: cp build_release/dist/*.tar.gz /tmp/fiddle/packages/
       - persist_to_workspace:
         root: /tmp/fiddle
-	paths:
-	  - packages/*
+        paths:
+          - packages/*
     
   python-39: &test-template
 
