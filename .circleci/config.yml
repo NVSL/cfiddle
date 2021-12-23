@@ -36,6 +36,7 @@ jobs:
       - run: make dist
       - run: mkdir -p /tmp/fiddle/packages/
       - run: cp build_release/dist/*.tar.gz /tmp/fiddle/packages/
+      - run: ls -lRa /tmp/fiddle
       - persist_to_workspace:
           root: /tmp/fiddle
           paths:
@@ -50,6 +51,7 @@ jobs:
       - checkout
       - attach_workspace:
           at: /tmp/fiddle
+      - run: ls -lRa /tmp/fiddle
       - run: sudo apt-get update --allow-releaseinfo-change
       - run: sudo apt-get install -y libboost-dev  graphviz
       - run: sudo curl -L https://github.com/radareorg/radare2/releases/download/5.3.1/radare2-dev_5.3.1_amd64.deb -o /tmp/radare2-dev_5.3.1_amd64.deb
@@ -57,7 +59,7 @@ jobs:
       - run: sudo apt install /tmp/radare2_5.3.1_amd64.deb  /tmp/radare2-dev_5.3.1_amd64.deb
       - run:
           name: Install fiddle
-          command: pip install /tmp/fiddle/*.tar.gz
+          command: pip install /tmp/fiddle/packages/*.tar.gz
       - run:
           name: Test fiddle
           command: $(set-fiddle-ld-path); cd tests; pytest .
