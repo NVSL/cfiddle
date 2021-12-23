@@ -27,8 +27,8 @@ class build(_build):
             subprocess.check_call(["make","default"])
 
 setup(
-    name="fiddle",
-    version="0.1",
+    name="nvsl-fiddle",
+    version="0.3",
     package_data={
         'fiddle': ['resources/*/*'],
     },
