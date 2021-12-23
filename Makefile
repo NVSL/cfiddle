@@ -7,15 +7,16 @@ dist:
 	python -m venv build_release/dist_test
 	(. build_release/dist_test/bin/activate; $(MAKE) -C build_release do-dist)
 
-
 .PHONY:do-dist
 do-dist:
 #	pip install --upgrade pytest wheel build ; pip install dist/fiddle-0.1-py3-none-any.whl; cd tests; pytest .
 	pip install --upgrade pytest wheel build 
 	python -m build
 	pip install dist/fiddle-0.1.tar.gz
-	find  dist_test/lib/python*/site-packages/fiddle
-	(cd tests; pytest . -vv -s)
+
+.PHONY:
+test-dist:
+	(. build_release/dist_test/bin/activate; $(MAKE) -C build_release package-test)
 
 .PHONY:test
 test: dist-test package-test
@@ -29,4 +30,12 @@ package-test:
 dist-test:
 	rm -rf .dist-test
 	mkdir -p .dist-test
-	(cd .dist-test; --
+
+
+.PHONY: docker
+docker:
+	docker build --progress plain -t stevenjswanson/fiddle:latest .
+
+.PHONY: push-docker
+	docker push stevenjswanson/fiddle:latest
+

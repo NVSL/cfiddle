@@ -94,6 +94,7 @@ def working_directory(path):
     finally:
         os.chdir(here)
 
+        
 @contextmanager
 def environment(**kwds):
     env = copy.deepcopy(os.environ)
@@ -109,6 +110,7 @@ def environment(**kwds):
         os.environ.clear()
         os.environ.update(env)
 
+        
 def read_file(f, *argc, **kwargs):
     with open(f, *argc, **kwargs) as f:
         return f.read()
