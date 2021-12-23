@@ -82,12 +82,23 @@ jobs:
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
-  fiddle-test: # This is the name of the workflow, feel free to change it to better match your workflow.
+   build-fiddle: # This is the name of the workflow, feel free to change it to better match your workflow.
     # Inside the workflow, you define the jobs you want to run.
     jobs:
       - build-package
-      - python-39
-      - python-310
-      - python-38
-      - python-37
-      - python-36
+      - python-39:
+          requires: 
+            - build-package
+      - python-310:
+          requires: 
+            - build-package
+      - python-38:
+          requires: 
+            - build-package
+      - python-37:
+          requires: 
+            - build-package
+      - python-36:
+          requires: 
+            - build-package
+
