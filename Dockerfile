@@ -15,7 +15,7 @@ USER root
 #WORKDIR /tmp
 
 RUN apt-get update --fix-missing; apt-get update
-RUN apt-get install -y less emacs-nox gcc make g++ gdb build-essential libboost-dev graphviz curl && apt-get clean -y #gcc-8 g++-8 libhdf5-dev uuid-runtime  openssh-client time  default-jdk
+RUN apt-get install -y less emacs-nox gcc make g++ gdb build-essential graphviz curl && apt-get clean -y #gcc-8 g++-8 libhdf5-dev uuid-runtime  openssh-client time  default-jdk
 RUN curl -L https://github.com/radareorg/radare2/releases/download/5.3.1/radare2-dev_5.3.1_amd64.deb -o /tmp/radare2-dev_5.3.1_amd64.deb
 RUN curl -L https://github.com/radareorg/radare2/releases/download/5.3.1/radare2_5.3.1_amd64.deb -o /tmp/radare2_5.3.1_amd64.deb
 RUN apt install /tmp/radare2_5.3.1_amd64.deb  /tmp/radare2-dev_5.3.1_amd64.deb

@@ -25,14 +25,7 @@ jobs:
           # pip-dependency-file: test-requirements.txt  # if you have a different name for your requirements file, maybe one that combines your runtime and test requirements.
 
       - run: sudo apt-get update --allow-releaseinfo-change
-      - run: sudo apt-get install -y libboost-dev  graphviz
-#      - run: sudo curl -L https://github.com/radareorg/radare2/releases/download/5.3.1/radare2-dev_5.3.1_amd64.deb -o /tmp/radare2-dev_5.3.1_amd64.deb
- #     - run: sudo curl -L https://github.com/radareorg/radare2/releases/download/5.3.1/radare2_5.3.1_amd64.deb -o /tmp/radare2_5.3.1_amd64.deb
- #     - run: sudo apt install /tmp/radare2_5.3.1_amd64.deb  /tmp/radare2-dev_5.3.1_amd64.deb
-#      - run: python setup.py build
-#      - run:
-#          name: Run tests
-#          command: pip install .; $(set-fiddle-ld-path); env; cd tests; pytest .
+      - run: sudo apt-get install -y graphviz
       - run: make dist
       - run: mkdir -p /tmp/fiddle/packages/
       - run: cp build_release/dist/*.tar.gz /tmp/fiddle/packages/
@@ -62,7 +55,7 @@ jobs:
           command: pip install /tmp/fiddle/packages/*.tar.gz
       - run:
           name: Test fiddle
-          command: $(set-fiddle-ld-path); cd tests; pytest .
+          command: $(set-fiddle-ld-path); cd tests; make test
   python-310:
     <<: *test-template
     docker:

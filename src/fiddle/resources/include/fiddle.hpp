@@ -9,7 +9,7 @@ double start_time = 0.0;
 extern DataSet * get_dataset();
 extern "C" void write_stats(char *  filename);
 
-void start_measurement(char *tag=NULL)
+void start_measurement(const char *tag=NULL)
 {
 
 	get_dataset()->start_new_row();
@@ -29,7 +29,7 @@ void end_measurement()
 	//std::cerr << "end time = " << end_time << "  " << end_time - start_time  << "\n";
 }
 
-void restart_measurement(char *tag)
+void restart_measurement(const char *tag=NULL)
 {
 	end_measurement();
 	start_measurement(tag);

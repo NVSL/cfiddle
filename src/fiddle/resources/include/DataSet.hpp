@@ -2,29 +2,42 @@
 #define COLLECTOR_INCLUDED
 #include<string>
 #include<sstream>
-#include <boost/any.hpp>
 #include<map>
 #include"csv.hpp"
 #include<vector>
 #include<set>
 #include<map>
+#include<cassert>
+
+template<typename T>
+class Datum;
 
 class AbstractDatum {
 public:
 	virtual std::string to_string() const = 0;
+
+	template<typename T>
+	T as() const {
+		auto * d = dynamic_cast<const Datum<T>*>(this);
+		if (d == NULL) {
+			assert(0);
+		}
+		return d->value;
+	}
+		
 };
 
 template<typename T>
 class Datum: public AbstractDatum {
-	boost::any value;
+	friend AbstractDatum;
+	T value;
 public:
 	explicit Datum(const T & v): value(v) {}
 	
 	std::string to_string() const {
 		std::stringstream ss;
-		ss << boost::any_cast<T>(value);
+		ss << value;
 		return ss.str();
-
 	}
 };
 
@@ -93,7 +106,7 @@ public:
 		current_row().set(name, t);
 		return *this;
 	}
-	
+
 	std::ostream & write_csv(std::ostream & o) {
 		std::vector<std::string> keys;
 		std::set<std::string> key_set;

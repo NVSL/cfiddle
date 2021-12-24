@@ -33,6 +33,7 @@ setup(
         'fiddle': ['resources/*/*'],
     },
     install_requires = [
+        "pytest-cpp",
         "click",
         "pytest",
         "r2pipe",

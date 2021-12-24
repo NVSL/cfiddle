@@ -3,6 +3,8 @@
 #include "gmock/gmock.h"
 #include <sstream>
 #include"DataSet.hpp"
+#include"fiddle.hpp"
+#include<string.h>
 
 using ::testing::ElementsAre;
 
@@ -70,6 +72,40 @@ namespace Tests {
 		ASSERT_EQ(ds.size(), 0);
 		ds.start_new_row();
 		ds.current_row().set("foo", 4);
+	}
+
+	class libfiddleTests :  public ::testing::Test {
+	public:
+		libfiddleTests() {
+			get_dataset()->clear();
+		}
+	};
+
+	TEST_F(libfiddleTests, start_end_test) {
+		start_measurement();
+		sleep(1);
+		end_measurement();
+		
+		ASSERT_NEAR(get_dataset()->current_row().get_datum("ET").as<double>(), 1.0,0.1);
+	}
+	
+	TEST_F(libfiddleTests, tag_test) {
+		start_measurement("foo");
+		end_measurement();
+		
+		ASSERT_EQ(strcmp(get_dataset()->current_row().get_datum("tag").as<const char*>(), "foo"), 0);
+	}
+	
+	TEST_F(libfiddleTests, start_restart_test) {
+		get_dataset()->clear();
+		start_measurement();
+		sleep(1);
+		restart_measurement("bar");
+		sleep(1);
+		end_measurement();
+		ASSERT_EQ(get_dataset()->size(), 2);
+		ASSERT_EQ(strcmp(get_dataset()->current_row().get_datum("tag").as<const char*>(), "bar"), 0);
+		ASSERT_NEAR(get_dataset()->current_row().get_datum("ET").as<double>(), 1.0, 0.1);
 	}
 }
 
