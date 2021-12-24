@@ -30,14 +30,14 @@ examples](https://mybinder.org/v2/gh/NVSL/fiddle/main?labpath=fiddle%2Fexamples%
 Or run it locally with Docker:
 
 ```
-docker run -it --publish published=8888,target=8888 stevenjswanson/fiddle:latest
+docker run -it  --publish published=8888,target=8888 stevenjswanson/fiddle:latest jupyter lab --LabApp.token=''
 ```
 
-There are some examples of what Fiddle can below, 
+and then visit [http://localhost:8888/lab/tree/README.ipynb].
 
-Here are some examples:
+## Examples
 
-## What Does a `for` loop look like in assembly?
+### What Does a `for` loop look like in assembly?
 
 ```python
 from fiddle import *
@@ -93,7 +93,7 @@ build_one(sample).cfg("loop", "readme_loop.png")
 
 ![CFG Example](images/readme_loop.png)
 
-## What Does `-O3` Do To That Loop?
+### What Does `-O3` Do To That Loop?
 
 ```python
 build_one(sample, parameters=dict(OPTIMIZE="-O3")).asm("loop")
