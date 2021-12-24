@@ -31,4 +31,5 @@ ENV LD_LIBRARY_PATH  /opt/conda/lib/python3.9/site-packages/fiddle/resources/lib
 RUN mkdir -p .jupyter
 COPY  jupyter_notebook_config.py .jupyter/
 
-WORKDIR ${HOME}
+WORKDIR ${HOME}/fiddle/examples
+
