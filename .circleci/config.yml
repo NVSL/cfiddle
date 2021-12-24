@@ -49,7 +49,7 @@ jobs:
       - run: sudo apt-get install -y graphviz cmake
       - run: sudo curl -L https://github.com/radareorg/radare2/releases/download/5.3.1/radare2-dev_5.3.1_amd64.deb -o /tmp/radare2-dev_5.3.1_amd64.deb
       - run: sudo curl -L https://github.com/radareorg/radare2/releases/download/5.3.1/radare2_5.3.1_amd64.deb -o /tmp/radare2_5.3.1_amd64.deb
-      - run: cd /tmp; git clone https://github.com/google/googletest.git && cd googletest && cmake CMakeLists.txt; make install
+      - run: cd /tmp; git clone https://github.com/google/googletest.git && cd googletest && cmake CMakeLists.txt; sudo make install
       - run: sudo apt install /tmp/radare2_5.3.1_amd64.deb  /tmp/radare2-dev_5.3.1_amd64.deb
       - run:
           name: Install fiddle
