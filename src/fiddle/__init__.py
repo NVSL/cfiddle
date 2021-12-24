@@ -69,15 +69,20 @@ def run_one(exe, function, arguments=None, **kwargs):
         arguments = {}
     return run([(exe, function, arguments)], **kwargs)[0]
 
+def libfiddle_dir_path():
+    PACKAGE_DATA_PATH = pkg_resources.resource_filename('fiddle', 'resources/')    
+    return os.path.join(PACKAGE_DATA_PATH, "libfiddle")
 
+def print_libfiddle_dir():
+    print(libfiddle_dir_path())
 
 def setup_ld_path():
-    PACKAGE_DATA_PATH = pkg_resources.resource_filename('fiddle', 'resources/')
+
     if "LD_LIBRARY_PATH" in os.environ:
         ld_paths = os.environ["LD_LIBRARY_PATH"].split(":")
     else:
         ld_paths = []
-    ld_paths.append(os.path.join(PACKAGE_DATA_PATH, "libfiddle"))
+    ld_paths.append(libfiddle_dir_path())
     os.environ["LD_LIBRARY_PATH"] = ":".join(ld_paths)
     return os.environ["LD_LIBRARY_PATH"]
 

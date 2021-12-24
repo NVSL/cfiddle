@@ -68,7 +68,8 @@ setup(
     },
     entry_points={
         'console_scripts' :[
-            'set-fiddle-ld-path=fiddle:set_ld_path_in_shell'
+            'set-fiddle-ld-path=fiddle:set_ld_path_in_shell',
+            'fiddle-lib-path=fiddle:print_libfiddle_dir'
         ]
     }
 )

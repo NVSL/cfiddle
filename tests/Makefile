@@ -11,7 +11,7 @@ CXXFLAGS=-I../src/fiddle/resources/include -MMD -g -Wall -Werror
 -include $(wildcard *.d)
 
 test_DataSet : test_DataSet.o
-	$(CXX) $^ $(LDFLAGS)  -pthread -lgtest -lgtest_main -lfiddle -L../src/fiddle/resources/libfiddle -o $@
+	$(CXX) $^ $(LDFLAGS)  -pthread -lgtest -lgtest_main -lfiddle -L$(shell fiddle-lib-path) -o $@
 
 .PHONY: help
 help:
