@@ -37,5 +37,6 @@ docker:
 	docker build --progress plain -t stevenjswanson/fiddle:latest .
 
 .PHONY: push-docker
+docker-push:
 	docker push stevenjswanson/fiddle:latest
 
