@@ -16,8 +16,6 @@ def test_cfg(test_cpp):
         svg = os.path.join(d, "test.svg")
         test_cpp.cfg("four", output=png)
         assert os.path.exists(png)
-        test_cpp.cfg("four", output=svg)
+        test_cpp.cfg("four", svg)
         assert os.path.exists(svg)
-        
-
 

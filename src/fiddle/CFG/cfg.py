@@ -364,6 +364,8 @@ def do_cfg(file,  symbol, output=None,
         r = SVG(f"./{output}")
         #r = Image(url=f"{output}.svg", embed=False)
         return r
+    else:
+        return output
 
 if __name__ == '__main__':
     cfg()

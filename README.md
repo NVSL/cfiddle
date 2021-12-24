@@ -40,7 +40,6 @@ Here are some examples:
 ## What Does a `for` loop look like in assembly?
 
 ```python
-
 from fiddle import *
 
 sample = code(r"""
@@ -55,7 +54,6 @@ int loop() {
 """)
 
 print(build_one(sample).asm("loop"))
-
 ```
 
 Will generate:
@@ -87,16 +85,18 @@ loop:
 	.cfi_endproc
 ```
 
-Or, more clearly:
+Or, if you prefe a CFG:
 
 ```
-build_one(sample).cfg("loop") 
+build_one(sample).cfg("loop", "readme_loop.png") 
 ```
+
+![images/readme_loop.png](CFG Example)
 
 ## What Does `-O3` Do To That Loop?
 
 ```python
-print(build_one(sample, parameters=dict(OPTIMIZE="-O3")).asm("loop"))
+build_one(sample, parameters=dict(OPTIMIZE="-O3")).asm("loop")
 ```
 
 ```gas
