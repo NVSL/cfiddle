@@ -25,7 +25,7 @@ It's features include:
 5. Works great with [Pandas](https://pandas.pydata.org/) and  [Jupyter Notebook/Lab](https://jupyter.org/).
 
 The best way to learn about Fiddle is to try it.  You can [run the
-examples](https://mybinder.org/v2/gh/NVSL/fiddle/main?labpath=fiddle%2Fexamples%2Fstd_maps.ipynb).
+examples](https://mybinder.org/v2/gh/NVSL/fiddle/main?labpath=README.ipynb).
 
 Or run it locally with Docker:
 
