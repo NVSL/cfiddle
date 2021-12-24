@@ -34,9 +34,12 @@ dist-test:
 
 .PHONY: docker
 docker:
-	docker build --progress plain -t stevenjswanson/fiddle:latest .
+	docker build --no-cache --progress plain -t stevenjswanson/fiddle:latest .
 
 .PHONY: push-docker
-docker-push:
+docker-push: docker-test
 	docker push stevenjswanson/fiddle:latest
 
+.PHONY: docker-test
+docker-test: docker
+	docker run -it -w /home/jovyan/fiddle/tests docker.io/stevenjswanson/fiddle:latest make test

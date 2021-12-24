@@ -14,3 +14,10 @@ venv
 *.ii
 *.csv
 *.json
+**/.fiddle
+**/.ipynb_checkpoints
+**/*.so
+**/*.o
+**/.DS_Store
+dist
+build

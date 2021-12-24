@@ -1,0 +1,8 @@
+*.png
+*.svg
+*.o
+test_DataSet
+*.dot
+.fiddle
+.ipynb_checkpoints
+*.asm
