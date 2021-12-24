@@ -68,19 +68,19 @@ def test_build_wrappers():
     assert len(t) == 1
     
     t = build(source="test_src/std_maps.cpp",
-              parameters={},
+              build_parameters={},
               verbose=True)
     assert t[0].build_spec.build_parameters == {}
     assert len(t) == 1
     
     t = build(source="test_src/std_maps.cpp",
-              parameters=dict(OPTIMIZE="-O0"),
+              build_parameters=dict(OPTIMIZE="-O0"),
               verbose=True)
     assert t[0].build_spec.build_parameters == dict(OPTIMIZE="-O0")
     assert len(t) == 1
     
     t = build(source="test_src/std_maps.cpp",
-              parameters=map_product(OPTIMIZE=["-O0", "-O3"]),
+              build_parameters=map_product(OPTIMIZE=["-O0", "-O3"]),
               verbose=True)
     assert t[0].build_spec.build_parameters == dict(OPTIMIZE="-O0")
     assert t[1].build_spec.build_parameters == dict(OPTIMIZE="-O3")
@@ -109,7 +109,7 @@ def test_run_wrappers(test_cpp):
 def test_streamline():
 
     executables = build(source="test_src/std_maps.cpp",
-                        parameters=map_product(OPTIMIZE=["-O0", "-O3"]),
+                        build_parameters=map_product(OPTIMIZE=["-O0", "-O3"]),
                         verbose=True, rebuild=True)
 
     results = run(invocations=product(executables,
@@ -120,7 +120,7 @@ def test_streamline():
 
 def _test_summarize():
     build.verbose()
-    builds = build("test_src/std_maps.cpp", parameters=[], OPTIMIZE=["-O0", "-O1"])
+    builds = build("test_src/std_maps.cpp", build_parameters=[], OPTIMIZE=["-O0", "-O1"])
     
     results = run(build=builds,
                   function=["ordered", "unordered"],

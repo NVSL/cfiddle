@@ -15,5 +15,5 @@ int loop() {
 
     print(build_one(sample).asm("loop"))
     
-    print(build_one(sample, parameters=dict(OPTIMIZE="-O3")).asm("loop"))
+    print(build_one(sample, build_parameters=dict(OPTIMIZE="-O3")).asm("loop"))
     

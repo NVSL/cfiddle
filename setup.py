@@ -40,7 +40,8 @@ setup(
         "pydot",
         "networkx",
         "pandas",
-        "IPython"
+        "IPython",
+        "nbmake"
     ],
     description="Fiddle makes it easy to ask and answers questions about the compilation and execution of smallish programs written in C or C++.",
     long_description=open("README.md").read(),

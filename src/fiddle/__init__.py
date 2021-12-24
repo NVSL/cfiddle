@@ -37,17 +37,17 @@ def build_and_run(source_file, build_parameters, function, arguments):
     return run_one(executable, function, arguments)
 
 
-def build(source, parameters=None, **kwargs):
+def build(source, build_parameters=None, **kwargs):
 
-    if parameters is None:
-       parameters = {}
+    if build_parameters is None:
+       build_parameters = {}
 
-    if isinstance(parameters, dict):
-        parameters = [parameters]
+    if isinstance(build_parameters, dict):
+        build_parameters = [build_parameters]
 
     Builder = get_config("Builder_type")
     ExeDesc = get_config("ExecutableDescription_type")
-    return [Builder(ExeDesc(source, build_parameters=p), **kwargs).build() for p in parameters]
+    return [Builder(ExeDesc(source, build_parameters=p), **kwargs).build() for p in build_parameters]
 
 
 def build_one(*args, **kwargs):

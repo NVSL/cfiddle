@@ -19,7 +19,7 @@ int loop() {
     build_one(sample).cfg("loop", "readme_loop.png") 
 
     with open("readme_loop_opt.asm", "w") as out:
-        out.write(build_one(sample, parameters=dict(OPTIMIZE="-O3")).asm("loop"))
-    build_one(sample, parameters=dict(OPTIMIZE="-O3")).cfg("loop", "readme_loop_opt.png")
+        out.write(build_one(sample, build_parameters=dict(OPTIMIZE="-O3")).asm("loop"))
+    build_one(sample, build_parameters=dict(OPTIMIZE="-O3")).cfg("loop", "readme_loop_opt.png")
     
 

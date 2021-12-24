@@ -1,4 +1,4 @@
- # Fiddle: A Tool For Studying Small Compiled rograms
+# Fiddle: A Tool For Studying Small Compiled rograms
 
 [![CircleCI](https://circleci.com/gh/circleci/circleci-docs.svg?style=svg)](https://circleci.com/gh/circleci/circleci-docs)
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/NVSL/fiddle/main?labpath=fiddle%2Fexamples%2Fstd_maps.ipynb)
@@ -96,7 +96,7 @@ build_one(sample).cfg("loop", "readme_loop.png")
 ### What Does `-O3` Do To That Loop?
 
 ```python
-build_one(sample, parameters=dict(OPTIMIZE="-O3")).asm("loop")
+build_one(sample, build_parameters=dict(OPTIMIZE="-O3")).asm("loop")
 ```
 
 ```gas

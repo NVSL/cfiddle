@@ -4,8 +4,9 @@
 .PHONY: default
 default: 
 
+EXAMPLES=../examples/sorting.ipynb  ../examples/README.ipynb 
 test: test_DataSet
-	pytest
+	pytest --nbmake . $(EXAMPLES)
 
 CXXFLAGS=-I../src/fiddle/resources/include -MMD -g -Wall -Werror
 -include $(wildcard *.d)
