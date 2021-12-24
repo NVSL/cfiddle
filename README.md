@@ -91,7 +91,7 @@ Or, if you prefe a CFG:
 build_one(sample).cfg("loop", "readme_loop.png") 
 ```
 
-![images/readme_loop.png](CFG Example)
+![CFG Example](images/readme_loop.png)
 
 ## What Does `-O3` Do To That Loop?
 
