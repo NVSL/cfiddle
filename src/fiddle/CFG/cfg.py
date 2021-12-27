@@ -351,7 +351,7 @@ def do_cfg(file,  symbol, output=None,
 
         ext = os.path.splitext(output)[1]
 
-        pydot_cfg.write_raw('pretty_tmp.dot')
+        pydot_cfg.write_raw(f'{temp_dir}/pretty_tmp.dot')
 
         if ext == ".png":
             pydot_cfg.write_png(f'{output}')
