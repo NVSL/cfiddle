@@ -75,9 +75,11 @@ def test_working_directory():
             assert os.getcwd() == d
         assert os.getcwd() == before
 
-        
-def test_changes_in():
 
+
+def test_changes_in():
+    if os.environ.get("CIRCLECI", "false") == "true":
+        pytest.skip("Doesn't work in Circle CI")
     with tempfile.NamedTemporaryFile() as f:
         changes = changes_in(f.name)
         f.write("A".encode())
