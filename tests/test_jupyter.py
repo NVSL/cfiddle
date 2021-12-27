@@ -4,6 +4,8 @@ from fiddle.jupyter import *
 import fiddle.jupyter.source
 import IPython
 from fiddle.config import fiddle_config
+from IPython.display import SVG
+import os
 
 def test_jupyter():
     with fiddle_config():
@@ -14,3 +16,5 @@ def test_jupyter():
         assert isinstance(r.asm(), IPython.display.Code)
         assert isinstance(r.source(), IPython.display.Code)
         assert isinstance(r.preprocessed(), IPython.display.Code)
+        assert isinstance(r.cfg("sum"), SVG)
+        assert os.path.exists(os.path.join(r.build_dir, "sum.svg"))

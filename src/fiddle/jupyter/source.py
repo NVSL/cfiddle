@@ -1,4 +1,5 @@
 import fiddle.source
+import os
 
 try:
     import IPython
@@ -34,8 +35,16 @@ class Preprocessed(fiddle.source.Preprocessed):
 
     def raw_preprocessed(self, *argc, **kwargs):
         return super().preprocessed_source(*argc, **kwargs)
+from IPython.display import Image,SVG
 
-class FullyInstrumentedExecutable(Preprocessed, Source, Assembly,Executable):
+from fiddle.CFG.cfg import CFG
+class CFG(CFG):
+    def cfg(self, function, *argc, **kwargs):
+        filename = os.path.join(self.build_dir, function) + ".svg"
+        return SVG(super().cfg(function, output=filename, *argc, **kwargs, jupyter=True))
+    
+    
+class FullyInstrumentedExecutable(Preprocessed, Source, Assembly, CFG,Executable):
     def __init__(self, *argc, **kwargs):
         super().__init__(*argc, **kwargs)
 
