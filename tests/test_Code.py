@@ -1,4 +1,5 @@
 from fiddle import *
+from util import *
 from fiddle.config import get_config
 import os
 

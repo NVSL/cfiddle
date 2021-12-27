@@ -1,4 +1,5 @@
 from fiddle import *
+from util import *
 from fixtures import *
 from itertools import product
 from fiddle.Runner import InvocationResult

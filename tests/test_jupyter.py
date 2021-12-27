@@ -1,4 +1,5 @@
 from fiddle import *
+from util import *
 from fiddle.jupyter import *
 import fiddle.jupyter.source
 import IPython

@@ -1,4 +1,5 @@
 from fiddle import *
+from util import *
 from fixtures import test_cpp
 from fiddle.source import FullyInstrumentedExecutable
 import pytest

@@ -1,4 +1,5 @@
 from fiddle import *
+from util import *
 from fiddle.Builder import Executable
 from fiddle.config import *
 import fiddle

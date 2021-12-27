@@ -1,4 +1,5 @@
 from fiddle import *
+from util import *
 from fixtures import *
 
 def test_hello_world(test_cpp):

@@ -1,4 +1,5 @@
 from fiddle import *
+from util import *
 from fiddle.Runner import Runner, InvocationDescription
 from fixtures import test_cpp
 import ctypes

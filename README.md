@@ -53,7 +53,7 @@ int loop() {
 }
 """)
 
-print(build_one(sample).asm("loop"))
+print(build(sample)[0].asm("loop"))
 ```
 
 Will generate:
@@ -85,10 +85,10 @@ loop:
 	.cfi_endproc
 ```
 
-Or, if you prefe a CFG:
+Or, if you prefer a CFG:
 
 ```
-build_one(sample).cfg("loop", "readme_loop.png") 
+build(sample)[0].cfg("loop", "readme_loop.png") 
 ```
 
 ![CFG Example](images/readme_loop.png)
@@ -96,7 +96,7 @@ build_one(sample).cfg("loop", "readme_loop.png")
 ### What Does `-O3` Do To That Loop?
 
 ```python
-build_one(sample, build_parameters=dict(OPTIMIZE="-O3")).asm("loop")
+build(sample, build_parameters=dict(OPTIMIZE="-O3"))[0].asm("loop")
 ```
 
 ```gas
