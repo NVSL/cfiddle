@@ -23,7 +23,7 @@ test: dist-test package-test
 
 .PHONY: package-test
 package-test:
-	(cd tests; pytest .)
+	$(MAKE) -C tests test
 
 
 .PHONY: dist-test
