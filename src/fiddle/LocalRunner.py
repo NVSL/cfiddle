@@ -33,7 +33,7 @@ class LocalRunner(Runner):
             c_lib = ctypes.CDLL(self.get_build_result().lib)
             return getattr(c_lib, self.get_invocation().function)
         except AttributeError:
-            raise UnknownSymbol(f"Couldn't find '{self.get_invocation().function}' in '{self.get_build_result().lib}'.  Do you need to recompile?.")
+            raise UnknownSymbol(f"Couldn't find '{self.get_invocation().function}' in '{self.get_build_result().lib}'.  Do you need to recompile? or declare it `extern \"C\"`?.")
         
     def _get_function(self, f):
         try:

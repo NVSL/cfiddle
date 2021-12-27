@@ -1,20 +1,27 @@
 from fiddle import *
 from util import *
 from fiddle.jupyter import *
+from fiddle.jupyter.util import *
 import fiddle.jupyter.source
 import IPython
 from fiddle.config import fiddle_config
-from IPython.display import SVG
+from IPython.display import SVG, HTML
 import os
 
 def test_jupyter():
     with fiddle_config():
         configure_for_jupyter()
+        test_cpp = build_one("test_src/test.cpp")
+        assert isinstance(test_cpp, fiddle.jupyter.source.FullyInstrumentedExecutable)
+        assert isinstance(test_cpp.asm(), IPython.display.Code)
+        assert isinstance(test_cpp.source(), IPython.display.Code)
+        assert isinstance(test_cpp.preprocessed(), IPython.display.Code)
+        assert isinstance(test_cpp.cfg("sum"), SVG)
+        assert os.path.exists(os.path.join(test_cpp.build_dir, "sum.svg"))
 
-        r = build_one("test_src/test.cpp")
-        assert isinstance(r, fiddle.jupyter.source.FullyInstrumentedExecutable)
-        assert isinstance(r.asm(), IPython.display.Code)
-        assert isinstance(r.source(), IPython.display.Code)
-        assert isinstance(r.preprocessed(), IPython.display.Code)
-        assert isinstance(r.cfg("sum"), SVG)
-        assert os.path.exists(os.path.join(r.build_dir, "sum.svg"))
+def test_compare():
+    with fiddle_config():
+        configure_for_jupyter()
+        test_cpp = build_one("test_src/test.cpp")
+        assert isinstance(compare([test_cpp.cfg("sum"), test_cpp.cfg("sum")]), HTML)
+    
