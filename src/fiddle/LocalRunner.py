@@ -4,6 +4,9 @@ import tempfile
 import os
 from .util import environment
 import csv
+import faulthandler
+
+faulthandler.enable()
 
 
 class LocalRunner(Runner):
@@ -11,7 +14,7 @@ class LocalRunner(Runner):
     def __init__(self, invocation, result_factory=None):
         super().__init__(invocation, result_factory=result_factory)
         self._libfiddle = ctypes.CDLL("libfiddle.so")
-        
+
     def run(self):
         self._reset_data_collection()
         return_value = self._invoke_function()
@@ -20,12 +23,24 @@ class LocalRunner(Runner):
     
     def _invoke_function(self):
         
-        self.bound_arguments = self.bind_arguments(self.get_invocation().arguments, self.get_build_result().functions[self.get_invocation().function])
+        self.bound_arguments = self.bind_arguments(self.get_invocation().arguments, self._get_function(self.get_invocation().function))
         
-        c_lib = ctypes.CDLL(self.get_build_result().lib)
-        f = getattr(c_lib, self.get_invocation().function)
+        f = self._load_symbol()
         return f(*self.bound_arguments)
 
+    def _load_symbol(self):
+        try:
+            c_lib = ctypes.CDLL(self.get_build_result().lib)
+            return getattr(c_lib, self.get_invocation().function)
+        except AttributeError:
+            raise UnknownSymbol(f"Couldn't find '{self.get_invocation().function}' in '{self.get_build_result().lib}'.  Do you need to recompile?.")
+        
+    def _get_function(self, f):
+        try:
+            return self.get_build_result().functions[f]
+        except KeyError:
+            raise UnknownSymbol(f"Couldn't find '{f}' in '{self.get_build_result().lib}'.  Did you declare it 'extern \"C\"'?.")
+        
     def _reset_data_collection(self):
         self._libfiddle.clear_stats()
 
@@ -53,3 +68,6 @@ class LocalRunner(Runner):
         result_file_name = f"{source_file_name}.{self.get_invocation().function}({arg_string}).csv"
         return os.path.join(self.get_build_result().build_dir, result_file_name)
 
+
+class UnknownSymbol(Exception):
+    pass

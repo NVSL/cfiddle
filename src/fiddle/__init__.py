@@ -17,7 +17,8 @@ __all__ = [
     "run",
     "run_one",
     "configure_for_jupyter",
-    "sanity_test"
+    "sanity_test",
+    "UnknownSymbol"
 ]
 
 from itertools import product
@@ -25,7 +26,7 @@ from .Data import InvocationResultsList
 from .Builder import ExecutableDescription, Executable
 from .MakeBuilder import MakeBuilder
 from .Runner import InvocationDescription, InvocationResult
-from .LocalRunner import LocalRunner
+from .LocalRunner import LocalRunner, UnknownSymbol
 from .util import map_product
 from .Code import code
 from .config import get_config, set_config
