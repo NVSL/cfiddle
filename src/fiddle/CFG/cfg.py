@@ -305,61 +305,60 @@ def do_cfg(file,  symbol, output=None,
         fcn_name = symbol
 
 
-    # temp_dir = tempfile.mkdtemp()
-    temp_dir = '.'
-    r2.cmd('e asm.syntax=att')
-    finished = False
-    r2.cmd(f's {fcn_name}; agfd > {temp_dir}/tmp.dot')
-    time.sleep(0.5)
-    nx_cfg = nx.drawing.nx_pydot.read_dot(f'{temp_dir}/tmp.dot')
+    with tempfile.TemporaryDirectory() as temp_dir:
+        r2.cmd('e asm.syntax=att')
+        finished = False
+        r2.cmd(f's {fcn_name}; agfd > {temp_dir}/tmp.dot')
+        time.sleep(0.5)
+        nx_cfg = nx.drawing.nx_pydot.read_dot(f'{temp_dir}/tmp.dot')
 
-    back_edges = get_back_edges(nx_cfg)
-    loops = identify_loops(nx_cfg, back_edges)
+        back_edges = get_back_edges(nx_cfg)
+        loops = identify_loops(nx_cfg, back_edges)
 
 
-    # Try fiddling with the dot file itself to see if it's better
-    # Try heuristic where the node going out of a loop is of lower rank
-    # than the rest of the loop
-    # Try drawing boxes around loop bodies - This is bad!
-    # Make last return block have lowest rank
-    # Create invisible nodes to define node ordering: https://newbedev.com/how-can-i-control-within-level-node-order-in-graphviz-s-dot
+        # Try fiddling with the dot file itself to see if it's better
+        # Try heuristic where the node going out of a loop is of lower rank
+        # than the rest of the loop
+        # Try drawing boxes around loop bodies - This is bad!
+        # Make last return block have lowest rank
+        # Create invisible nodes to define node ordering: https://newbedev.com/how-can-i-control-within-level-node-order-in-graphviz-s-dot
 
-    nx.nx_pydot.write_dot(nx_cfg, f'{temp_dir}/nx_tmp.dot')
+        nx.nx_pydot.write_dot(nx_cfg, f'{temp_dir}/nx_tmp.dot')
 
-    pydot_cfg = nx.nx_pydot.to_pydot(nx_cfg)
-    pydot_cfg = prettify_back_edges(pydot_cfg, back_edges)
-    
-    if pretty_loops:
-        pydot_cfg = sequentialize_loops(nx_cfg, pydot_cfg, loops)
-    if trim_addresses:
-        pydot_cfg = do_trim_addresses(pydot_cfg)
-    if trim_comments:
-        pydot_cfg = do_trim_comments(pydot_cfg)
-    if remove_assembly:
-        pydot_cfg = remove_basic_block_assembly(pydot_cfg)
-    if number_nodes:
-        pydot_cfg = do_number_nodes(pydot_cfg)
-    if inst_counts:
-        pydot_cfg = do_inst_counts(pydot_cfg)
-    
-    pydot_cfg.set_ranksep(spacing) # Increase spacing between ranks and thus the nodes
-    
-    if output is None:
-        if in_notebook() or jupyter:
-            output = f"{file}-{symbol}.svg"
-        else:
-            output = f"{file}-{symbol}.png"
+        pydot_cfg = nx.nx_pydot.to_pydot(nx_cfg)
+        pydot_cfg = prettify_back_edges(pydot_cfg, back_edges)
 
-    ext = os.path.splitext(output)[1]
+        if pretty_loops:
+            pydot_cfg = sequentialize_loops(nx_cfg, pydot_cfg, loops)
+        if trim_addresses:
+            pydot_cfg = do_trim_addresses(pydot_cfg)
+        if trim_comments:
+            pydot_cfg = do_trim_comments(pydot_cfg)
+        if remove_assembly:
+            pydot_cfg = remove_basic_block_assembly(pydot_cfg)
+        if number_nodes:
+            pydot_cfg = do_number_nodes(pydot_cfg)
+        if inst_counts:
+            pydot_cfg = do_inst_counts(pydot_cfg)
 
-    pydot_cfg.write_raw('pretty_tmp.dot')
+        pydot_cfg.set_ranksep(spacing) # Increase spacing between ranks and thus the nodes
 
-    if ext == ".png":
-        pydot_cfg.write_png(f'{output}')
-    elif ext == ".svg":
-        pydot_cfg.write_svg(f'{output}')
+        if output is None:
+            if in_notebook() or jupyter:
+                output = f"{file}-{symbol}.svg"
+            else:
+                output = f"{file}-{symbol}.png"
 
-    return output
+        ext = os.path.splitext(output)[1]
+
+        pydot_cfg.write_raw('pretty_tmp.dot')
+
+        if ext == ".png":
+            pydot_cfg.write_png(f'{output}')
+        elif ext == ".svg":
+            pydot_cfg.write_svg(f'{output}')
+
+        return output
 
 if __name__ == '__main__':
     cfg()
