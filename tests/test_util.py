@@ -74,4 +74,17 @@ def test_working_directory():
         with working_directory(d):
             assert os.getcwd() == d
         assert os.getcwd() == before
+
         
+def test_changes_in():
+
+    with tempfile.NamedTemporaryFile() as f:
+        changes = changes_in(f.name)
+        f.write("A".encode())
+        f.flush()
+        t = next(changes)
+        f.write("A".encode())
+        f.flush()
+        t = next(changes)
+
+    

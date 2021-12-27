@@ -17,16 +17,16 @@ __all__ = [
 #    "run_one",
     "configure_for_jupyter",
     "sanity_test",
-    "UnknownSymbol"
+    "UnknownSymbol",
+    "changes_in"
 ]
 
-from itertools import product
 from .Data import InvocationResultsList
 from .Builder import ExecutableDescription, Executable
 from .MakeBuilder import MakeBuilder
 from .Runner import InvocationDescription, InvocationResult
 from .LocalRunner import LocalRunner, UnknownSymbol
-from .util import map_product
+from .util import map_product, changes_in
 from .Code import code
 from .config import get_config, set_config
 from .jupyter import configure_for_jupyter

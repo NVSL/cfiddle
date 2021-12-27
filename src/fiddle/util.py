@@ -4,8 +4,7 @@ import os
 from contextlib import contextmanager
 from collections.abc import Iterable
 import subprocess
-from itertools import product
-
+import time
 
 def map_product(**parameters):
     """
@@ -141,4 +140,14 @@ def type_check(value, the_type):
 def type_check_list(values, the_type):
     if not all(isinstance(v, the_type) for v in values):
         raise ValueError(f"Expected sequence of '{the_type.__name__}' not '{[type(v).__name__ for v in values]}' in {values}")
+    
+def changes_in(filename):
+    last_mtime = None
+    while True:
+        current_mtime  = os.path.getmtime(filename)
+        if current_mtime != last_mtime:
+            last_mtime = current_mtime
+            yield filename
+        time.sleep(0.5)
+    
     
