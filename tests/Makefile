@@ -4,7 +4,7 @@
 .PHONY: default
 default: 
 
-EXAMPLES=../examples/sorting.ipynb  ../examples/README.ipynb 
+EXAMPLES=../examples/sorting.ipynb  ../examples/README.ipynb ../examples/VirtualMethods.ipynb 
 test: test_DataSet
 	pytest --nbmake . $(EXAMPLES)
 
