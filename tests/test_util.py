@@ -7,6 +7,8 @@ import tempfile
     (dict(a="bc"), [{"a": "bc"}]),
     (dict(a=[1,2]), [{"a": 1},
                      {"a": 2}]),
+    (dict(a=[1,2],b=None), [{"a": 1, "b":None},
+                            {"a": 2, "b":None}]),
     (dict(a=range(1,3),
           b=1), [{"a": 1, "b": 1},
                  {"a": 2, "b":1}]),

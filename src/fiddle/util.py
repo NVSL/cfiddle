@@ -19,7 +19,7 @@ def map_product(**parameters):
 
     """
     def listify(t):
-        return t if isinstance(t, Iterable) and not isinstance(t, str) else [t]
+        return t if isinstance(t, Iterable) and not isinstance(t, str) and not isinstance(t, dict) else [t]
     t = [(k, listify(v)) for k,v in parameters.items()]
     return _cross_product(t)
 

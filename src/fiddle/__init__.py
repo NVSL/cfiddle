@@ -13,6 +13,7 @@ __all__ = [
     "build_and_run",
     "build",
     "run",
+    "run_list",
     "configure_for_jupyter",
     "sanity_test",
     "UnknownSymbol",
@@ -48,7 +49,16 @@ def build(source, build_parameters=None, **kwargs):
     return [Builder(ExeDesc(source, build_parameters=p), **kwargs).build() for p in build_parameters]
 
 
-def run(invocations, **kwargs):
+def run_list(invocations, **kwargs):
+    IRList = get_config("InvocationResultsList_type")
+    Runner = get_config("Runner_type")
+    InvDesc = get_config("InvocationDescription_type")
+    return IRList(Runner(InvDesc(**i), **kwargs).run() for i in invocations)
+
+def run(executable, function, arguments=None, **kwargs):
+    if arguments is None:
+        arguments = [{}]
+    invocations = map_product(executable=executable, function=function, arguments=arguments)
     IRList = get_config("InvocationResultsList_type")
     Runner = get_config("Runner_type")
     InvDesc = get_config("InvocationDescription_type")
@@ -77,9 +87,8 @@ def set_ld_path_in_shell():
 
     
 def sanity_test():
-    return run([dict(executable=build(code('extern "C" int foo() {return 4;}'))[0],
-                     function="foo",
-                     arguments={})])[0].return_value
+    return run(executable=build(code('extern "C" int foo() {return 4;}')),
+               function=["foo"])[0].return_value
 
 PACKAGE_DATA_PATH = pkg_resources.resource_filename('fiddle', 'resources/')
 
