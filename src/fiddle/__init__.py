@@ -9,7 +9,6 @@ __all__ = [
     "InvocationDescription",
     "LocalRunner",
     "map_product",
-    "product",
     "code",
     "build_and_run",
     "build",
@@ -55,7 +54,7 @@ def run(invocations, **kwargs):
     IRList = get_config("InvocationResultsList_type")
     Runner = get_config("Runner_type")
     InvDesc = get_config("InvocationDescription_type")
-    return IRList(Runner(InvDesc(*i), **kwargs).run() for i in invocations)
+    return IRList(Runner(InvDesc(**i), **kwargs).run() for i in invocations)
 
 
 def libfiddle_dir_path():
@@ -80,7 +79,9 @@ def set_ld_path_in_shell():
 
     
 def sanity_test():
-    return run([(build(code('extern "C" int foo() {return 4;}'))[0], "foo", {})])[0].return_value
+    return run([dict(executable=build(code('extern "C" int foo() {return 4;}'))[0],
+                     function="foo",
+                     arguments={})])[0].return_value
 
 PACKAGE_DATA_PATH = pkg_resources.resource_filename('fiddle', 'resources/')
 

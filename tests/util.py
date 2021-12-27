@@ -16,4 +16,4 @@ def build_one(*args, **kwargs):
 def run_one(exe, function, arguments=None, **kwargs):
     if arguments is None:
         arguments = {}
-    return run([(exe, function, arguments)], **kwargs)[0]
+    return run([dict(executable=exe, function=function, arguments=arguments)], **kwargs)[0]

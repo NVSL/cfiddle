@@ -45,7 +45,7 @@ def test_maps_experiment():
     executables = [MakeBuilder(ExecutableDescription("test_src/std_maps.cpp", build_parameters=p), verbose=True, rebuild=True).build()
                                for p in map_product(OPTIMIZE=["-O0", "-O3"])]
 
-    invocations = [InvocationDescription(*i) for i in product(executables, ["ordered", "unordered"],map_product(count=map(lambda x: 2**x, range(0,10))))]
+    invocations = [InvocationDescription(**i) for i in map_product(executable=executables, function=["ordered", "unordered"], arguments=map_product(count=map(lambda x: 2**x, range(0,10))))]
 
     results = InvocationResultsList(LocalRunner(i).run() for i in invocations)
     
@@ -96,13 +96,13 @@ def test_run_wrappers(test_cpp):
         assert isinstance(t, InvocationResult)
         assert t.return_value == 4
 
-    t = run(invocations=[(test_cpp, "sum", dict(a=1, b=2))])
+    t = run(invocations=[dict(executable=test_cpp, function="sum", arguments=dict(a=1, b=2))])
     assert len(t) == 1
     assert t[0].return_value == 3
     
-    t = run(invocations=product([test_cpp],
-                                ["sum", "product"],
-                                map_product(a=[1,2], b=[3,4])))
+    t = run(invocations=map_product(executable=[test_cpp],
+                                    function=["sum", "product"],
+                                    arguments=map_product(a=[1,2], b=[3,4])))
     assert len(t) == 8
     assert t[1].return_value == 5
 
@@ -113,9 +113,9 @@ def test_streamline():
                         build_parameters=map_product(OPTIMIZE=["-O0", "-O3"]),
                         verbose=True, rebuild=True)
 
-    results = run(invocations=product(executables,
-                                      ["ordered", "unordered"],
-                                      map_product(count=map(lambda x: 2**x, range(0,10)))))
+    results = run(invocations=map_product(executable=executables,
+                                          function=["ordered", "unordered"],
+                                          arguments=map_product(count=map(lambda x: 2**x, range(0,10)))))
     print(results.as_df())
     
 
@@ -143,7 +143,7 @@ def test_factoring_out_loops():
     for OPTIMIZE in ["-O0", "-O3"]:
         build = build_one("test_src/std_maps.cpp", dict(OPTIMIZE=OPTIMIZE))
         for function in ["ordered", "unordered"]:
-            run(invocations=product([build],
-                                    [function],
-                                    map_product(count=map(lambda x: 2**x, range(0, 4)))))
+            run(invocations=map_product(executable=[build],
+                                    function=[function],
+                                    arguments=map_product(count=map(lambda x: 2**x, range(0, 4)))))
 
