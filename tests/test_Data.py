@@ -16,7 +16,18 @@ def test_no_data(test_cpp):
     
     results = run(test_cpp, "four")
     results.as_df()
-    
+
+def test_lots_of_no_data(test_cpp):
+
+    results = run(test_cpp, ["sum", "product"], arguments=map_product(a=[0,1], b=[2,3]))
+    print (len(results.as_df()))
+    print (results.as_df())
+    assert len(results) == 8
+
+    results = run(test_cpp, ["four", "nop"])
+    print (len(results.as_df()))
+    print (results.as_df())
+    assert len(results.as_df()) == 2
 
 def test_csv():
     import csv
@@ -59,3 +70,12 @@ def test_csv():
             assert rows[3]['y'] == ""
             assert rows[3]['z'] == "2"
 
+def test_json(test_cpp):
+    exe = run(test_cpp, ["sum", "product"], arguments=map_product(a=[1,2], b=[2,3]))
+    exe.as_json()
+
+def test_dicts(test_cpp):
+    exe = run(test_cpp, ["sum", "product"], arguments=map_product(a=[1,2], b=[2,3]))
+    exe.as_dicts()
+    
+    

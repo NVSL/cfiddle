@@ -49,6 +49,8 @@ class Executable:
         else:
             raise ValueError(f"There's is not exactly one function ({list(self.functions.keys())}), so you need to provide one.")
 
+    def get_build_parameters(self):
+        return self.build_spec.build_parameters
         
     def _raise_on_invalid_types(self):
         type_check(self.lib, str)

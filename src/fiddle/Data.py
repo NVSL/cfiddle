@@ -29,7 +29,7 @@ class InvocationResultsList(list):
                                data=rows))
             
     def as_dicts(self):
-        return self.__to_keys_and_dicts(invocation_results)[1]
+        return self.__to_keys_and_dicts(self)[1]
 
     
     def __to_keys_and_dicts(self,invocation_results):
@@ -56,8 +56,17 @@ class InvocationResultsList(list):
 
 
     def __build_merged_rows(self,ordered_keys, run_result):
-        this_result_fields = {** run_result.invocation.executable.build_spec.build_parameters, **run_result.invocation.arguments}
-        return [{**row, **this_result_fields, "function": run_result.invocation.function} for row in run_result.get_results()]
+        merged_build_parameters_and_arguments = {**run_result.invocation.executable.build_spec.build_parameters,
+                                                 **run_result.invocation.arguments}
+
+        data_from_execution = run_result.get_results()
+
+        if len(data_from_execution) == 0:
+            data_from_execution=[{}]
+        
+        return [{**invocation_results,
+                 **merged_build_parameters_and_arguments,
+                 "function": run_result.invocation.function} for invocation_results in data_from_execution]
 
     
     def _convert_to_numeric(self,df):
