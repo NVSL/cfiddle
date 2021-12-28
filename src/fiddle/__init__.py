@@ -30,23 +30,23 @@ from .Code import code
 from .config import get_config, set_config
 from .jupyter import configure_for_jupyter
 
+
 def build_and_run(source_file, build_parameters, function, arguments):
     executable = build_one(source_file, build_parameters)
 
     return run_one(executable, function, arguments)
 
 
-def build(source, build_parameters=None, **kwargs):
+def build(source=source, build_parameters=None, **kwargs):
 
     if build_parameters is None:
-       build_parameters = {}
+       build_parameters = [{}]
 
-    if isinstance(build_parameters, dict):
-        build_parameters = [build_parameters]
-
+    builds = map_product(source=source, build_parameters=build_parameters)
+    
     Builder = get_config("Builder_type")
     ExeDesc = get_config("ExecutableDescription_type")
-    return [Builder(ExeDesc(source, build_parameters=p), **kwargs).build() for p in build_parameters]
+    return [Builder(ExeDesc(**p), **kwargs).build() for p in builds]
 
 
 def run_list(invocations, **kwargs):
@@ -54,6 +54,7 @@ def run_list(invocations, **kwargs):
     Runner = get_config("Runner_type")
     InvDesc = get_config("InvocationDescription_type")
     return IRList(Runner(InvDesc(**i), **kwargs).run() for i in invocations)
+
 
 def run(executable, function, arguments=None, **kwargs):
     if arguments is None:
@@ -63,6 +64,7 @@ def run(executable, function, arguments=None, **kwargs):
     Runner = get_config("Runner_type")
     InvDesc = get_config("InvocationDescription_type")
     return IRList(Runner(InvDesc(**i), **kwargs).run() for i in invocations)
+
 
 
 def libfiddle_dir_path():

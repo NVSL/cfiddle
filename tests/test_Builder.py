@@ -14,13 +14,13 @@ class NopBuilder(Builder):
     
 
 def test_create_spec():
-    build_spec = ExecutableDescription(source_file="test_src/test.cpp",
+    build_spec = ExecutableDescription(source="test_src/test.cpp",
                                        build_parameters=dict(OPTIMIZE="-O1"))
 
     
 @pytest.fixture
 def test_cpp_nop_builder():
-    return NopBuilder(build_spec = ExecutableDescription(source_file="test_src/test.cpp",
+    return NopBuilder(build_spec = ExecutableDescription(source="test_src/test.cpp",
                                                          build_parameters=dict(OPTIMIZE="-O1")))
 
 
@@ -43,7 +43,7 @@ def test_nop_build(test_cpp_nop_builder):
     
 
 def test_alt_build_directory():
-    t = NopBuilder(build_spec = ExecutableDescription(source_file="", build_parameters={}), build_root="/tmp")
+    t = NopBuilder(build_spec = ExecutableDescription(source="", build_parameters={}), build_root="/tmp")
     assert t.build_root == "/tmp"
     
 
@@ -52,7 +52,7 @@ def test_mixins():
         def my_result(self):
             return "my_result"
         
-    t = NopBuilder(build_spec = ExecutableDescription(source_file="", build_parameters={}), result_factory=MyResult)
+    t = NopBuilder(build_spec = ExecutableDescription(source="", build_parameters={}), result_factory=MyResult)
     result = t.build()
     assert isinstance(result, MyResult)
     assert result.my_result() == "my_result"

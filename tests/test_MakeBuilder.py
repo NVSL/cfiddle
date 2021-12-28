@@ -7,7 +7,7 @@ import ctypes
 
 @pytest.fixture
 def test_cpp_builder():
-    return MakeBuilder(build_spec = ExecutableDescription(source_file="test_src/test.cpp",
+    return MakeBuilder(build_spec = ExecutableDescription(source="test_src/test.cpp",
                                               build_parameters=dict(OPTIMIZE="-O1")))
 
 
@@ -25,7 +25,7 @@ def test_build(source, function_count, return_value):
     
 
 def test_alt_makefile():
-    builder = MakeBuilder(ExecutableDescription(source_file="test_src/test.cpp", build_parameters={}),
+    builder = MakeBuilder(ExecutableDescription(source="test_src/test.cpp", build_parameters={}),
                           makefile="test_src/test.make",
                           rebuild=True,
                           verbose=True)
@@ -35,7 +35,7 @@ def test_alt_makefile():
 
     
 def test_complex_flags():
-    builder = MakeBuilder(ExecutableDescription(source_file="test_src/test.cpp", build_parameters=dict(OPTIMIZE="-O1 -fno-inline")))
+    builder = MakeBuilder(ExecutableDescription(source="test_src/test.cpp", build_parameters=dict(OPTIMIZE="-O1 -fno-inline")))
     result = builder.build()
     assert os.path.exists(result.lib)
 

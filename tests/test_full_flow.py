@@ -52,8 +52,7 @@ def test_maps_experiment():
     print(results.as_df())
     return results.as_df()
 
-def test_build_wrappers():
-
+def test_build_simple():
         
     t = build("test_src/std_maps.cpp", rebuild=True)
     assert t[0].build_spec.build_parameters == {}
@@ -67,6 +66,8 @@ def test_build_wrappers():
               verbose=True)
     assert t[0].build_spec.build_parameters == {}
     assert len(t) == 1
+
+def test_build_parameter():
     
     t = build(source="test_src/std_maps.cpp",
               build_parameters={},
@@ -86,6 +87,14 @@ def test_build_wrappers():
     assert t[0].build_spec.build_parameters == dict(OPTIMIZE="-O0")
     assert t[1].build_spec.build_parameters == dict(OPTIMIZE="-O3")
     assert len(t) == 2
+
+def test_build_multi_build():
+    t = build(source=["test_src/std_maps.cpp","test_src/test.cpp"],
+              build_parameters=map_product(OPTIMIZE=["-O0", "-O1"]))
+    assert t[0].build_spec.build_parameters == dict(OPTIMIZE="-O0")
+    assert t[2].build_spec.build_parameters == dict(OPTIMIZE="-O0")
+    assert len(t) == 4
+    
     
     
 def test_run_one(test_cpp):
@@ -109,12 +118,13 @@ def test_run_list(test_cpp):
     assert t[1].return_value == 5
 
     
-def test_run(test_cpp):
+def test_run_simple(test_cpp):
 
     t = run(executable=test_cpp, function="sum", arguments=dict(a=1, b=2))
     assert len(t) == 1
     assert t[0].return_value == 3
     
+def test_run_combo(test_cpp):
     t = run(executable=test_cpp,
              function=["sum", "product"],
              arguments=map_product(a=[1,2], b=[3,4]))
@@ -122,6 +132,7 @@ def test_run(test_cpp):
     assert len(t) == 8
     assert t[1].return_value == 5
 
+def test_no_args(test_cpp):
     t = run(executable=[test_cpp,test_cpp],
             function=["nop", "four"])
     
@@ -131,14 +142,6 @@ def test_run(test_cpp):
     assert t[2].return_value == 4
     assert t[3].return_value == 4
 
-    
-    t = run(executable=test_cpp,
-            function="nop")
-    
-    assert len(t) == 1
-    assert t[0].return_value == 4
-
-    
     
 def test_streamline():
 

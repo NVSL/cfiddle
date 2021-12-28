@@ -6,8 +6,8 @@ import os
 import pytest
 
 class ExecutableDescription:
-    def __init__(self, source_file, build_parameters):
-        self.source_file = source_file
+    def __init__(self, source=None, build_parameters=None):
+        self.source_file = source
         self.build_parameters = build_parameters
 
         self._raise_on_invalid_types()
