@@ -2,7 +2,7 @@ import tempfile
 from fiddle import *
 from util import *
 from itertools import product
-
+from fixtures import test_cpp
 
 def test_df_numeric_conversion():
     r = build_and_run("test_src/test_Data.cpp", {}, "go", {})
@@ -11,6 +11,11 @@ def test_df_numeric_conversion():
     # Shouldn't fail because the data aren't strings
     df["a"]  = df["a"] + 1
     df["b"]  = df["b"] + 1.0
+
+def test_no_data(test_cpp):
+    
+    results = run(test_cpp, "four")
+    results.as_df()
     
 
 def test_csv():

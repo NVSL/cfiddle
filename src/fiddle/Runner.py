@@ -64,6 +64,9 @@ class InvocationResult:
         self.return_value = return_value
         
     def get_results_field_names(self):
+        if len(self.results) == 0:
+            return []
+        
         return self.results[0].keys()
 
     def get_results(self):
