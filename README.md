@@ -30,7 +30,7 @@ examples](https://mybinder.org/v2/gh/NVSL/fiddle/main?labpath=README.ipynb).
 Or run it locally with Docker:
 
 ```
-docker run -it  --publish published=8888,target=8888 stevenjswanson/fiddle:latest jupyter lab --LabApp.token=''
+docker run -it --publish published=8888,target=8888 stevenjswanson/fiddle:latest jupyter lab --LabApp.token=''
 ```
 
 and then visit [http://localhost:8888/lab/tree/README.ipynb].
