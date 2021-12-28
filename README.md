@@ -3,18 +3,14 @@
 [![CircleCI](https://circleci.com/gh/circleci/circleci-docs.svg?style=svg)](https://circleci.com/gh/circleci/circleci-docs)
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/NVSL/fiddle/main?labpath=fiddle%2Fexamples%2Fstd_maps.ipynb)
 	
-Fiddle makes it easy to ask and answers questions about the compilation and
-execution of smallish programs written in C or C++.",Fiddle is a tool for
+Fiddle is a tool for
 studying the compilation and execution of smallish programs written in C or
-C++.
+C++.  If you want to know what the compiler does to your code and why your code is slow, Fiddle can help.
 
 It makes it easy to ask and answer interesting questions about what happens to
 programs as they go from source code to running program.  Fiddle can run on its
 own, but it is built to work with [Jupyter Notebook/Jupyter
 Lab](https://jupyter.org/) to support interactive exploration.
-
-If you've ever used the excellent [Compiler Explorer](https://godbolt.org/), the idea is
-similar, but with more flexibilty and built-in performance measurement tools.
 
 It's features include:
 
@@ -33,7 +29,7 @@ Or run it locally with Docker:
 docker run -it  --publish published=8888,target=8888 stevenjswanson/fiddle:latest jupyter lab --LabApp.token=''
 ```
 
-and then visit [http://localhost:8888/lab/tree/README.ipynb].
+and then visit http://localhost:8888/lab/tree/README.ipynb.
 
 ## Examples
 
