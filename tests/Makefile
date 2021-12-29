@@ -12,7 +12,10 @@ CXXFLAGS=-I../src/fiddle/resources/include -MMD -g -Wall -Werror
 -include $(wildcard *.d)
 
 test_DataSet : test_DataSet.o
-	$(CXX) $^ $(LDFLAGS)  -pthread -lgtest -lgtest_main -lfiddle -L$(shell fiddle-lib-path) -o $@
+	$(CXX) $^ $(LDFLAGS) -pthread -lgtest -lgtest_main -lfiddle -L$(shell fiddle-lib-path) -o $@
+
+test_PerfCounter : test_PerfCounter.o
+	$(CXX) $^ $(LDFLAGS) -pthread -lgtest -lgtest_main -o $@
 
 .PHONY: help
 help:
