@@ -13,7 +13,7 @@ namespace Tests {
 		if (!counter.performance_counters_enabled())
 			GTEST_SKIP();
 	}
-	
+
 	TEST_F(PerfCountTests, test_CPU_CYCLES) {
 		
 		PerfCounter counter;

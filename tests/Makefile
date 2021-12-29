@@ -17,6 +17,9 @@ test_DataSet : test_DataSet.o
 test_PerfCounter : test_PerfCounter.o
 	$(CXX) $^ $(LDFLAGS) -pthread -lgtest -lgtest_main -o $@
 
+test_libfiddle : test_libfiddle.o
+	$(CXX) $^ $(LDFLAGS) -pthread -lfiddle -L$(shell fiddle-lib-path) -lgtest -lgtest_main -o $@
+
 .PHONY: help
 help:
 	@echo 'make clean     : cleanup'

@@ -26,15 +26,16 @@ class PerfCounter {
 	std::vector<CounterValue> counter_values;
 	bool valid;
 
-	static std::map<uint64_t, std::string> COUNTER_NAME_MAP;
-
+	std::map<uint64_t, std::string> COUNTER_NAME_MAP;
 	
-	static std::map<uint64_t, std::string> CACHE_TYPE_MAP;
-	static std::map<uint64_t, std::string> CACHE_OP_MAP;
-	static std::map<uint64_t, std::string> CACHE_RESULT_MAP;
+	std::map<uint64_t, std::string> CACHE_TYPE_MAP;
+	std::map<uint64_t, std::string> CACHE_OP_MAP;
+	std::map<uint64_t, std::string> CACHE_RESULT_MAP;
 	
 public:
-	PerfCounter() : lead_fd(-1), valid(true) {}
+	PerfCounter() : lead_fd(-1), valid(true) {
+		build_maps();
+	}
 
 	void add_counter(uint32_t type, uint64_t config, const std::string & name = "") {
 		struct perf_event_attr perf_event;
@@ -47,12 +48,15 @@ public:
 		if (lead_fd == -1) {
 			lead_fd = new_fd;
 		}
+
 		std::string final_name;
+
 		if (name == "") {
 			final_name = COUNTER_NAME_MAP[config];
 		} else {
 			final_name = name;
 		}
+
  		counter_values.push_back(CounterValue(final_name, new_fd));
 	}
 
@@ -72,12 +76,20 @@ public:
 		read_counters_and_update_values();
 	}
 
-	void reset() {
+	void reset_values() {
 		for(auto & cv : counter_values) {
 			cv.value = 0;
 		}
 	}
 
+	void clear() {
+		for(auto & cv : counter_values) {
+			if (cv.fd != -1) {
+				close(cv.fd);
+			}
+		}
+		counter_values.clear();
+	}
 	const std::vector<CounterValue> & get_counters() {
 		return counter_values;
 	}
@@ -96,9 +108,7 @@ public:
 		
 	}
 	~PerfCounter() {
-		for(auto & cv : counter_values) {
-			close(cv.fd);
-		}
+		clear();
 	}
 
 private:
@@ -166,72 +176,75 @@ private:
 	void flag_error() {
 		valid = false;
 	}
-};
 
+	void build_maps() {
 #define HW_COUNTER_NAME(x) {PERF_COUNT_HW_ ## x, std::string(#x)}
 #define SW_COUNTER_NAME(x) {PERF_COUNT_SW_ ## x, std::string(#x)}
-std::map<uint64_t, std::string> PerfCounter::COUNTER_NAME_MAP =
-	{
-	 HW_COUNTER_NAME(CPU_CYCLES),
-	 HW_COUNTER_NAME(INSTRUCTIONS),
-	 HW_COUNTER_NAME(CACHE_REFERENCES),
-	 HW_COUNTER_NAME(CACHE_MISSES),
-	 HW_COUNTER_NAME(BRANCH_INSTRUCTIONS),
-	 HW_COUNTER_NAME(BRANCH_MISSES),
-	 HW_COUNTER_NAME(BUS_CYCLES),
-	 HW_COUNTER_NAME(STALLED_CYCLES_FRONTEND),
-	 HW_COUNTER_NAME(STALLED_CYCLES_BACKEND),
-	 HW_COUNTER_NAME(REF_CPU_CYCLES),
-	 SW_COUNTER_NAME(CPU_CLOCK),
-	 SW_COUNTER_NAME(TASK_CLOCK),
-	 SW_COUNTER_NAME(PAGE_FAULTS),
-	 SW_COUNTER_NAME(CONTEXT_SWITCHES),
-	 SW_COUNTER_NAME(CPU_MIGRATIONS),
-	 SW_COUNTER_NAME(PAGE_FAULTS_MIN),
-	 SW_COUNTER_NAME(PAGE_FAULTS_MAJ),
-	 SW_COUNTER_NAME(ALIGNMENT_FAULTS),
-	 SW_COUNTER_NAME(EMULATION_FAULTS),
-	 SW_COUNTER_NAME(DUMMY)
-	};
+		COUNTER_NAME_MAP =
+			{
+			 HW_COUNTER_NAME(CPU_CYCLES),
+			 HW_COUNTER_NAME(INSTRUCTIONS),
+			 HW_COUNTER_NAME(CACHE_REFERENCES),
+			 HW_COUNTER_NAME(CACHE_MISSES),
+			 HW_COUNTER_NAME(BRANCH_INSTRUCTIONS),
+			 HW_COUNTER_NAME(BRANCH_MISSES),
+			 HW_COUNTER_NAME(BUS_CYCLES),
+			 HW_COUNTER_NAME(STALLED_CYCLES_FRONTEND),
+			 HW_COUNTER_NAME(STALLED_CYCLES_BACKEND),
+			 HW_COUNTER_NAME(REF_CPU_CYCLES),
+			 SW_COUNTER_NAME(CPU_CLOCK),
+			 SW_COUNTER_NAME(TASK_CLOCK),
+			 SW_COUNTER_NAME(PAGE_FAULTS),
+			 SW_COUNTER_NAME(CONTEXT_SWITCHES),
+			 SW_COUNTER_NAME(CPU_MIGRATIONS),
+			 SW_COUNTER_NAME(PAGE_FAULTS_MIN),
+			 SW_COUNTER_NAME(PAGE_FAULTS_MAJ),
+			 SW_COUNTER_NAME(ALIGNMENT_FAULTS),
+			 SW_COUNTER_NAME(EMULATION_FAULTS),
+			 SW_COUNTER_NAME(DUMMY)
+			};
 
 #define CACHE_TYPE(X) {PERF_COUNT_HW_CACHE_ ## X, #X}
-std::map<uint64_t, std::string> PerfCounter::CACHE_TYPE_MAP =
-	{
-	 CACHE_TYPE(L1D),
-	 CACHE_TYPE(L1I),
-	 CACHE_TYPE(LL),
-	 CACHE_TYPE(DTLB),
-	 CACHE_TYPE(ITLB),
-	 CACHE_TYPE(BPU),
-	 CACHE_TYPE(NODE),
-	 CACHE_TYPE(L1D),
-	 CACHE_TYPE(L1I),
-	 CACHE_TYPE(LL),
-	 CACHE_TYPE(DTLB),
-	 CACHE_TYPE(ITLB),
-	 CACHE_TYPE(BPU),
-	 CACHE_TYPE(NODE)
-	};
+		CACHE_TYPE_MAP =
+			{
+			 CACHE_TYPE(L1D),
+			 CACHE_TYPE(L1I),
+			 CACHE_TYPE(LL),
+			 CACHE_TYPE(DTLB),
+			 CACHE_TYPE(ITLB),
+			 CACHE_TYPE(BPU),
+			 CACHE_TYPE(NODE),
+			 CACHE_TYPE(L1D),
+			 CACHE_TYPE(L1I),
+			 CACHE_TYPE(LL),
+			 CACHE_TYPE(DTLB),
+			 CACHE_TYPE(ITLB),
+			 CACHE_TYPE(BPU),
+			 CACHE_TYPE(NODE)
+			};
 #undef CACHE_TYPE
 
 #define CACHE_OP(X) {PERF_COUNT_HW_CACHE_OP_ ## X, #X}
-std::map<uint64_t, std::string> PerfCounter::CACHE_OP_MAP =
-	{
-         CACHE_OP(READ),
-	 CACHE_OP(WRITE),
-	 CACHE_OP(PREFETCH)
-	};
+		CACHE_OP_MAP =
+			{
+			 CACHE_OP(READ),
+			 CACHE_OP(WRITE),
+			 CACHE_OP(PREFETCH)
+			};
 #undef CACHE_OP
-
+		
 #define CACHE_RESULT(X) {PERF_COUNT_HW_CACHE_RESULT_ ## X, #X}
-std::map<uint64_t, std::string> PerfCounter::CACHE_RESULT_MAP =
-	{
-	 CACHE_RESULT(ACCESS),
-	 CACHE_RESULT(MISS)
-	};
+		CACHE_RESULT_MAP =
+			{
+			 CACHE_RESULT(ACCESS),
+			 CACHE_RESULT(MISS)
+			};
 #undef CACHE_RESULT
 
 	
+	}
+};
+
 	 
 									
 #endif

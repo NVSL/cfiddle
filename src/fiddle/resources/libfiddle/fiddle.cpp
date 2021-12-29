@@ -16,6 +16,7 @@ void write_stats(char *  filename) {
 extern "C"
 void clear_stats() {
 	get_dataset()->clear();
+	get_perf_counter()->reset_values();
 }
 
 
@@ -23,6 +24,13 @@ DataSet *get_dataset() {
 	static DataSet *ds = new DataSet();
 	return ds;
 }
+
+
+PerfCounter *get_perf_counter() {
+	static PerfCounter *pc = new PerfCounter();
+	return pc;
+}
+
 
 void __attribute__ ((constructor)) my_init(void) {
 }
