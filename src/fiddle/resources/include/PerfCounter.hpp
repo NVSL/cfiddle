@@ -11,6 +11,8 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
+#include "PerfCounterDefs.hpp"
+
 class CounterValue {
 public:
 	std::string name;
@@ -33,8 +35,9 @@ class PerfCounter {
 	std::map<uint64_t, std::string> CACHE_RESULT_MAP;
 	
 public:
-	PerfCounter() : lead_fd(-1), valid(true) {
+	PerfCounter() {
 		build_maps();
+		clear();
 	}
 
 	void add_counter(uint32_t type, uint64_t config, const std::string & name = "") {
@@ -89,6 +92,8 @@ public:
 			}
 		}
 		counter_values.clear();
+		lead_fd = -1;
+		valid = true;
 	}
 	const std::vector<CounterValue> & get_counters() {
 		return counter_values;
@@ -106,7 +111,7 @@ public:
 			return true;
 		}
 		
-	}
+ 	}
 	~PerfCounter() {
 		clear();
 	}
@@ -178,66 +183,35 @@ private:
 	}
 
 	void build_maps() {
-#define HW_COUNTER_NAME(x) {PERF_COUNT_HW_ ## x, std::string(#x)}
-#define SW_COUNTER_NAME(x) {PERF_COUNT_SW_ ## x, std::string(#x)}
+#define HW_COUNTER(x) {PERF_COUNT_HW_ ## x, std::string(#x)},
+#define SW_COUNTER(x) {PERF_COUNT_SW_ ## x, std::string(#x)},
 		COUNTER_NAME_MAP =
 			{
-			 HW_COUNTER_NAME(CPU_CYCLES),
-			 HW_COUNTER_NAME(INSTRUCTIONS),
-			 HW_COUNTER_NAME(CACHE_REFERENCES),
-			 HW_COUNTER_NAME(CACHE_MISSES),
-			 HW_COUNTER_NAME(BRANCH_INSTRUCTIONS),
-			 HW_COUNTER_NAME(BRANCH_MISSES),
-			 HW_COUNTER_NAME(BUS_CYCLES),
-			 HW_COUNTER_NAME(STALLED_CYCLES_FRONTEND),
-			 HW_COUNTER_NAME(STALLED_CYCLES_BACKEND),
-			 HW_COUNTER_NAME(REF_CPU_CYCLES),
-			 SW_COUNTER_NAME(CPU_CLOCK),
-			 SW_COUNTER_NAME(TASK_CLOCK),
-			 SW_COUNTER_NAME(PAGE_FAULTS),
-			 SW_COUNTER_NAME(CONTEXT_SWITCHES),
-			 SW_COUNTER_NAME(CPU_MIGRATIONS),
-			 SW_COUNTER_NAME(PAGE_FAULTS_MIN),
-			 SW_COUNTER_NAME(PAGE_FAULTS_MAJ),
-			 SW_COUNTER_NAME(ALIGNMENT_FAULTS),
-			 SW_COUNTER_NAME(EMULATION_FAULTS),
-			 SW_COUNTER_NAME(DUMMY)
+			 PERF_HW_COUNTERS
+			 PERF_SW_COUNTERS
 			};
+#undef HW_COUNTER
+#undef SW_COUNTER
 
-#define CACHE_TYPE(X) {PERF_COUNT_HW_CACHE_ ## X, #X}
+#define CACHE(X) {PERF_COUNT_HW_CACHE_ ## X, #X},
 		CACHE_TYPE_MAP =
 			{
-			 CACHE_TYPE(L1D),
-			 CACHE_TYPE(L1I),
-			 CACHE_TYPE(LL),
-			 CACHE_TYPE(DTLB),
-			 CACHE_TYPE(ITLB),
-			 CACHE_TYPE(BPU),
-			 CACHE_TYPE(NODE),
-			 CACHE_TYPE(L1D),
-			 CACHE_TYPE(L1I),
-			 CACHE_TYPE(LL),
-			 CACHE_TYPE(DTLB),
-			 CACHE_TYPE(ITLB),
-			 CACHE_TYPE(BPU),
-			 CACHE_TYPE(NODE)
+			 PERF_CACHES
 			};
-#undef CACHE_TYPE
+#undef CACHE
 
-#define CACHE_OP(X) {PERF_COUNT_HW_CACHE_OP_ ## X, #X}
+#define CACHE_OP(X) {PERF_COUNT_HW_CACHE_OP_ ## X, #X},
 		CACHE_OP_MAP =
 			{
-			 CACHE_OP(READ),
-			 CACHE_OP(WRITE),
-			 CACHE_OP(PREFETCH)
+			 PERF_CACHE_OPS
 			};
 #undef CACHE_OP
 		
-#define CACHE_RESULT(X) {PERF_COUNT_HW_CACHE_RESULT_ ## X, #X}
+#define CACHE_RESULT(X) {PERF_COUNT_HW_CACHE_RESULT_ ## X, #X},
+		
 		CACHE_RESULT_MAP =
 			{
-			 CACHE_RESULT(ACCESS),
-			 CACHE_RESULT(MISS)
+			 PERF_CACHE_RESULTS
 			};
 #undef CACHE_RESULT
 
@@ -245,6 +219,5 @@ private:
 	}
 };
 
-	 
-									
+
 #endif

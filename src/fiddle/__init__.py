@@ -56,14 +56,18 @@ def run_list(invocations, **kwargs):
     return IRList(Runner(InvDesc(**i), **kwargs).run() for i in invocations)
 
 
-def run(executable, function, arguments=None, **kwargs):
+def run(executable, function, arguments=None, perf_counters=None,  **kwargs):
+    if perf_counters is None:
+        perf_counters = []
+        
     if arguments is None:
         arguments = [{}]
+        
     invocations = map_product(executable=executable, function=function, arguments=arguments)
     IRList = get_config("InvocationResultsList_type")
     Runner = get_config("Runner_type")
     InvDesc = get_config("InvocationDescription_type")
-    return IRList(Runner(InvDesc(**i), **kwargs).run() for i in invocations)
+    return IRList(Runner(InvDesc(**i, perf_counters=perf_counters), **kwargs).run() for i in invocations)
 
 
 

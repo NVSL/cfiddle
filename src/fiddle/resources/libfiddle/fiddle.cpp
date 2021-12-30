@@ -16,7 +16,21 @@ void write_stats(char *  filename) {
 extern "C"
 void clear_stats() {
 	get_dataset()->clear();
-	get_perf_counter()->reset_values();
+}
+
+extern "C"
+void clear_perf_counters() {
+	get_perf_counter()->clear();
+}
+
+extern "C"
+void add_perf_counter(uint32_t type, uint64_t config){
+	get_perf_counter()->add_counter(type, config);
+}
+
+extern "C"
+void add_cache_perf_counter(int cache, int op, int result){
+	get_perf_counter()->add_cache_counter(cache, op, result);
 }
 
 
@@ -30,7 +44,6 @@ PerfCounter *get_perf_counter() {
 	static PerfCounter *pc = new PerfCounter();
 	return pc;
 }
-
 
 void __attribute__ ((constructor)) my_init(void) {
 }

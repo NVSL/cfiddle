@@ -3,18 +3,18 @@ import ctypes
 import tempfile
 import os
 from .util import environment
+from .perfcount import install_perf_counters, clear_perf_counters
 import csv
 import faulthandler
 
 faulthandler.enable()
-
 
 class LocalRunner(Runner):
 
     def __init__(self, invocation, result_factory=None):
         super().__init__(invocation, result_factory=result_factory)
         self._libfiddle = ctypes.CDLL("libfiddle.so")
-
+        
     def run(self):
         self._reset_data_collection()
         return_value = self._invoke_function()
@@ -42,8 +42,9 @@ class LocalRunner(Runner):
             raise UnknownSymbol(f"Couldn't find '{f}' in '{self.get_build_result().lib}'.  Did you declare it 'extern \"C\"'?.")
         
     def _reset_data_collection(self):
+        clear_perf_counters()
+        install_perf_counters(self._invocation.perf_counters)
         self._libfiddle.clear_stats()
-
 
     def _collect_data(self):
         output_file = self._build_results_path()
