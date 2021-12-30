@@ -46,30 +46,36 @@ def build(source=source, build_parameters=None, **kwargs):
     
     Builder = get_config("Builder_type")
     ExeDesc = get_config("ExecutableDescription_type")
-    return [Builder(ExeDesc(**p), **kwargs).build() for p in builds]
+    progress_bar = get_config("ProgressBar")
 
+    l = []
+    for p in progress_bar(builds):
+        print(p)
+        l.append(Builder(ExeDesc(**p), **kwargs).build())
+    return l
 
-def run_list(invocations, **kwargs):
-    IRList = get_config("InvocationResultsList_type")
-    Runner = get_config("Runner_type")
-    InvDesc = get_config("InvocationDescription_type")
-    return IRList(Runner(InvDesc(**i), **kwargs).run() for i in invocations)
-
-
-def run(executable, function, arguments=None, perf_counters=None,  **kwargs):
+def run_list(invocations, perf_counters=None, **kwargs):
     if perf_counters is None:
         perf_counters = []
-        
-    if arguments is None:
-        arguments = [{}]
-        
-    invocations = map_product(executable=executable, function=function, arguments=arguments)
+
     IRList = get_config("InvocationResultsList_type")
     Runner = get_config("Runner_type")
     InvDesc = get_config("InvocationDescription_type")
-    return IRList(Runner(InvDesc(**i, perf_counters=perf_counters), **kwargs).run() for i in invocations)
+    progress_bar = get_config("ProgressBar")
+    
+    l = IRList()
+    for i in progress_bar(invocations):
+        print(i)
+        l.append(Runner(InvDesc(**i), **kwargs).run())
+    return l
 
+def run(executable, function, arguments=None, **kwargs):
+    if arguments is None:
+        arguments = [{}]
 
+    invocations = map_product(executable=executable, function=function, arguments=arguments)
+    return run_list(invocations, **kwargs)
+        
 
 def libfiddle_dir_path():
     PACKAGE_DATA_PATH = pkg_resources.resource_filename('fiddle', 'resources/')    

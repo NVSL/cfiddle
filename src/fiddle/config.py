@@ -7,7 +7,7 @@ from .Runner import InvocationResult, InvocationDescription
 from .LocalRunner import LocalRunner
 from .CProtoParser import CProtoParser
 from .source import FullyInstrumentedExecutable
-
+from tqdm import tqdm
 from contextlib import contextmanager
 
 
@@ -19,7 +19,8 @@ default_config = dict(Executable_type=FullyInstrumentedExecutable,
                       ExecutableDescription_type=ExecutableDescription,
                       InvocationDescription_type=InvocationDescription,
                       ProtoParse_type=CProtoParser,
-                      FIDDLE_BUILD_ROOT=".fiddle/builds")
+                      FIDDLE_BUILD_ROOT=".fiddle/builds",
+                      ProgressBar=tqdm)
 
 
 fiddle_config_stack = []
