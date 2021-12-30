@@ -50,7 +50,6 @@ def build(source=source, build_parameters=None, **kwargs):
 
     l = []
     for p in progress_bar(builds):
-        print(p)
         l.append(Builder(ExeDesc(**p), **kwargs).build())
     return l
 
@@ -65,7 +64,6 @@ def run_list(invocations, perf_counters=None, **kwargs):
     
     l = IRList()
     for i in progress_bar(invocations):
-        print(i)
         l.append(Runner(InvDesc(**i), **kwargs).run())
     return l
 
