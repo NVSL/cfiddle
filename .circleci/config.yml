@@ -45,7 +45,7 @@ jobs:
       - attach_workspace:
           at: /tmp/fiddle
       - run: ls -lRa /tmp/fiddle
-      - run: sudo bash /tmp/fiddle/install_prereqs.sh
+      - run: sudo bash ./install_prereqs.sh
       - run:
           name: Install fiddle
           command: pip install /tmp/fiddle/packages/*.tar.gz
