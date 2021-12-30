@@ -12,9 +12,10 @@ RUN bash ./install_prereqs.sh
 
 
 ##### Install fiddle
-USER ${NB_USER}
 
-COPY .clean_checkout ./fiddle
+COPY  .clean_checkout ./fiddle
+RUN  chown -R ${NB_USER} ./fiddle
+USER ${NB_USER}
 RUN cd fiddle; pip install  .
 ENV LD_LIBRARY_PATH  /opt/conda/lib/python3.9/site-packages/fiddle/resources/libfiddle
 
