@@ -21,7 +21,7 @@ It's features include:
 5. Works great with [Pandas](https://pandas.pydata.org/) and  [Jupyter Notebook/Lab](https://jupyter.org/).
 
 The best way to learn about Fiddle is to try it.  You can [run the
-examples](https://mybinder.org/v2/gh/NVSL/fiddle/main?labpath=README.ipynb).
+examples](https://mybinder.org/v2/gh/NVSL/fiddle/main?labpath=README.ipynb) (this can take a while to load).
 
 Or run it locally with Docker:
 
@@ -30,6 +30,50 @@ docker run -it --publish published=8888,target=8888 stevenjswanson/fiddle:latest
 ```
 
 and then visit http://localhost:8888/lab/tree/README.ipynb.
+
+## Local Installation
+
+Fiddle depends on some system packages and python's `wheel`.  Setup a virtual environment:
+
+```
+python -m venv fiddle-venv
+```
+
+Become root, so you can install the systetm packages with `apt-get` with 
+
+```
+sudo bash
+. fiddle-venv/bin/activate	
+make install-prereqs
+exit
+```
+
+Install fiddle:
+
+```
+. fiddle-venv/bin/activate
+pip install .
+```
+
+Run the tests:
+
+```
+make test
+```
+
+## Common Problems
+
+Fiddle needs `LD_LIBRARY_PATH` set properly to work, and it can't set it itself reliably.  If you get
+
+```
+OSError: libfiddle.so: cannot open shared object file: No such file or directory
+```
+
+You can update `LD_LIBRARY_PATH` with:
+
+```
+$(set-fiddle-ld-path)
+```
 
 ## Examples
 
