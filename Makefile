@@ -26,34 +26,17 @@ package-test:
 	$(MAKE) -C tests test
 
 
-.PHONY: dist-test
-dist-test:
-	rm -rf .dist-test
-	mkdir -p .dist-test
-
-
 .PHONY: docker
 docker:
+	rm -rf .clean_checkout
+	git clone . .clean_checkout
 	docker build --no-cache --progress plain -t stevenjswanson/fiddle:latest .
-
-.PHONY: push-docker
-docker-push: docker-test
-	docker push stevenjswanson/fiddle:latest
 
 .PHONY: docker-test
 docker-test: docker
 	docker run -it -w /home/jovyan/fiddle/tests docker.io/stevenjswanson/fiddle:latest make test
 
-.PHONY: install-prereqs
-install-prereqs:
-	apt-get update --fix-missing; apt-get update
-	apt-get install -y less emacs-nox gcc make g++ cmake gdb build-essential graphviz curl && apt-get clean -y
-        #gcc-8 g++-8 libhdf5-dev uuid-runtime  openssh-client time  default-jdk
-        ##### Redare2
-	curl -L https://github.com/radareorg/radare2/releases/download/5.3.1/radare2-dev_5.3.1_amd64.deb -o /tmp/radare2-dev_5.3.1_amd64.deb
-	curl -L https://github.com/radareorg/radare2/releases/download/5.3.1/radare2_5.3.1_amd64.deb -o /tmp/radare2_5.3.1_amd64.deb
-	apt install /tmp/radare2_5.3.1_amd64.deb  /tmp/radare2-dev_5.3.1_amd64.deb
-        ##### python stuff
-	pip install wheel			   
-        ##### Google test
-	(cd /tmp; git clone https://github.com/google/googletest.git && cd googletest && cmake CMakeLists.txt; make install)
+
+.PHONY: push-docker
+docker-push: docker-test
+	docker push stevenjswanson/fiddle:latest
