@@ -49,6 +49,9 @@ namespace Tests {
 	}
 
 	TEST_F(libfiddleTests, perf_count_CPU_CYCLES) {
+		if (!get_perf_counter()->performance_counters_enabled()) {
+			GTEST_SKIP();
+		}
 		get_perf_counter()->add_counter(PERF_TYPE_HARDWARE, PERF_COUNT_HW_CPU_CYCLES);
 
 		start_measurement();

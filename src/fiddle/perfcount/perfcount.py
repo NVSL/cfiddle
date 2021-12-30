@@ -27,9 +27,14 @@ def install_perf_counters(perf_counters):
         else:
             raise ValueError("Expected instance of 'PerformanceCounterSpec' not {type(pc).__name__}.")
 
+def are_perf_counters_available():
+    return _load_libfiddle().are_perf_counters_available()
+
+
 def clear_perf_counters():
     _load_libfiddle().clear_perf_counters()
 
 
 def _load_libfiddle():
     return  ctypes.CDLL("libfiddle.so")
+

@@ -9,15 +9,16 @@ namespace Tests {
 	class PerfCountTests:  public ::testing::Test {
 	};	      
 
-	void skip_if_wont_work(const PerfCounter & counter) {
-		if (!counter.performance_counters_enabled())
-			GTEST_SKIP();
-	}
-
+#define SKIP_FOR_NO_PERFCOUNT_PERMS \
+	do  {							\
+		if (!counter.performance_counters_enabled())	\
+			GTEST_SKIP();				\
+	} while (0)
+	
 	TEST_F(PerfCountTests, test_CPU_CYCLES) {
 		
 		PerfCounter counter;
-		skip_if_wont_work(counter);
+		SKIP_FOR_NO_PERFCOUNT_PERMS;
 		counter.add_counter(PERF_TYPE_HARDWARE, PERF_COUNT_HW_CPU_CYCLES);
 		ASSERT_EQ(counter.check_valid(), true);
 		counter.start();
@@ -36,7 +37,7 @@ namespace Tests {
 	
 	TEST_F(PerfCountTests, test_CPI) {
 		PerfCounter counter;
-		skip_if_wont_work(counter);
+		SKIP_FOR_NO_PERFCOUNT_PERMS;
 		counter.add_counter(PERF_TYPE_HARDWARE, PERF_COUNT_HW_CPU_CYCLES);
 		ASSERT_EQ(counter.check_valid(), true);
 		counter.add_counter(PERF_TYPE_HARDWARE, PERF_COUNT_HW_INSTRUCTIONS);
@@ -76,6 +77,11 @@ namespace Tests {
 	}
 
 
+	// TEST_F(PerfCountTests, test_disabled_perfcount) {
+	// 	PerfCounter counter;
+	// 	ASSERT_EQ(counter.performance_counters_enabled(), false);
+	// }
+	
 	class CacheNamingFixture: public ::testing::TestWithParam<std::tuple<uint64_t, uint64_t, uint64_t, const char*>> {};
 	
 	TEST_P(CacheNamingFixture, test_CacheNaming) {
@@ -145,7 +151,7 @@ namespace Tests {
 	
 	TEST_F(PerfCountTests, test_CacheHits) {
 		PerfCounter counter;
-		skip_if_wont_work(counter);
+		SKIP_FOR_NO_PERFCOUNT_PERMS;
 		auto buffer = new int[1024];
 		counter.add_cache_counter(PERF_COUNT_HW_CACHE_L1D,
 					  PERF_COUNT_HW_CACHE_OP_READ,
@@ -169,7 +175,7 @@ namespace Tests {
 	TEST_F(PerfCountTests, test_CantCollect) {
 
 		PerfCounter counter;
-		skip_if_wont_work(counter);
+		SKIP_FOR_NO_PERFCOUNT_PERMS;
 		
 		counter.add_cache_counter(PERF_COUNT_HW_CACHE_L1D,
 					  PERF_COUNT_HW_CACHE_OP_READ,
@@ -185,88 +191,6 @@ namespace Tests {
 	}
 
 	
-// 	TEST_F(PerfTests, cycle_count) {
-// 		struct perf_event_attr pe;
-// 		long long small;
-// 		long long big;
-// 		int fd;
-
-// 		init_perf_event_attr(pe, PERF_TYPE_HARDWARE, PERF_COUNT_HW_CPU_CYCLES);
-		
-// 		fd = perf_event_open(&pe, 0, -1, -1, 0);
-// 		if (fd == -1) {
-// 			fprintf(stderr, "Error opening leader %llx\n", pe.config);
-// 			exit(EXIT_FAILURE);
-// 		}
-
-// 		ioctl(fd, PERF_EVENT_IOC_RESET, 0);
-// 		ioctl(fd, PERF_EVENT_IOC_ENABLE, 0);
-// 		volatile int i;
-// 		for(i = 0; i < 10000; i++) {
-// 		}
-
-// 		ioctl(fd, PERF_EVENT_IOC_DISABLE, 0);
-// 		read(fd, &small, sizeof(small));
-
-		
-// 		ioctl(fd, PERF_EVENT_IOC_RESET, 0);
-// 		ioctl(fd, PERF_EVENT_IOC_ENABLE, 0);
-
-// 		for(i = 0; i < 100000; i++) {
-// 		}
-// 		ioctl(fd, PERF_EVENT_IOC_DISABLE, 0);
-// 		read(fd, &big, sizeof(big));
-
-		
-// 		ASSERT_NEAR((big+0.0)/(small+0.0),10.0,0.2);
-// 		close(fd);
-// 	}
-
-// 	TEST_F(PerfTests, cycle_CPI) {
-// 		struct perf_event_attr pe;
-// 		long long small;
-// 		long long big;
-// 		int lead_fd;
-// 		//int second_fd;
-
-// 		init_perf_event_attr(pe, PERF_TYPE_HARDWARE, PERF_COUNT_HW_CPU_CYCLES);
-		
-// 		lead_fd = perf_event_open(&pe, 0, -1, -1, 0);
-// 		if (lead_fd == -1) {
-// 			fprintf(stderr, "Error opening leader %llx %s\n", pe.config, strerror(errno));
-// 			exit(EXIT_FAILURE);
-// 		}
-
-// 		init_perf_event_attr(pe, PERF_TYPE_HARDWARE, PERF_COUNT_HW_INSTRUCTIONS);
-		
-// 		perf_event_open(&pe, 0, -1, lead_fd, 0);
-// 		if (lead_fd == -1) {
-// 			fprintf(stderr, "Error opening second %llx %s\n", pe.config, strerror(errno));
-// 			exit(EXIT_FAILURE);
-// 		}
-
-// 		ioctl(lead_fd, PERF_EVENT_IOC_RESET, 0);
-// 		ioctl(lead_fd, PERF_EVENT_IOC_ENABLE, 0);
-// 		volatile int i;
-// 		for(i = 0; i < 10000; i++) {
-// 		}
-
-// 		ioctl(lead_fd, PERF_EVENT_IOC_DISABLE, 0);
-// 		read(lead_fd, &small, sizeof(small));
-
-		
-// 		ioctl(lead_fd, PERF_EVENT_IOC_RESET, 0);
-// 		ioctl(lead_fd, PERF_EVENT_IOC_ENABLE, 0);
-
-// 		for(i = 0; i < 100000; i++) {
-// 		}
-// 		ioctl(lead_fd, PERF_EVENT_IOC_DISABLE, 0);
-// 		read(lead_fd, &big, sizeof(big));
-
-		
-// 		ASSERT_NEAR((big+0.0)/(small+0.0),10.0,0.2);
-// 		close(lead_fd);
-// 	}
 }
 
 

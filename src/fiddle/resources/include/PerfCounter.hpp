@@ -108,10 +108,24 @@ public:
 		if (fd == -1) {
 			return false;
 		} else {
-			return true;
+			char buf[10];
+			int r = read(fd, buf, 10);
+			if (r == -1) {
+				close(fd);
+				return false;
+			} else {
+				buf[r] = 0;
+				int paranoia_level = atoi(buf);
+				if (paranoia_level > 2) {
+					close(fd);
+					return false;
+				}
+			}
 		}
-		
+		close(fd);
+		return true;
  	}
+	
 	~PerfCounter() {
 		clear();
 	}

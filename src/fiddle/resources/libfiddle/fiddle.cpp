@@ -34,6 +34,11 @@ void add_cache_perf_counter(int cache, int op, int result){
 }
 
 
+extern "C"
+bool are_perf_counters_available() {
+	return get_perf_counter()->performance_counters_enabled();
+}
+
 DataSet *get_dataset() {
 	static DataSet *ds = new DataSet();
 	return ds;
