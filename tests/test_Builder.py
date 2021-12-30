@@ -1,3 +1,4 @@
+from fiddle import *
 from fiddle.Builder import Builder, ExecutableDescription, Executable
 from fiddle.config import get_config
 import os
