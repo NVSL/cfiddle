@@ -64,7 +64,7 @@ def run_list(invocations, perf_counters=None, **kwargs):
     
     l = IRList()
     for i in progress_bar(invocations):
-        l.append(Runner(InvDesc(**i), **kwargs).run())
+        l.append(Runner(InvDesc(**i, perf_counters=perf_counters), **kwargs).run())
     return l
 
 def run(executable, function, arguments=None, **kwargs):
