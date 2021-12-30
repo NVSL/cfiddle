@@ -4,8 +4,9 @@
 .PHONY: default
 default: 
 
-EXAMPLES=../examples/sorting.ipynb  ../examples/README.ipynb ../examples/VirtualMethods.ipynb 
-test: test_DataSet
+EXAMPLES=../examples/sorting.ipynb  ../examples/README.ipynb ../examples/VirtualMethods.ipynb
+CPP_TESTS=test_DataSet test_libfiddle test_PerfCounter
+test: $(CPP_TESTS)
 	pytest --nbmake . $(EXAMPLES)
 
 CXXFLAGS=-I../src/fiddle/resources/include -MMD -g -Wall -Werror
@@ -26,4 +27,4 @@ help:
 
 .PHONY: clean
 clean:
-	rm -f test_DataSet *.o
+	rm -f $(CPP_TESTS) *.o

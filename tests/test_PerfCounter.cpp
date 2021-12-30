@@ -56,13 +56,23 @@ namespace Tests {
 
 		ASSERT_GT(results[0].value, 0);
 		ASSERT_GT(results[1].value, 0);
-		counter.reset();
+		counter.reset_values();
 		ASSERT_EQ(counter.check_valid(), true);
 		
 		results = counter.get_counters();
 		ASSERT_EQ(counter.check_valid(), true);
 		ASSERT_EQ(results[0].value, 0);
 		ASSERT_EQ(results[1].value, 0);
+	}
+
+	TEST_F(PerfCountTests, test_clear) {
+		PerfCounter counter;
+		counter.add_counter(PERF_TYPE_HARDWARE, PERF_COUNT_HW_CPU_CYCLES);
+		ASSERT_EQ(counter.get_counters().size(), 1);
+		counter.reset_values();
+		ASSERT_EQ(counter.get_counters().size(), 1);
+		counter.clear();
+		ASSERT_EQ(counter.get_counters().size(), 0);
 	}
 
 
