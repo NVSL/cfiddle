@@ -34,7 +34,7 @@ docker:
 
 .PHONY: docker-test
 docker-test: docker
-	docker run -it -w /home/jovyan/fiddle/tests docker.io/stevenjswanson/fiddle:latest make test
+	docker run -it --privileged -w /home/jovyan/fiddle/tests docker.io/stevenjswanson/fiddle:latest make test
 
 
 .PHONY: push-docker
