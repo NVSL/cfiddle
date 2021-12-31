@@ -2,13 +2,16 @@ from .Builder import Executable
 import collections
 import os
 from .util import type_check, type_check_list
+from .perfcount import PerformanceCounterSpec
 
 class InvocationDescription:
-    def __init__(self, executable, function, arguments):
+    def __init__(self, executable, function, arguments, perf_counters=None):
+        if perf_counters is None:
+            perf_counters = []
         self.executable = executable
         self.function = function
         self.arguments = arguments
-
+        self.perf_counters = perf_counters
         self._raise_on_invalid_types()
 
     def _raise_on_invalid_types(self):
@@ -17,7 +20,7 @@ class InvocationDescription:
         type_check(self.function, str)
         type_check(self.arguments, dict)
         type_check_list(self.arguments.keys(), str)
-        
+        type_check_list(self.perf_counters, PerformanceCounterSpec)
     
 class Runner:
 

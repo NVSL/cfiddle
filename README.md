@@ -149,3 +149,10 @@ loop:
 	.cfi_endproc
 ```
 
+## Saving Your Work
+
+If you want to save changes you make to any of the examples, you'll need to run docker something like this:
+
+```
+docker run -it --publish published=8888,target=8888 --mount type=bind,source=$HOME,dst=/home/jovyan -w /home/jovyan/fiddle_work/fiddle  stevenjswanson/fiddle:latest  jupyter lab --LabApp.token=''
+```

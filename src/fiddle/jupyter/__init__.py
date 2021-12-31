@@ -2,6 +2,7 @@ from fiddle.config import set_config
 from .source import FullyInstrumentedExecutable
 from .util import compare
 from .util import html_parameters
+from tqdm.notebook import tqdm
 
 def running_under_jupyter():
     """
@@ -13,4 +14,5 @@ def running_under_jupyter():
 
 def configure_for_jupyter():
     set_config("Executable_type", FullyInstrumentedExecutable) 
+    set_config("ProgressBar", tqdm)
 

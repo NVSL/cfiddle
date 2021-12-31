@@ -1,3 +1,4 @@
+from fiddle import *
 from fiddle.Builder import Builder, ExecutableDescription, Executable
 from fiddle.config import get_config
 import os
@@ -56,3 +57,23 @@ def test_mixins():
     result = t.build()
     assert isinstance(result, MyResult)
     assert result.my_result() == "my_result"
+
+    
+def test_invalid_parameters():
+    with pytest.raises(ValueError):
+        build("test_src/test.cpp", dict(OPTIMIZE=None))
+
+    with pytest.raises(ValueError):
+        build("test_src/test.cpp", dict(OPTIMIZE=True))
+
+    with pytest.raises(ValueError):
+        build("test_src/test.cpp", dict(OPTIMIZE=[]))
+
+    with pytest.raises(ValueError):
+        build("test_src/test.cpp", dict(OPTIMIZE={}))
+
+    with pytest.raises(ValueError):
+        build("test_src/test.cpp", {4:""})
+
+        
+    

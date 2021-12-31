@@ -6,3 +6,5 @@ test_DataSet
 .fiddle
 .ipynb_checkpoints
 *.asm
+test_PerfCounter
+test_libfiddle

@@ -6,7 +6,7 @@ SRCS=./fiddle.cpp
 
 OBJS=$(SRCS:.cpp=.o)
 
-default: libfiddle.so
+default: libfiddle.so export_perf_count_macros ../../perfcount/perfcount_defs.py
 FULL_SO_PATH=$(realpath ./)
 test:
 	echo $(OBJS)
@@ -18,3 +18,9 @@ libfiddle.a: $(OBJS)
 libfiddle.so: $(OBJS)
 	$(CXX) $^ -shared -o $@
 	@echo Built $(FULL_SO_PATH)/$@
+
+export_perf_count_macros: export_perf_count_macros.o
+	$(CXX) export_perf_count_macros.o -o export_perf_count_macros
+
+../../perfcount/perfcount_defs.py: export_perf_count_macros
+	./export_perf_count_macros > $@
