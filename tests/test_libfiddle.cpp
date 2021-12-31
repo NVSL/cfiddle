@@ -26,7 +26,7 @@ namespace Tests {
 		sleep(1);
 		end_measurement();
 		
-		ASSERT_NEAR(get_dataset()->current_row().get_datum("ET").as<double>(), 1.0,0.1);
+		ASSERT_NEAR(get_dataset()->current_row().get_datum("ET").as<double>(), 1.0, 0.15);
 	}
 	
 	TEST_F(libfiddleTests, tag_test) {

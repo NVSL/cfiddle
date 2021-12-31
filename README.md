@@ -31,49 +31,6 @@ docker run -it --publish published=8888,target=8888 stevenjswanson/fiddle:latest
 
 and then visit http://localhost:8888/lab/tree/README.ipynb.
 
-## Local Installation
-
-Fiddle depends on some system packages and python's `wheel`.  Setup a virtual environment:
-
-```
-python -m venv fiddle-venv
-```
-
-Become root, so you can install the systetm packages with `apt-get` with 
-
-```
-sudo bash
-. fiddle-venv/bin/activate	
-make install-prereqs
-exit
-```
-
-Install fiddle:
-
-```
-. fiddle-venv/bin/activate
-pip install .
-```
-
-Run the tests:
-
-```
-make test
-```
-
-## Common Problems
-
-Fiddle needs `LD_LIBRARY_PATH` set properly to work, and it can't set it itself reliably.  If you get
-
-```
-OSError: libfiddle.so: cannot open shared object file: No such file or directory
-```
-
-You can update `LD_LIBRARY_PATH` with:
-
-```
-$(set-fiddle-ld-path)
-```
 
 ## Examples
 
@@ -148,6 +105,52 @@ loop:
 	ret
 	.cfi_endproc
 ```
+
+
+## Local Installation
+
+Fiddle depends on some system packages and python's `wheel`.  Setup a virtual environment:
+
+```
+python -m venv fiddle-venv
+```
+
+Become root, so you can install the systetm packages with `apt-get` with 
+
+```
+sudo bash
+. fiddle-venv/bin/activate	
+make install-prereqs
+exit
+```
+
+Install fiddle:
+
+```
+. fiddle-venv/bin/activate
+pip install .
+```
+
+Run the tests:
+
+```
+make test
+```
+
+## Common Problems
+
+Fiddle needs `LD_LIBRARY_PATH` set properly to work, and it can't set it itself reliably.  If you get
+
+```
+OSError: libfiddle.so: cannot open shared object file: No such file or directory
+```
+
+You can update `LD_LIBRARY_PATH` with:
+
+```
+$(set-fiddle-ld-path)
+```
+
 
 ## Saving Your Work
 
