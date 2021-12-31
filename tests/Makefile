@@ -4,7 +4,7 @@
 .PHONY: default
 default: 
 
-EXAMPLES=../examples/sorting.ipynb  ../examples/README.ipynb ../examples/VirtualMethods.ipynb
+EXAMPLES=../examples/sorting.ipynb  ../examples/README.ipynb ../examples/VirtualMethods.ipynb ../examples/CacheMeasurement.ipynb
 CPP_TESTS=test_DataSet test_libfiddle test_PerfCounter
 test: $(CPP_TESTS)
 	pytest --nbmake . $(EXAMPLES)

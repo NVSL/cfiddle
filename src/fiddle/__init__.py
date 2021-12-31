@@ -17,7 +17,8 @@ __all__ = [
     "configure_for_jupyter",
     "sanity_test",
     "UnknownSymbol",
-    "changes_in"
+    "changes_in",
+    "exp_range"
 ]
 
 from .Data import InvocationResultsList
@@ -25,7 +26,7 @@ from .Builder import ExecutableDescription, Executable
 from .MakeBuilder import MakeBuilder
 from .Runner import InvocationDescription, InvocationResult
 from .LocalRunner import LocalRunner, UnknownSymbol
-from .util import map_product, changes_in
+from .util import map_product, changes_in, exp_range
 from .Code import code
 from .config import get_config, set_config
 from .jupyter import configure_for_jupyter
@@ -49,7 +50,7 @@ def build(source=source, build_parameters=None, **kwargs):
     progress_bar = get_config("ProgressBar")
 
     l = []
-    for p in progress_bar(builds):
+    for p in progress_bar(builds, miniters=1):
         l.append(Builder(ExeDesc(**p), **kwargs).build())
     return l
 
@@ -63,7 +64,7 @@ def run_list(invocations, perf_counters=None, **kwargs):
     progress_bar = get_config("ProgressBar")
     
     l = IRList()
-    for i in progress_bar(invocations):
+    for i in progress_bar(invocations, miniters=1):
         l.append(Runner(InvDesc(**i, perf_counters=perf_counters), **kwargs).run())
     return l
 
