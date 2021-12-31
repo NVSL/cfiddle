@@ -44,7 +44,8 @@ setup(
         "IPython",
         "nbmake",
         "matplotlib",
-        "tqdm"
+        "tqdm",
+        "ipywidgets"
     ],
     description="Fiddle makes it easy to ask and answers questions about the compilation and execution of smallish programs written in C or C++.",
     long_description=open("README.md").read(),
