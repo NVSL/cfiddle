@@ -77,8 +77,15 @@ def test_working_directory():
             assert os.getcwd() == d
         assert os.getcwd() == before
 
+@pytest.mark.parametrize("parameters,result", [
+    ((1,8), [1,2,4,8]),
+    ((1,32,4), [1,4,16,64]),
+    ((1,8,1.5), [1,2,3,5,7,11])
+])
+def test_exp_range(parameters, result):
+    assert list(exp_range(*parameters)) == result
 
-
+    
 # def test_changes_in():
 #     if True or os.environ.get("CIRCLECI", "false") == "true":
 #         pytest.skip("Doesn't work in Circle CI")
