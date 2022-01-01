@@ -78,7 +78,7 @@ def run(executable, function, arguments=None, **kwargs):
 
 def libfiddle_dir_path():
     PACKAGE_DATA_PATH = pkg_resources.resource_filename('fiddle', 'resources/')    
-    return os.path.join(PACKAGE_DATA_PATH, "libfiddle")
+    return os.path.join(PACKAGE_DATA_PATH, "libfiddle", "build")
 
 def print_libfiddle_dir():
     print(libfiddle_dir_path())

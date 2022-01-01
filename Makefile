@@ -40,3 +40,7 @@ docker-test: docker
 .PHONY: push-docker
 docker-push: docker-test
 	docker push stevenjswanson/fiddle:latest
+
+.PHONY: docker-pull
+docker-pull:
+	docker pull stevenjswanson/fiddle:latest
