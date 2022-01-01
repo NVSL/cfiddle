@@ -8,7 +8,7 @@ __all__ = [
     "MakeBuilder",
     "InvocationDescription",
     "LocalRunner",
-    "map_product",
+    "arg_map",
     "code",
     "build_and_run",
     "build",
@@ -26,7 +26,7 @@ from .Builder import ExecutableDescription, Executable
 from .MakeBuilder import MakeBuilder
 from .Runner import InvocationDescription, InvocationResult
 from .LocalRunner import LocalRunner, UnknownSymbol
-from .util import map_product, changes_in, exp_range
+from .util import arg_map, changes_in, exp_range
 from .Code import code
 from .config import get_config, set_config
 from .jupyter import configure_for_jupyter
@@ -43,7 +43,7 @@ def build(source=source, build_parameters=None, **kwargs):
     if build_parameters is None:
        build_parameters = [{}]
 
-    builds = map_product(source=source, build_parameters=build_parameters)
+    builds = arg_map(source=source, build_parameters=build_parameters)
     
     Builder = get_config("Builder_type")
     ExeDesc = get_config("ExecutableDescription_type")
@@ -72,7 +72,7 @@ def run(executable, function, arguments=None, **kwargs):
     if arguments is None:
         arguments = [{}]
 
-    invocations = map_product(executable=executable, function=function, arguments=arguments)
+    invocations = arg_map(executable=executable, function=function, arguments=arguments)
     return run_list(invocations, **kwargs)
         
 

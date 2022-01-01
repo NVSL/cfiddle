@@ -30,8 +30,8 @@ import tempfile
         "b": 2,
         "c": 3}])
 ])
-def test_map_product(inp, output):
-    assert map_product(**inp) == output
+def test_arg_map(inp, output):
+    assert arg_map(**inp) == output
 
 
 def test_type_check():

@@ -9,6 +9,10 @@ CPP_TESTS=test_DataSet test_libfiddle test_PerfCounter
 test: $(CPP_TESTS)
 	pytest --nbmake . $(EXAMPLES)
 
+.PHONY: test
+examples:
+	pytest --nbmake $(EXAMPLES)
+
 CXXFLAGS=-I../src/fiddle/resources/include -MMD -g -Wall -Werror
 -include $(wildcard *.d)
 

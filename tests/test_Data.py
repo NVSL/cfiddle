@@ -19,7 +19,7 @@ def test_no_data(test_cpp):
 
 def test_lots_of_no_data(test_cpp):
 
-    results = run(test_cpp, ["sum", "product"], arguments=map_product(a=[0,1], b=[2,3]))
+    results = run(test_cpp, ["sum", "product"], arguments=arg_map(a=[0,1], b=[2,3]))
     print (len(results.as_df()))
     print (results.as_df())
     assert len(results) == 8
@@ -32,7 +32,7 @@ def test_lots_of_no_data(test_cpp):
 def test_csv():
     import csv
     
-    exec_specs = [ExecutableDescription(*es) for es in product(["test_src/write_dataset.cpp"], map_product(TEST=["A", "B"]))]
+    exec_specs = [ExecutableDescription(*es) for es in product(["test_src/write_dataset.cpp"], arg_map(TEST=["A", "B"]))]
     executables = [MakeBuilder(es, rebuild=True, verbose=True).build() for es in exec_specs]
     
     with tempfile.NamedTemporaryFile() as combined:
@@ -71,11 +71,11 @@ def test_csv():
             assert rows[3]['z'] == "2"
 
 def test_json(test_cpp):
-    exe = run(test_cpp, ["sum", "product"], arguments=map_product(a=[1,2], b=[2,3]))
+    exe = run(test_cpp, ["sum", "product"], arguments=arg_map(a=[1,2], b=[2,3]))
     exe.as_json()
 
 def test_dicts(test_cpp):
-    exe = run(test_cpp, ["sum", "product"], arguments=map_product(a=[1,2], b=[2,3]))
+    exe = run(test_cpp, ["sum", "product"], arguments=arg_map(a=[1,2], b=[2,3]))
     exe.as_dicts()
     
     

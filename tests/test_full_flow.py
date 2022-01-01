@@ -43,9 +43,9 @@ def test_everything_explicit():
 def test_maps_experiment():
 
     executables = [MakeBuilder(ExecutableDescription("test_src/std_maps.cpp", build_parameters=p), verbose=True, rebuild=True).build()
-                               for p in map_product(OPTIMIZE=["-O0", "-O3"])]
+                               for p in arg_map(OPTIMIZE=["-O0", "-O3"])]
 
-    invocations = [InvocationDescription(**i) for i in map_product(executable=executables, function=["ordered", "unordered"], arguments=map_product(count=map(lambda x: 2**x, range(0,10))))]
+    invocations = [InvocationDescription(**i) for i in arg_map(executable=executables, function=["ordered", "unordered"], arguments=arg_map(count=map(lambda x: 2**x, range(0,10))))]
 
     results = InvocationResultsList(LocalRunner(i).run() for i in invocations)
     
@@ -82,7 +82,7 @@ def test_build_parameter():
     assert len(t) == 1
     
     t = build(source="test_src/std_maps.cpp",
-              build_parameters=map_product(OPTIMIZE=["-O0", "-O3"]),
+              build_parameters=arg_map(OPTIMIZE=["-O0", "-O3"]),
               verbose=True)
     assert t[0].build_spec.build_parameters == dict(OPTIMIZE="-O0")
     assert t[1].build_spec.build_parameters == dict(OPTIMIZE="-O3")
@@ -90,7 +90,7 @@ def test_build_parameter():
 
 def test_build_multi_build():
     t = build(source=["test_src/std_maps.cpp","test_src/test.cpp"],
-              build_parameters=map_product(OPTIMIZE=["-O0", "-O1"]))
+              build_parameters=arg_map(OPTIMIZE=["-O0", "-O1"]))
     assert t[0].build_spec.build_parameters == dict(OPTIMIZE="-O0")
     assert t[2].build_spec.build_parameters == dict(OPTIMIZE="-O0")
     assert len(t) == 4
@@ -111,9 +111,9 @@ def test_run_list(test_cpp):
     assert len(t) == 1
     assert t[0].return_value == 3
     
-    t = run_list(invocations=map_product(executable=[test_cpp],
+    t = run_list(invocations=arg_map(executable=[test_cpp],
                                          function=["sum", "product"],
-                                         arguments=map_product(a=[1,2], b=[3,4])))
+                                         arguments=arg_map(a=[1,2], b=[3,4])))
     assert len(t) == 8
     assert t[1].return_value == 5
 
@@ -127,7 +127,7 @@ def test_run_simple(test_cpp):
 def test_run_combo(test_cpp):
     t = run(executable=test_cpp,
              function=["sum", "product"],
-             arguments=map_product(a=[1,2], b=[3,4]))
+             arguments=arg_map(a=[1,2], b=[3,4]))
     
     assert len(t) == 8
     assert t[1].return_value == 5
@@ -146,11 +146,11 @@ def test_no_args(test_cpp):
 def test_streamline():
 
     executables = build(source="test_src/std_maps.cpp",
-                        build_parameters=map_product(OPTIMIZE=["-O0", "-O3"]),
+                        build_parameters=arg_map(OPTIMIZE=["-O0", "-O3"]),
                         verbose=True, rebuild=True)
 
     results = run(executable=executables,
                   function=["ordered", "unordered"],
-                  arguments=map_product(count=map(lambda x: 2**x, range(0,10))))
+                  arguments=arg_map(count=map(lambda x: 2**x, range(0,10))))
     print(results.as_df())
     
