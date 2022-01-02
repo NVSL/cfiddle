@@ -9,38 +9,42 @@ dist:
 
 .PHONY:do-dist
 do-dist:
-#	pip install --upgrade pytest wheel build ; pip install dist/fiddle-0.1-py3-none-any.whl; cd tests; pytest .
 	pip install --upgrade pytest wheel build 
 	python -m build
-#pip install dist/fiddle-0.1.tar.gz
 
 .PHONY:
 test-dist:
 	(. build_release/dist_test/bin/activate; $(MAKE) -C build_release package-test)
 
 .PHONY:test
-test: dist-test package-test
+test:  package-test docker-test
 
 .PHONY: package-test
 package-test:
 	$(MAKE) -C tests test
 
+FIDDLE_DOCKER_IMAGE=fiddle-devel
 
 .PHONY: docker
 docker:
-	rm -rf .clean_checkout
-	git clone . .clean_checkout
-	docker build --no-cache --progress plain -t stevenjswanson/fiddle:latest .
+	docker build --no-cache --progress plain -t stevenjswanson/$(FIDDLE_DOCKER_IMAGE):latest .
 
 .PHONY: docker-test
 docker-test: docker
-	docker run -it --privileged -w /home/jovyan/fiddle/tests docker.io/stevenjswanson/fiddle:latest make test
-
+	docker run -it --privileged -w /home/jovyan/fiddle/tests docker.io/stevenjswanson/$(FIDDLE_DOCKER_IMAGE):latest make test
 
 .PHONY: push-docker
+docker-release: FIDDLE_DOCKER_IMAGE=fiddle
+docker-release: docker-release
+	rm -rf .clean_checkout
+	git clone https://github.com/NVSL/fiddle.git .clean_checkout
+#	git clone . .clean_checkout
+	(cd .clean_checkout; pip install .; $(MAKE) docker-push)
+#	(cd .clean_checkout; pip install .; $(MAKE) docker-test)
+
 docker-push: docker-test
-	docker push stevenjswanson/fiddle:latest
+	docker push stevenjswanson/$(FIDDLE_DOCKER_IMAGE):latest
 
 .PHONY: docker-pull
 docker-pull:
-	docker pull stevenjswanson/fiddle:latest
+	docker pull stevenjswanson/$(FIDDLE_DOCKER_IMAGE):latest
