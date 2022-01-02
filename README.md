@@ -1,7 +1,7 @@
 # Fiddle: A Tool For Studying Small Compiled rograms
 
 [![CircleCI](https://circleci.com/gh/circleci/circleci-docs.svg?style=svg)](https://circleci.com/gh/circleci/circleci-docs)
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/NVSL/fiddle/main?labpath=fiddle%2Fexamples%2Fstd_maps.ipynb)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/NVSL/fiddle/main?labpath=README.ipynb)
 	
 Fiddle is a tool for
 studying the compilation and execution of smallish programs written in C or
