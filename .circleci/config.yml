@@ -93,3 +93,10 @@ workflows:
           requires: 
             - build-package
 
+    triggers:
+      - schedule:
+         cron: "0 0 * * *"
+	 filters:
+	   branches:
+	     only:
+	       - main
