@@ -1,11 +1,11 @@
 # TODOs
 
-0. Fix dockerfile so it works on binder.org
 1. Support for (de)serialization of resuls, spec,s etc. to json.  Running of same.
 2. Support for remote exection (based on 5)
 3. Error reporting on perf counters
 	1.  Not available
 	2.  Incompatable set of counters.
+4. Documentation
 4. Build C-friendly version of fiddle.hpp
 5. Integrate libpfm4 (https://github.com/wcohen/libpfm4) so we can count everything.
 6. Multiple workflow support
@@ -34,5 +34,12 @@
 14. Automatically run a test several times and generate average/stdev etc.  Then automatically draw error bars		
 
 	
+# Notes
+
+To get newer kernel on Ubunut 20.04:
+
+1.  move to HWE releases: https://wiki.ubuntu.com/Kernel/LTSEnablementStack
+2.  upgrade docker: https://askubuntu.com/questions/472412/how-do-i-upgrade-docker
+
 
    
