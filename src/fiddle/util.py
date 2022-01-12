@@ -8,15 +8,30 @@ import time
 
 
 def arg_map(**parameters):
-    """
-    Generate a set of parameter assignments from a dict or parameter names and values.
+    """Generates the `named cross product` for a :obj:`dict` that maps names to lists of values.  
 
-    arg_map(dict(a=range(1,3),
-                b=1)
+    For example:
 
-    yields:
+    .. code-block :: python
 
-    [{"a": 1, "b": 1},  {"a": 2, "b": 1}])
+      arg_map(foo=[1,2], bar=[3,4], baz=5)
+    
+    returns
+    
+    .. code-block :: python
+    
+      [
+       dict(foo=1, bar=3, baz=5),
+       dict(foo=1, bar=4, baz=5),
+       dict(foo=2, bar=3, baz=5),
+       dict(foo=2, bar=4, baz=5)
+      ]
+   
+    Args:
+      **kwargs: key-value pairs.  Scalar values will are treated as lists of length 1.
+
+    Returns:
+      :obj:`list` of :obj:`dict`:  See example above.
 
     """
     def listify(t):

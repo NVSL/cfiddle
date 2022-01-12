@@ -6,9 +6,29 @@ import ctypes
 
 
 class InvocationResultsList(list):
+    """Collect and summarize execution results.
+    
+    A table of values describing multiple executions (e.g., returned by
+    :func:`run()`).
 
+    The columns of the table include:
 
+    1.  Build parameters.
+    2.  The function name.
+    3.  The function arguments.
+    4.  Measurements and outputs of the functions
+
+    You can export these data in multiple formats using the methods below.
+    """
+    
     def as_csv(self, csv_file):
+        """Write results to a CSV file.
+        
+        Args:
+          csv_file: filename to write results to.
+        Returns:
+          None
+        """
         keys, rows = self.__to_keys_and_dicts(self)
         with open(csv_file, "w") as out_file:
             writer = csv.DictWriter(out_file, keys)
@@ -17,6 +37,13 @@ class InvocationResultsList(list):
 
 
     def as_df(self):
+        """Return results as a Pandas dataframe.
+
+        Values that appear numeric are convert to numbers.
+        
+        Returns:
+          :obj:`Dataframe`: A copy of the data as a :obj:`Dataframe`.
+        """
         keys, rows = self.__to_keys_and_dicts(self)
         df=  pd.DataFrame(rows, columns=keys);
         df = self._convert_to_numeric(df)
@@ -24,11 +51,22 @@ class InvocationResultsList(list):
 
     
     def as_json(self):
+        """Return results as a json string.
+
+        Returns:
+          :obj:`str`: A JSON represenation of the data.
+        """
         keys, rows = self.__to_keys_and_dicts(self)
         return json.dumps(dict(keys=keys,
                                data=rows))
             
     def as_dicts(self):
+        """Return results as a :obj:`list` of :obj:`dict`.
+
+        Returns:
+          :obj:`list` of :obj:`dict`: A copy of the data as a JSON-like Python object.
+        """
+        
         return self.__to_keys_and_dicts(self)[1]
 
     

@@ -2,9 +2,9 @@
 
 [![CircleCI](https://circleci.com/gh/circleci/circleci-docs.svg?style=svg)](https://circleci.com/gh/circleci/circleci-docs)
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/NVSL/fiddle/main?labpath=README.ipynb)
+[![Documentation Status](https://readthedocs.org/projects/fiddle-docs/badge/?version=latest)](https://fiddle-docs.readthedocs.io/en/latest/?badge=latest)
 	
-Fiddle is a tool for
-studying the compilation and execution of smallish programs written in C or
+Fiddle is a tool for studying the compilation and execution of smallish programs written in C or
 C++.  If you want to know what the compiler does to your code and why your code is slow, Fiddle can help.
 
 It makes it easy to ask and answer interesting questions about what happens to

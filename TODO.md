@@ -6,6 +6,10 @@
 	1.  Not available
 	2.  Incompatable set of counters.
 4. Documentation
+   1.  Add change log to README.md
+   2.  Add devel instructions to README.md
+   3.  Update cross refs in docstrings.
+   4.  Add doctests for code in documentation.
 4. Build C-friendly version of fiddle.hpp
 5. Integrate libpfm4 (https://github.com/wcohen/libpfm4) so we can count everything.
 6. Multiple workflow support
