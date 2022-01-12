@@ -1,8 +1,1 @@
-pytest
-r2pipe
-pydot
-networkx
-gprof2dot
-pandas
-IPython
-
+../
