@@ -7,10 +7,10 @@ from fiddle.Runner import InvocationResult
 import pandas as pd
 import numpy as np
 
-def test_simplest():
+def test_simplest(setup):
     assert sanity_test() == 4
 
-def test_one():
+def test_one(setup):
 
     build = ExecutableDescription("test_src/std_maps.cpp", build_parameters=dict(OPTIMIZE="-O0"))
 
@@ -23,7 +23,7 @@ def test_one():
     print(result.results)
 
     
-def test_everything_explicit():
+def test_everything_explicit(setup):
 
     exec_specs = [ExecutableDescription("test_src/std_maps.cpp", build_parameters=dict(OPTIMIZE="-O0")),
                   ExecutableDescription("test_src/std_maps.cpp", build_parameters=dict(OPTIMIZE="-O1"))]
@@ -40,7 +40,7 @@ def test_everything_explicit():
     print(InvocationResultsList(results).as_json())
 
 
-def test_maps_experiment():
+def test_maps_experiment(setup):
 
     executables = [MakeBuilder(ExecutableDescription("test_src/std_maps.cpp", build_parameters=p), verbose=True, rebuild=True).build()
                                for p in arg_map(OPTIMIZE=["-O0", "-O3"])]
@@ -52,7 +52,7 @@ def test_maps_experiment():
     print(results.as_df())
     return results.as_df()
 
-def test_build_simple():
+def test_build_simple(setup):
         
     t = build("test_src/std_maps.cpp", rebuild=True)
     assert t[0].build_spec.build_parameters == {}
@@ -67,7 +67,7 @@ def test_build_simple():
     assert t[0].build_spec.build_parameters == {}
     assert len(t) == 1
 
-def test_build_parameter():
+def test_build_parameter(setup):
     
     t = build(source="test_src/std_maps.cpp",
               build_parameters={},
@@ -88,7 +88,7 @@ def test_build_parameter():
     assert t[1].build_spec.build_parameters == dict(OPTIMIZE="-O3")
     assert len(t) == 2
 
-def test_build_multi_build():
+def test_build_multi_build(setup):
     t = build(source=["test_src/std_maps.cpp","test_src/test.cpp"],
               build_parameters=arg_map(OPTIMIZE=["-O0", "-O1"]))
     assert t[0].build_spec.build_parameters == dict(OPTIMIZE="-O0")
@@ -143,7 +143,7 @@ def test_no_args(test_cpp):
     assert t[3].return_value == 4
 
     
-def test_streamline():
+def test_streamline(setup):
 
     executables = build(source="test_src/std_maps.cpp",
                         build_parameters=arg_map(OPTIMIZE=["-O0", "-O3"]),

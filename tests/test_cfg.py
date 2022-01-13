@@ -1,6 +1,6 @@
 from fiddle import *
 from util import *
-from fixtures import test_cpp
+from fixtures import *
 from fiddle.source import FullyInstrumentedExecutable
 from fiddle.util import working_directory
 import pytest

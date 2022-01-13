@@ -1,6 +1,7 @@
 from fiddle import *
+from fixtures import *
 
-def test_README_loop():
+def test_README_loop(setup):
 
     sample = code(r"""
 extern "C"

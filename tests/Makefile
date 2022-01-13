@@ -7,10 +7,12 @@ default:
 EXAMPLES=../examples/sorting.ipynb  ../examples/README.ipynb ../examples/VirtualMethods.ipynb ../examples/CacheMeasurement.ipynb
 CPP_TESTS=test_DataSet test_libfiddle test_PerfCounter
 test: $(CPP_TESTS)
+	rm -rf ../examples/.fiddle # give these a clean directory.
 	pytest --nbmake . $(EXAMPLES)
 
 .PHONY: test
 examples:
+	rm -rf ../examples/.fiddle # give these a clean directory.
 	pytest --nbmake $(EXAMPLES)
 
 CXXFLAGS=-I../src/fiddle/resources/include -MMD -g -Wall -Werror
