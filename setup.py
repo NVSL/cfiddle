@@ -27,8 +27,8 @@ class build(_build):
             subprocess.check_call(["make","default"])
 
 setup(
-    name="fiddle",
-    version="0.3",
+    name="nvsl-fiddle",
+    version="0.1",
     package_data={
         'fiddle': ['resources/*/*'],
     },
@@ -59,7 +59,7 @@ setup(
         'Topic :: Education :: Computer Aided Instruction (CAI)',
         'Topic :: Software Development :: Compilers',
         'Framework :: Jupyter',
-        #        'License :: OSI Approved :: MIT License',   # Again, pick a license
+        'License :: OSI Approved :: MIT License',   # Again, pick a license
         'Programming Language :: Python :: 3',      #Specify which pyhton versions that you want to support
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',

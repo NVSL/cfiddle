@@ -22,3 +22,4 @@ venv
 dist
 build
 .clean_checkout
+build_release

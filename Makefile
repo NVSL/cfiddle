@@ -12,6 +12,10 @@ do-dist:
 	pip install --upgrade pytest wheel build 
 	python -m build
 
+.PHONY:pypi
+pypi: dist
+	twine upload --verbose  build_release/dist/*
+
 .PHONY:
 test-dist:
 	(. build_release/dist_test/bin/activate; $(MAKE) -C build_release package-test)
