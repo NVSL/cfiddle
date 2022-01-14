@@ -65,7 +65,8 @@ Then, we can compile it and print the assembly:
 
 .. doctest::
 	      
-   >>> print(build(sample)[0].asm("loop")) # doctest: +NORMALIZE_WHITESPACE
+   >>> asm = build(sample)[0].asm("loop")
+   >>> print(asm)  # doctest: +SKIP
    loop:
    .LFB2910:
    	.cfi_startproc
