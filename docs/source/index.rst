@@ -12,7 +12,6 @@ Fiddle
    index
 
 
-
 Fiddle is a tool for
 studying the compilation and execution of smallish programs written in C or
 C++.  If you want to know what the compiler does to your code and why your code is slow, Fiddle can help.
@@ -44,44 +43,86 @@ Here's an example to set the stage before we describe the key functions below.
 
 First, create a source file:
 
-.. code-block :: python
+.. doctest::
 
-  from fiddle import *
+    >>> from fiddle import  *
+    >>> sample = code(r"""
+    ... #include <fiddle.hpp>
+    ... extern "C"
+    ... int loop(int count) {
+    ...	   int sum = 0;
+    ...    start_measurement();
+    ...    for(int i = 0; i < count; i++) {
+    ...       sum += i;
+    ...    }
+    ...    end_measurement();
+    ...    return sum;
+    ... }
+    ... """)
 
-  sample = code(r"""
-  extern "C"
-  int loop(int count) {
-	int sum = 0;
-	for(int i = 0; i < count; i++) {
-		sum += i;
-	}
-	return sum;
-  }
-  """)
 
 Then, we can compile it and print the assembly:
 
-.. code-block :: python
+.. doctest::
+	      
+   >>> asm = build(sample)[0].asm("loop")
+   >>> print(asm)  # doctest: +SKIP
+   loop:
+   .LFB2910:
+   	.cfi_startproc
+   	endbr64
+   	pushq	%rbp
+   	.cfi_def_cfa_offset 16
+   	.cfi_offset 6, -16
+   	movq	%rsp, %rbp
+   	.cfi_def_cfa_register 6
+   	subq	$32, %rsp
+   	movl	%edi, -20(%rbp)
+   	movl	$0, -8(%rbp)
+   	movl	$0, %edi
+   	call	_Z17start_measurementPKc@PLT
+   	movl	$0, -4(%rbp)
+   .L71:
+   	movl	-4(%rbp), %eax
+   	cmpl	-20(%rbp), %eax
+   	jge	.L70
+   	movl	-4(%rbp), %eax
+   	addl	%eax, -8(%rbp)
+   	addl	$1, -4(%rbp)
+   	jmp	.L71
+   .L70:
+   	call	_Z15end_measurementv@PLT
+   	movl	-8(%rbp), %eax
+   	leave
+   	.cfi_def_cfa 7, 8
+   	ret
+   	.cfi_endproc
 
-    print(build(sample)[0].asm("loop"))
-
+   
 Or compile it with different optimization levels:
 
-.. code-block :: python
+.. doctest::
+   
+   >>> exes = build(sample, build_parameters=arg_map(OPTIMIZE=["-O0", "-O3"]))
 
-   exes = build(sample, build_parameters=arg_map(OPTIMIZE=["-O0", "-O3"]))
+   
+And the run both versions with different arguments and render them as a dataframe:
 
-And the run both versions with different arguments:
+.. doctest::
 
-.. code-block :: python
-
-   results = run(exes, "loop", arguments=arg_map(count=[1,10,100,1000,10000]))
-
-And check the results:
-
-.. code-block :: python
-
-   print(results.as_df())
+   >>> results = run(exes, "loop", arguments=arg_map(count=[1,10,100,1000,10000]))
+   >>> print(results.as_df()) # doctest: +SKIP
+     OPTIMIZE function  count        ET
+   0      -O0     loop      1  0.000011
+   1      -O0     loop     10  0.000006
+   2      -O0     loop    100  0.000006
+   3      -O0     loop   1000  0.000012
+   4      -O0     loop  10000  0.000026
+   5      -O3     loop      1  0.000009
+   6      -O3     loop     10  0.000006
+   7      -O3     loop    100  0.000008
+   8      -O3     loop   1000  0.000006
+   9      -O3     loop  10000  0.000010
 
 
 Key Operations

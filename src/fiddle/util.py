@@ -12,20 +12,14 @@ def arg_map(**parameters):
 
     For example:
 
-    .. code-block :: python
-
-      arg_map(foo=[1,2], bar=[3,4], baz=5)
-    
-    returns
-    
-    .. code-block :: python
-    
-      [
-       dict(foo=1, bar=3, baz=5),
-       dict(foo=1, bar=4, baz=5),
-       dict(foo=2, bar=3, baz=5),
-       dict(foo=2, bar=4, baz=5)
-      ]
+    .. doctest
+      >>> from fiddle import *
+      >>> from pprint import pprint
+      >>> pprint(arg_map(foo=[1,2], bar=[3,4], baz=5))
+      [{'bar': 3, 'baz': 5, 'foo': 1},
+       {'bar': 4, 'baz': 5, 'foo': 1},
+       {'bar': 3, 'baz': 5, 'foo': 2},
+       {'bar': 4, 'baz': 5, 'foo': 2}]
    
     Args:
       **kwargs: key-value pairs.  Scalar values will are treated as lists of length 1.

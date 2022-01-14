@@ -16,8 +16,11 @@ RUN bash ./install_prereqs.sh
 COPY  . ./fiddle
 RUN  chown -R ${NB_USER} ./fiddle
 USER ${NB_USER}
-RUN cd fiddle; pip install  .
+#RUN cd fiddle; python setup.py build && pip install  -e .
+RUN cd fiddle;  pip install  .
 ENV LD_LIBRARY_PATH  /opt/conda/lib/python3.9/site-packages/fiddle/resources/libfiddle/build
+#ENV LD_LIBRARY_PATH  /home/jovyan/fiddle/src/fiddle/resources/libfiddle/build/
+#   
 
 RUN mkdir -p .jupyter
 COPY  jupyter_notebook_config.py .jupyter/
