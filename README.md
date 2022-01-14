@@ -37,7 +37,7 @@ and then visit http://localhost:8888/lab/tree/README.ipynb.
 ### What Does a `for` loop look like in assembly?
 
 ```python
->>> from fiddle import *
+>>> from fiddle import * 
 >>> sample = code(r""" 
 ...    extern "C"
 ...    int loop() {
@@ -48,7 +48,8 @@ and then visit http://localhost:8888/lab/tree/README.ipynb.
 ...	   return sum;
 ... }
 ... """)
->>> print(build(sample)[0].asm("loop")) # doctest: +NORMALIZE_WHITESPACE
+>>> asm = build(sample)[0].asm("loop")
+>>> print(asm) # doctest: +SKIP
 loop:
 .LFB0:
     .cfi_startproc
