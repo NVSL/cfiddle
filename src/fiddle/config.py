@@ -10,6 +10,8 @@ from .source import FullyInstrumentedExecutable
 from tqdm import tqdm
 from contextlib import contextmanager
 
+def noop_progress_bar(data, *argc, **kwargs):
+    return data
 
 default_config = dict(Executable_type=FullyInstrumentedExecutable,
                       InvocationResult_type=InvocationResult,
@@ -20,7 +22,7 @@ default_config = dict(Executable_type=FullyInstrumentedExecutable,
                       InvocationDescription_type=InvocationDescription,
                       ProtoParse_type=CProtoParser,
                       FIDDLE_BUILD_ROOT=".fiddle/builds",
-                      ProgressBar=tqdm)
+                      ProgressBar=noop_progress_bar)
 
 
 fiddle_config_stack = []
