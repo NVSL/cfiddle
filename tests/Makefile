@@ -5,13 +5,13 @@
 default: 
 
 EXAMPLES=../examples/sorting.ipynb  ../examples/README.ipynb ../examples/VirtualMethods.ipynb ../examples/CacheMeasurement.ipynb
-JUPYTER=--nbmake $(EXAMPLES) 
-DOCS=--doctest-glob="*.rst" --doctest-glob="*.md"  ../README.md --doctest-modules ../docs/
-MODULES=../src/fiddle
+JUPYTER=--nbmake $(EXAMPLES)
+DOCS=--doctest-glob="*.rst" --doctest-glob="*.md" ../*.md ../docs/
+#MODULES=#../src/fiddle/*.py
 CPP_TESTS=test_DataSet test_libfiddle test_PerfCounter
 test: $(CPP_TESTS)
 	rm -rf ../examples/.fiddle # give these a clean directory.
-	pytest . $(MODULES)  $(DOCS) $(JUPYTER)
+	pytest -n auto .  $(DOCS) $(JUPYTER)
 .PHONY: test
 examples:
 	rm -rf ../examples/.fiddle # give these a clean directory.
