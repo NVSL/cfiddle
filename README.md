@@ -90,7 +90,8 @@ Or, if you prefer a CFG:
 ### What Does `-O3` Do To That Loop?
 
 ```python
->>> print(build(sample, build_parameters=dict(OPTIMIZE="-O3"))[0].asm("loop")) # doctest: +NORMALIZE_WHITESPACE
+>>> asm = build(sample, build_parameters=dict(OPTIMIZE="-O3"))[0].asm("loop")
+>>> print(asm) # doctest: +SKIP
 loop:
 .LFB0:
     .cfi_startproc
