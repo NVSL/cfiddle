@@ -1,16 +1,17 @@
-doc#-*- Makefile -*-
+#-*- Makefile -*-
 
 
 .PHONY: default
 default: 
 
 EXAMPLES=../examples/sorting.ipynb  ../examples/README.ipynb ../examples/VirtualMethods.ipynb ../examples/CacheMeasurement.ipynb
-DOCS=../docs/.
+JUPYTER=--nbmake $(EXAMPLES) 
+DOCS=--doctest-glob="*.rst" --doctest-glob="*.md"  ../README.md --doctest-modules ../docs/
+MODULES=../src/fiddle
 CPP_TESTS=test_DataSet test_libfiddle test_PerfCounter
 test: $(CPP_TESTS)
 	rm -rf ../examples/.fiddle # give these a clean directory.
-	pytest --nbmake . $(EXAMPLES) $(DOCS)
-
+	pytest . $(MODULES)  $(DOCS) $(JUPYTER)
 .PHONY: test
 examples:
 	rm -rf ../examples/.fiddle # give these a clean directory.
