@@ -1,11 +1,11 @@
-from fiddle import *
-from fiddle.perfcount import *
+from cfiddle import *
+from cfiddle.perfcount import *
 import pytest
 from fixtures import *
 @pytest.fixture
 def cycle_counter(setup):
     return build(code(r"""
-    #include"fiddle.hpp"
+    #include"cfiddle.hpp"
 
     extern "C"
     int go(int count) {
@@ -38,7 +38,7 @@ def test_CycleCount_scaling(cycle_counter):
 @pytest.fixture
 def mem_loop(setup):
     return build(code(r"""
-    #include"fiddle.hpp"
+    #include"cfiddle.hpp"
 
     extern "C"
     int go(int count) {

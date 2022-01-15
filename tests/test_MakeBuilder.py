@@ -1,5 +1,5 @@
-from fiddle.MakeBuilder import MakeBuilder
-from fiddle.Builder import ExecutableDescription, Executable
+from cfiddle.MakeBuilder import MakeBuilder
+from cfiddle.Builder import ExecutableDescription, Executable
 import os
 import pytest
 import ctypes

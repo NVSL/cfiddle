@@ -13,7 +13,7 @@ def arg_map(**parameters):
     For example:
 
     .. doctest
-      >>> from fiddle import *
+      >>> from cfiddle import *
       >>> from pprint import pprint
       >>> pprint(arg_map(foo=[1,2], bar=[3,4], baz=5))
       [{'bar': 3, 'baz': 5, 'foo': 1},

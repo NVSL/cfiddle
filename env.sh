@@ -1,2 +1,2 @@
-LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/src/fiddle/resources/libfiddle/
+LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/src/cfiddle/resources/libcfiddle/
 

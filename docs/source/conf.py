@@ -17,7 +17,7 @@
 
 # -- Project information -----------------------------------------------------
 
-project = 'Fiddle'
+project = 'CFiddle'
 copyright = '2022, Steven Swanson'
 author = 'Steven Swanson'
 

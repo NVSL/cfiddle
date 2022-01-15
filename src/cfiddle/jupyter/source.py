@@ -1,4 +1,4 @@
-import fiddle.source
+import cfiddle.source
 import os
 
 try:
@@ -6,30 +6,30 @@ try:
 except ImportError:
     pass
 
-import fiddle.source
-from fiddle import Executable
+import cfiddle.source
+from cfiddle import Executable
 
-class Source(fiddle.source.Source):
+class Source(cfiddle.source.Source):
 
     def source(self, *argc, **kwargs):
-        language = kwargs.get("language", fiddle.source.infer_language(self.build_spec.source_file))
+        language = kwargs.get("language", cfiddle.source.infer_language(self.build_spec.source_file))
         source = super().source(*argc, **kwargs)
         return Code_hacked(source, language=language)
 
     def raw_source(self, *argc, **kwargs):
         return super().source(*argc, **kwargs)
     
-class Assembly(fiddle.source.Assembly):
+class Assembly(cfiddle.source.Assembly):
     def asm(self, *argc, **kwargs):
         return Code_hacked(super().asm(*argc, **kwargs), language="gas")
 
     def raw_asm(self,*argc, **kwargs):
         return super().asm(*argc, **kwargs)
 
-class Preprocessed(fiddle.source.Preprocessed):
+class Preprocessed(cfiddle.source.Preprocessed):
     
     def preprocessed(self, *argc, **kwargs):
-        language = kwargs.get("language", fiddle.source.infer_language(self.build_spec.source_file))
+        language = kwargs.get("language", cfiddle.source.infer_language(self.build_spec.source_file))
         preprocessed_source = super().preprocessed(*argc, **kwargs)
         return Code_hacked(preprocessed_source, language=language)
 
@@ -37,7 +37,7 @@ class Preprocessed(fiddle.source.Preprocessed):
         return super().preprocessed_source(*argc, **kwargs)
 from IPython.display import Image,SVG
 
-from fiddle.CFG.cfg import CFG
+from cfiddle.CFG.cfg import CFG
 class CFG(CFG):
     def cfg(self, function, *argc, **kwargs):
         filename = os.path.join(self.build_dir, function) + ".svg"

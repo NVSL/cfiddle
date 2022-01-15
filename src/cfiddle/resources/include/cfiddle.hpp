@@ -1,5 +1,5 @@
-#ifndef FIDDLE_INCLUDED
-#define FIDDLE_INCLUDED
+#ifndef CFIDDLE_INCLUDED
+#define CFIDDLE_INCLUDED
 #include"DataSet.hpp"
 #include"PerfCounter.hpp"
 #include"walltime.h"

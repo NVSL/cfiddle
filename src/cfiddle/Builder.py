@@ -76,7 +76,7 @@ class Builder:
         self.build_root = build_root
 
         if self.build_root is None:
-            self.build_root = os.path.join(os.environ.get("FIDDLE_BUILD_ROOT", get_config("FIDDLE_BUILD_ROOT")), "build")
+            self.build_root = os.path.join(os.environ.get("CFIDDLE_BUILD_ROOT", get_config("CFIDDLE_BUILD_ROOT")), "build")
 
         self.build_directory = self._compute_build_directory()
 

@@ -17,24 +17,24 @@ class CacheCounter(PerformanceCounterSpec):
 
 
 def install_perf_counters(perf_counters):
-    libfiddle = _load_libfiddle()
+    libcfiddle = _load_libcfiddle()
 
     for pc in perf_counters:
         if isinstance(pc, CacheCounter):
-            libfiddle.add_cache_perf_counter(pc.cache, pc.op, pc.result)
+            libcfiddle.add_cache_perf_counter(pc.cache, pc.op, pc.result)
         elif isinstance(pc, PerformanceCounterSpec):
-            libfiddle.add_perf_counter(pc.type, pc.config)
+            libcfiddle.add_perf_counter(pc.type, pc.config)
         else:
             raise ValueError("Expected instance of 'PerformanceCounterSpec' not {type(pc).__name__}.")
 
 def are_perf_counters_available():
-    return _load_libfiddle().are_perf_counters_available()
+    return _load_libcfiddle().are_perf_counters_available()
 
 
 def clear_perf_counters():
-    _load_libfiddle().clear_perf_counters()
+    _load_libcfiddle().clear_perf_counters()
 
 
-def _load_libfiddle():
-    return  ctypes.CDLL("libfiddle.so")
+def _load_libcfiddle():
+    return  ctypes.CDLL("libcfiddle.so")
 

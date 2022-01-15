@@ -1,8 +1,8 @@
-from fiddle import *
+from cfiddle import *
 from util import *
 from fixtures import *
 from itertools import product
-from fiddle.Runner import InvocationResult
+from cfiddle.Runner import InvocationResult
 
 import pandas as pd
 import numpy as np

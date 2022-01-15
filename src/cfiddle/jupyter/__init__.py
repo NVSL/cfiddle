@@ -1,4 +1,4 @@
-from fiddle.config import set_config
+from cfiddle.config import set_config
 from .source import FullyInstrumentedExecutable
 from .util import compare
 from .util import html_parameters

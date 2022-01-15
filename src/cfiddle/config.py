@@ -21,27 +21,27 @@ default_config = dict(Executable_type=FullyInstrumentedExecutable,
                       ExecutableDescription_type=ExecutableDescription,
                       InvocationDescription_type=InvocationDescription,
                       ProtoParse_type=CProtoParser,
-                      FIDDLE_BUILD_ROOT=".fiddle/builds",
+                      CFIDDLE_BUILD_ROOT=".cfiddle/builds",
                       ProgressBar=noop_progress_bar)
 
 
-fiddle_config_stack = []
-fiddle_config_stack.append(default_config)
+cfiddle_config_stack = []
+cfiddle_config_stack.append(default_config)
 
     
 def set_config(k,v):
-    global fiddle_config_stack
-    fiddle_config_stack[-1][k] = v
+    global cfiddle_config_stack
+    cfiddle_config_stack[-1][k] = v
 
     
 def get_config(k):
     # TODO several places check the environment first and then look here. We sohuld factor that out.
-    global fiddle_config_stack
-    return fiddle_config_stack[-1][k]
+    global cfiddle_config_stack
+    return cfiddle_config_stack[-1][k]
 
 
 @contextmanager
-def fiddle_config(**kwargs):
+def cfiddle_config(**kwargs):
     push_config()
     [set_config(k,v) for k,v in kwargs.items()]
     try:
@@ -51,12 +51,12 @@ def fiddle_config(**kwargs):
         
 
 def push_config():
-    global fiddle_config_stack
-    fiddle_config_stack.append(copy.deepcopy(fiddle_config_stack[-1]))
+    global cfiddle_config_stack
+    cfiddle_config_stack.append(copy.deepcopy(cfiddle_config_stack[-1]))
 
     
 def pop_config():
-    global fiddle_config_stack
-    if len(fiddle_config_stack) == 1:
-        raise ValueError("Poping the fiddle configuration stack would leave it empty.")
-    fiddle_config_stack = fiddle_config_stack[:-1]
+    global cfiddle_config_stack
+    if len(cfiddle_config_stack) == 1:
+        raise ValueError("Poping the cfiddle configuration stack would leave it empty.")
+    cfiddle_config_stack = cfiddle_config_stack[:-1]

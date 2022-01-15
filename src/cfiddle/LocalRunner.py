@@ -13,7 +13,7 @@ class LocalRunner(Runner):
 
     def __init__(self, invocation, result_factory=None):
         super().__init__(invocation, result_factory=result_factory)
-        self._libfiddle = ctypes.CDLL("libfiddle.so")
+        self._libcfiddle = ctypes.CDLL("libcfiddle.so")
         
     def run(self):
         self._reset_data_collection()
@@ -44,7 +44,7 @@ class LocalRunner(Runner):
     def _reset_data_collection(self):
         clear_perf_counters()
         install_perf_counters(self._invocation.perf_counters)
-        self._libfiddle.clear_stats()
+        self._libcfiddle.clear_stats()
 
     def _collect_data(self):
         output_file = self._build_results_path()
@@ -60,7 +60,7 @@ class LocalRunner(Runner):
 
         
     def _write_results(self, filename):
-        self._libfiddle.write_stats(ctypes.c_char_p(filename.encode()))
+        self._libcfiddle.write_stats(ctypes.c_char_p(filename.encode()))
 
     
     def _build_results_path(self):

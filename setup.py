@@ -20,17 +20,17 @@ class build(_build):
         # I figured this out by looking closely at the output of pip installing
         # a sdist.  It showed where the files had been copied too, so I build
         # it using that copy of the source code.  No idea if this is a stable interface.
-        with working_directory(os.path.join(self.build_lib, "fiddle/resources/libfiddle")) as path:
+        with working_directory(os.path.join(self.build_lib, "cfiddle/resources/libcfiddle")) as path:
             self.announce(
-                f'Building libfiddle in {path}',
+                f'Building libcfiddle in {path}',
                 level=INFO)
             subprocess.check_call(["make","default"])
 
 setup(
-    name="fiddle",
-    version="0.1.1",
+    name="cfiddle",
+    version="0.0.0",
     package_data={
-        'fiddle': ['resources/*/*'],
+        'cfiddle': ['resources/*/*'],
     },
     install_requires = [
         "pytest-cpp",
@@ -50,7 +50,7 @@ setup(
         "sphinx",
         "twine"
     ],
-    description="Fiddle makes it easy to ask and answers questions about the compilation and execution of smallish programs written in C or C++.",
+    description="CFiddle makes it easy to ask and answers questions about the compilation and execution of smallish programs written in C or C++.",
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
     classifiers=[
@@ -76,8 +76,8 @@ setup(
     },
     entry_points={
         'console_scripts' :[
-            'set-fiddle-ld-path=fiddle:set_ld_path_in_shell',
-            'fiddle-lib-path=fiddle:print_libfiddle_dir'
+            'set-cfiddle-ld-path=cfiddle:set_ld_path_in_shell',
+            'cfiddle-lib-path=cfiddle:print_libcfiddle_dir'
         ]
     }
 )
