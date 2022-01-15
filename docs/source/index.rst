@@ -32,6 +32,10 @@ It's features include:
 The best way to learn about Fiddle is to try it.  You can `run the
 examples <https://mybinder.org/v2/gh/NVSL/fiddle/main?labpath=README.ipynb>`_ (this can take a while to load).
 
+Installation
+------------
+
+Installation instructions are in `the README <https://github.com/NVSL/fiddle>`_.
 
 Example
 -------

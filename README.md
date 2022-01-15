@@ -31,6 +31,7 @@ docker run -it --publish published=8888,target=8888 stevenjswanson/fiddle:latest
 
 and then visit http://localhost:8888/lab/tree/README.ipynb.
 
+You can also read [the documentation](https://fiddle-docs.readthedocs.io).
 
 ## Examples
 
