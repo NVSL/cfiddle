@@ -28,7 +28,7 @@ class build(_build):
 
 setup(
     name="cfiddle",
-    version="0.0.0",
+    version="0.1.0",
     package_data={
         'cfiddle': ['resources/*/*'],
     },
