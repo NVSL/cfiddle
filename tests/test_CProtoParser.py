@@ -10,7 +10,7 @@ from fiddle.ProtoParser import BadParameter, UnknownType, BadParameterName, Prot
     ("long", ctypes.c_long),
     ("uint64_t", ctypes.c_ulonglong)
 ])
-def test_get_ctype(t,ct ):
+def test_get_ctype(t,ct):
     assert get_ctype(t.split()) ==ct
 
 @pytest.mark.parametrize("t,ct", [

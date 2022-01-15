@@ -10,6 +10,8 @@
    2.  Add devel instructions to README.md
    3.  Update cross refs in docstrings.
    4.  Add doctests for code in documentation.
+4. Write a function decorator to catch exception and print nice error messages in Jupyter
+5. Create testing fixture so everything test runs in a new .fiddle directory.
 4. Build C-friendly version of fiddle.hpp
 5. Integrate libpfm4 (https://github.com/wcohen/libpfm4) so we can count everything.
 6. Multiple workflow support

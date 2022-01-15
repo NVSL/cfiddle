@@ -1,4 +1,5 @@
 from fiddle import *
+from fixtures import *
 from fiddle.Builder import Builder, ExecutableDescription, Executable
 from fiddle.config import get_config
 import os
@@ -14,18 +15,18 @@ class NopBuilder(Builder):
                                    functions=dict())
     
 
-def test_create_spec():
+def test_create_spec(setup):
     build_spec = ExecutableDescription(source="test_src/test.cpp",
                                        build_parameters=dict(OPTIMIZE="-O1"))
 
     
 @pytest.fixture
-def test_cpp_nop_builder():
+def test_cpp_nop_builder(setup):
     return NopBuilder(build_spec = ExecutableDescription(source="test_src/test.cpp",
                                                          build_parameters=dict(OPTIMIZE="-O1")))
 
 
-def test_builder_construction(test_cpp_nop_builder):
+def test_builder_construction(test_cpp_nop_builder, setup):
 
     assert test_cpp_nop_builder.source_file == "test_src/test.cpp"
     assert test_cpp_nop_builder.source_name_base == "test"
@@ -35,20 +36,20 @@ def test_builder_construction(test_cpp_nop_builder):
     assert "OPTIMIZE" in test_cpp_nop_builder.build_directory 
     assert "O1" in test_cpp_nop_builder.build_directory
 
-    
-def test_nop_build(test_cpp_nop_builder):
+
+def test_nop_build(test_cpp_nop_builder, setup):
 
     result = test_cpp_nop_builder.build()
     
     assert isinstance(result, Executable)
     
 
-def test_alt_build_directory():
+def test_alt_build_directory(setup):
     t = NopBuilder(build_spec = ExecutableDescription(source="", build_parameters={}), build_root="/tmp")
     assert t.build_root == "/tmp"
     
 
-def test_mixins():
+def test_mixins(setup):
     class MyResult(Executable):
         def my_result(self):
             return "my_result"
@@ -59,7 +60,7 @@ def test_mixins():
     assert result.my_result() == "my_result"
 
     
-def test_invalid_parameters():
+def test_invalid_parameters(setup):
     with pytest.raises(ValueError):
         build("test_src/test.cpp", dict(OPTIMIZE=None))
 

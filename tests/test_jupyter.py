@@ -1,5 +1,6 @@
 from fiddle import *
 from util import *
+from fixtures import *
 from fiddle.jupyter import *
 from fiddle.jupyter.util import *
 import fiddle.jupyter.source
@@ -8,7 +9,7 @@ from fiddle.config import fiddle_config
 from IPython.display import SVG, HTML
 import os
 
-def test_jupyter():
+def test_jupyter(setup):
     with fiddle_config():
         configure_for_jupyter()
         test_cpp = build_one("test_src/test.cpp")
@@ -19,7 +20,7 @@ def test_jupyter():
         assert isinstance(test_cpp.cfg("sum"), SVG)
         assert os.path.exists(os.path.join(test_cpp.build_dir, "sum.svg"))
 
-def test_compare():
+def test_compare(setup):
     with fiddle_config():
         configure_for_jupyter()
         test_cpp = build_one("test_src/test.cpp")

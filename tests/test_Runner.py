@@ -1,7 +1,7 @@
 from fiddle import *
 from util import *
 from fiddle.Runner import Runner, InvocationDescription
-from fixtures import test_cpp
+from fixtures import *
 import ctypes
 import pytest
 import inspect
@@ -26,7 +26,7 @@ test_prototype = Prototype(None, None, (Parameter(type=ctypes.c_float, name="a")
      TypeError)
 ]
 )
-def test_bind_arguments(params, proto, result):
+def test_bind_arguments(params, proto, result,setup):
     runner = Runner(None)
     
     if inspect.isclass(result) and issubclass(result, Exception):

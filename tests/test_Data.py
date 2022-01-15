@@ -2,9 +2,9 @@ import tempfile
 from fiddle import *
 from util import *
 from itertools import product
-from fixtures import test_cpp
+from fixtures import *
 
-def test_df_numeric_conversion():
+def test_df_numeric_conversion(setup):
     r = build_and_run("test_src/test_Data.cpp", {}, "go", {})
     df = InvocationResultsList([r]).as_df()
     
@@ -29,7 +29,7 @@ def test_lots_of_no_data(test_cpp):
     print (results.as_df())
     assert len(results.as_df()) == 2
 
-def test_csv():
+def test_csv(setup):
     import csv
     
     exec_specs = [ExecutableDescription(*es) for es in product(["test_src/write_dataset.cpp"], arg_map(TEST=["A", "B"]))]

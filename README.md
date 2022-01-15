@@ -37,55 +37,52 @@ and then visit http://localhost:8888/lab/tree/README.ipynb.
 ### What Does a `for` loop look like in assembly?
 
 ```python
-from fiddle import *
-
-sample = code(r"""
-extern "C"
-int loop() {
-	int sum = 0;
-	for(int i = 0; i < 10; i++) {
-		sum += i;
-	}
-	return sum;
-}
-""")
-
-print(build(sample)[0].asm("loop"))
-```
-
-Will generate:
-
-```gas
+>>> from fiddle import * 
+>>> sample = code(r""" 
+...    extern "C"
+...    int loop() {
+...    int sum = 0;
+...	   for(int i = 0; i < 10; i++) {
+... 		sum += i;
+...    }
+...	   return sum;
+... }
+... """)
+>>> asm = build(sample)[0].asm("loop")
+>>> print(asm) # doctest: +SKIP
 loop:
 .LFB0:
-	.cfi_startproc
-	endbr64
-	pushq	%rbp
-	.cfi_def_cfa_offset 16
-	.cfi_offset 6, -16
-	movq	%rsp, %rbp
-	.cfi_def_cfa_register 6
-	movl	$0, -8(%rbp)
-	movl	$0, -4(%rbp)
+    .cfi_startproc
+    endbr64
+    pushq    %rbp
+    .cfi_def_cfa_offset 16
+    .cfi_offset 6, -16
+    movq    %rsp, %rbp
+    .cfi_def_cfa_register 6
+    movl    $0, -8(%rbp)
+    movl    $0, -4(%rbp)
 .L3:
-	cmpl	$9, -4(%rbp)
-	jg	.L2
-	movl	-4(%rbp), %eax
-	addl	%eax, -8(%rbp)
-	addl	$1, -4(%rbp)
-	jmp	.L3
+    cmpl    $9, -4(%rbp)
+    jg    .L2
+    movl    -4(%rbp), %eax
+    addl    %eax, -8(%rbp)
+    addl    $1, -4(%rbp)
+    jmp    .L3
 .L2:
-	movl	-8(%rbp), %eax
-	popq	%rbp
-	.cfi_def_cfa 7, 8
-	ret
-	.cfi_endproc
+    movl    -8(%rbp), %eax
+    popq    %rbp
+    .cfi_def_cfa 7, 8
+    ret
+    .cfi_endproc
+
 ```
 
 Or, if you prefer a CFG:
 
 ```
-build(sample)[0].cfg("loop", "readme_loop.png") 
+>>> build(sample)[0].cfg("loop", "readme_loop.png") 
+'readme_loop.png'
+
 ```
 
 ![CFG Example](images/readme_loop.png)
@@ -93,17 +90,16 @@ build(sample)[0].cfg("loop", "readme_loop.png")
 ### What Does `-O3` Do To That Loop?
 
 ```python
-build(sample, build_parameters=dict(OPTIMIZE="-O3"))[0].asm("loop")
-```
-
-```gas
+>>> asm = build(sample, build_parameters=dict(OPTIMIZE="-O3"))[0].asm("loop")
+>>> print(asm) # doctest: +SKIP
 loop:
 .LFB0:
-	.cfi_startproc
+    .cfi_startproc
 	endbr64
 	movl	$45, %eax
 	ret
 	.cfi_endproc
+	
 ```
 
 

@@ -1,6 +1,6 @@
 from fiddle import *
 from util import *
-from fixtures import test_cpp
+from fixtures import *
 from fiddle.source import FullyInstrumentedExecutable
 import pytest
 
@@ -39,7 +39,7 @@ def test_asm(test_cpp):
     assert ".cfi_endproc" in asm.split("\n")[-1]
 
 
-def test_CPP_flags():
+def test_CPP_flags(setup):
 
     build = MakeBuilder(build_spec=ExecutableDescription("test_src/test.cpp", build_parameters=dict(MORE_CXXFLAGS="-DINCLUDE_MORE")),
                         rebuild=True,

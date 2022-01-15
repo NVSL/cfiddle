@@ -1,9 +1,9 @@
 from fiddle import *
 from fiddle.perfcount import *
 import pytest
-
+from fixtures import *
 @pytest.fixture
-def cycle_counter():
+def cycle_counter(setup):
     return build(code(r"""
     #include"fiddle.hpp"
 
@@ -36,7 +36,7 @@ def test_CycleCount_scaling(cycle_counter):
     print(results.as_df())
 
 @pytest.fixture
-def mem_loop():
+def mem_loop(setup):
     return build(code(r"""
     #include"fiddle.hpp"
 

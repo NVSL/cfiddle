@@ -35,6 +35,7 @@ setup(
     install_requires = [
         "wheel",
         "pytest-cpp",
+        "pytest-xdist",
         "click",
         "pytest",
         "r2pipe",
@@ -79,3 +80,5 @@ setup(
         ]
     }
 )
+
+
