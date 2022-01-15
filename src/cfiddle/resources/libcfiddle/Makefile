@@ -1,24 +1,24 @@
 BUILD=build
-FIDDLE_INCLUDE=../include
-include ../make/fiddle.make
+CFIDDLE_INCLUDE=../include
+include ../make/cfiddle.make
 
 clean:
 	rm -rf *.o *.so
 
-SRCS=./fiddle.cpp
+SRCS=./cfiddle.cpp
 
 OBJS=$(addprefix $(BUILD)/,$(SRCS:.cpp=.o))
 
-default: $(BUILD)/libfiddle.so $(BUILD)/export_perf_count_macros ../../perfcount/perfcount_defs.py
+default: $(BUILD)/libcfiddle.so $(BUILD)/export_perf_count_macros ../../perfcount/perfcount_defs.py
 FULL_SO_PATH=$(realpath ./)
 test:
 	echo $(OBJS)
-libfiddle.a: $(OBJS)
+libcfiddle.a: $(OBJS)
 	ar rcs $@ $^
 
 #http://www.faqs.org/docs/Linux-HOWTO/Program-Library-HOWTO.html#INIT-AND-CLEANUP
 
-$(BUILD)/libfiddle.so: $(OBJS)
+$(BUILD)/libcfiddle.so: $(OBJS)
 	$(CXX) $^ -shared -o $@
 	@echo Built $(FULL_SO_PATH)/$@
 

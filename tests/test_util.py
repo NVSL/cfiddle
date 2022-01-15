@@ -1,4 +1,4 @@
-from fiddle.util import *
+from cfiddle.util import *
 import tempfile
 
 @pytest.mark.parametrize("inp,output", [

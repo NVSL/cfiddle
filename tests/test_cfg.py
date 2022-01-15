@@ -1,8 +1,8 @@
-from fiddle import *
+from cfiddle import *
 from util import *
 from fixtures import *
-from fiddle.source import FullyInstrumentedExecutable
-from fiddle.util import working_directory
+from cfiddle.source import FullyInstrumentedExecutable
+from cfiddle.util import working_directory
 import pytest
 import tempfile
 import os

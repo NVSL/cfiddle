@@ -1,4 +1,4 @@
-from fiddle import *
+from cfiddle import *
 
 def build_and_run(source_file, build_parameters, function, arguments):
     executable = build_one(source_file, build_parameters)

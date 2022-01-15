@@ -1,5 +1,5 @@
 import tempfile
-from fiddle import *
+from cfiddle import *
 from util import *
 from itertools import product
 from fixtures import *

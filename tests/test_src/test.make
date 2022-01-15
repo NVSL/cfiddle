@@ -3,14 +3,14 @@
 
 BUILD?=build
 
-vpath %.cpp $(FIDDLE_VPATH)
-vpath %.cc $(FIDDLE_VPATH)
-vpath %.CPP $(FIDDLE_VPATH)
-vpath %.cp $(FIDDLE_VPATH)
-vpath %.cxx $(FIDDLE_VPATH)
-vpath %.C $(FIDDLE_VPATH)
-vpath %.c++ $(FIDDLE_VPATH)
-vpath %.c $(FIDDLE_VPATH)
+vpath %.cpp $(CFIDDLE_VPATH)
+vpath %.cc $(CFIDDLE_VPATH)
+vpath %.CPP $(CFIDDLE_VPATH)
+vpath %.cp $(CFIDDLE_VPATH)
+vpath %.cxx $(CFIDDLE_VPATH)
+vpath %.C $(CFIDDLE_VPATH)
+vpath %.c++ $(CFIDDLE_VPATH)
+vpath %.c $(CFIDDLE_VPATH)
 
 
 $(BUILD)/%.o : %.cpp

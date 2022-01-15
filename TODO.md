@@ -11,22 +11,22 @@
    3.  Update cross refs in docstrings.
    4.  Add doctests for code in documentation.
 4. Write a function decorator to catch exception and print nice error messages in Jupyter
-5. Create testing fixture so everything test runs in a new .fiddle directory.
-4. Build C-friendly version of fiddle.hpp
+5. Create testing fixture so everything test runs in a new .cfiddle directory.
+4. Build C-friendly version of cfiddle.hpp
 5. Integrate libpfm4 (https://github.com/wcohen/libpfm4) so we can count everything.
 6. Multiple workflow support
    1. Encapsulate a configuration in a Workflow object. (One for C, one for Rust,  remote execution, etc.)
-   2. from fiddle import * would pull in the default.
+   2. from cfiddle import * would pull in the default.
 7. Arm support
    1. cross-compiler support
 	  1. This mostly works "out of the box".  Issues/instructions:
 		  1. apt-get install -y binutils-arm-linux-gnueabi g++-arm-linux-gnueabi gcc-arm-linux-gnueabi
 		  2. set CXX=arm-linux-gnueabi-g++
-		  3. bunch of "notes" in output of compiling libfiddle.so
-	      2. libfiddle.so needs to be compiled for it.
+		  3. bunch of "notes" in output of compiling libcfiddle.so
+	      2. libcfiddle.so needs to be compiled for it.
 		  3. searching for asm functions needs to search for `.fnend` instead of `.cfi_endproc`
 8. Support for Rust and Go
-   1. Use the FFI interfaces in each language to get access to libfiddle.
+   1. Use the FFI interfaces in each language to get access to libcfiddle.
    2. Extend the makefile.
 9. Executable-based execution (rather than .so)
    1. Auto-generate code from python.

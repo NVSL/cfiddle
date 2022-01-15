@@ -1,12 +1,12 @@
-from fiddle import *
+from cfiddle import *
 from util import *
-from fiddle.Runner import Runner, InvocationDescription
+from cfiddle.Runner import Runner, InvocationDescription
 from fixtures import *
 import ctypes
 import pytest
 import inspect
 
-from fiddle.ProtoParser import Parameter, Prototype
+from cfiddle.ProtoParser import Parameter, Prototype
 
 test_prototype = Prototype(None, None, (Parameter(type=ctypes.c_float, name="a"),
                                         Parameter(type=ctypes.c_int, name="b")))

@@ -1,7 +1,7 @@
-from fiddle import *
+from cfiddle import *
 from fixtures import *
-from fiddle.Builder import Builder, ExecutableDescription, Executable
-from fiddle.config import get_config
+from cfiddle.Builder import Builder, ExecutableDescription, Executable
+from cfiddle.config import get_config
 import os
 import pytest
 
@@ -31,7 +31,7 @@ def test_builder_construction(test_cpp_nop_builder, setup):
     assert test_cpp_nop_builder.source_file == "test_src/test.cpp"
     assert test_cpp_nop_builder.source_name_base == "test"
     assert test_cpp_nop_builder.build_parameters == dict(OPTIMIZE="-O1")
-    assert test_cpp_nop_builder.build_root == os.path.join(get_config("FIDDLE_BUILD_ROOT"),"build")
+    assert test_cpp_nop_builder.build_root == os.path.join(get_config("CFIDDLE_BUILD_ROOT"),"build")
     assert test_cpp_nop_builder.build_directory.startswith(test_cpp_nop_builder.build_root)
     assert "OPTIMIZE" in test_cpp_nop_builder.build_directory 
     assert "O1" in test_cpp_nop_builder.build_directory

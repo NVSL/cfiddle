@@ -134,12 +134,12 @@ def run(executable, function, arguments=None, perf_counters=None, **kwargs):
     return run_list(invocations, perf_counters=perf_counters, **kwargs)
         
 
-def libfiddle_dir_path():
-    PACKAGE_DATA_PATH = pkg_resources.resource_filename('fiddle', 'resources/')    
-    return os.path.join(PACKAGE_DATA_PATH, "libfiddle", "build")
+def libcfiddle_dir_path():
+    PACKAGE_DATA_PATH = pkg_resources.resource_filename('cfiddle', 'resources/')    
+    return os.path.join(PACKAGE_DATA_PATH, "libcfiddle", "build")
 
-def print_libfiddle_dir():
-    print(libfiddle_dir_path())
+def print_libcfiddle_dir():
+    print(libcfiddle_dir_path())
 
 def setup_ld_path():
 
@@ -147,7 +147,7 @@ def setup_ld_path():
         ld_paths = os.environ["LD_LIBRARY_PATH"].split(":")
     else:
         ld_paths = []
-    ld_paths.append(libfiddle_dir_path())
+    ld_paths.append(libcfiddle_dir_path())
     os.environ["LD_LIBRARY_PATH"] = ":".join(ld_paths)
     return os.environ["LD_LIBRARY_PATH"]
 
@@ -159,7 +159,7 @@ def sanity_test():
     return run(executable=build(code('extern "C" int foo() {return 4;}')),
                function=["foo"])[0].return_value
 
-PACKAGE_DATA_PATH = pkg_resources.resource_filename('fiddle', 'resources/')
+PACKAGE_DATA_PATH = pkg_resources.resource_filename('cfiddle', 'resources/')
 
 setup_ld_path()
 

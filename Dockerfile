@@ -11,19 +11,19 @@ COPY install_prereqs.sh ./
 RUN bash ./install_prereqs.sh
 
 
-##### Install fiddle
+##### Install cfiddle
 
-COPY  . ./fiddle
-RUN  chown -R ${NB_USER} ./fiddle
+COPY  . ./cfiddle
+RUN  chown -R ${NB_USER} ./cfiddle
 USER ${NB_USER}
-#RUN cd fiddle; python setup.py build && pip install  -e .
-RUN cd fiddle;  pip install  .
-ENV LD_LIBRARY_PATH  /opt/conda/lib/python3.9/site-packages/fiddle/resources/libfiddle/build
-#ENV LD_LIBRARY_PATH  /home/jovyan/fiddle/src/fiddle/resources/libfiddle/build/
+#RUN cd cfiddle; python setup.py build && pip install  -e .
+RUN cd cfiddle;  pip install  .
+ENV LD_LIBRARY_PATH  /opt/conda/lib/python3.9/site-packages/cfiddle/resources/libcfiddle/build
+#ENV LD_LIBRARY_PATH  /home/jovyan/cfiddle/src/cfiddle/resources/libcfiddle/build/
 #   
 
 RUN mkdir -p .jupyter
 COPY  jupyter_notebook_config.py .jupyter/
 
-WORKDIR ${HOME}/fiddle/examples
+WORKDIR ${HOME}/cfiddle/examples
 

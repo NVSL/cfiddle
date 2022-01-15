@@ -1,6 +1,6 @@
-from fiddle import *
+from cfiddle import *
 from util import *
-from fiddle.config import get_config
+from cfiddle.config import get_config
 import os
 
 def test_code_cpp():
@@ -10,7 +10,7 @@ def test_code_cpp():
     return 4;
     }
 """), {}, "four", {})
-    assert os.path.exists(os.path.join(get_config("FIDDLE_BUILD_ROOT"), "anonymous_code"))
+    assert os.path.exists(os.path.join(get_config("CFIDDLE_BUILD_ROOT"), "anonymous_code"))
 
 def test_code_c():
     build_and_run(code(r"""

@@ -1,9 +1,9 @@
-.. Fiddle documentation master file, created by
+.. CFiddle documentation master file, created by
    sphinx-quickstart on Tue Jan 11 00:07:33 2022.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Fiddle
+CFiddle
 =======================
 
 .. toctree::
@@ -12,12 +12,12 @@ Fiddle
    index
 
 
-Fiddle is a tool for
+CFiddle is a tool for
 studying the compilation and execution of smallish programs written in C or
-C++.  If you want to know what the compiler does to your code and why your code is slow, Fiddle can help.
+C++.  If you want to know what the compiler does to your code and why your code is slow, CFiddle can help.
 
 It makes it easy to ask and answer interesting questions about what happens to
-programs as they go from source code to running program.  Fiddle can run on its
+programs as they go from source code to running program.  CFiddle can run on its
 own, but it is built to work with `Jupyter Notebook/Jupyter Lab
 <https://jupyter.org/>`_ to support interactive exploration.
 
@@ -29,19 +29,19 @@ It's features include:
 4. Easy, unified parameter and data gathering across building and running code.
 5. Works great with `Pandas <https://pandas.pydata.org/>`_ and  `Jupyter Notebook/Lab <https://jupyter.org/>`_   .
 
-The best way to learn about Fiddle is to try it.  You can `run the
-examples <https://mybinder.org/v2/gh/NVSL/fiddle/main?labpath=README.ipynb>`_ (this can take a while to load).
+The best way to learn about CFiddle is to try it.  You can `run the
+examples <https://mybinder.org/v2/gh/NVSL/cfiddle/main?labpath=README.ipynb>`_ (this can take a while to load).
 
 Installation
 ------------
 
-Installation instructions are in `the README <https://github.com/NVSL/fiddle>`_.
+Installation instructions are in `the README <https://github.com/NVSL/cfiddle>`_.
 
 Example
 -------
 
-The basic workflow for Fiddle is to compile some code using :func:`fiddle.build`,
-execute it using :func:`fiddle.run()`, and then examine results.
+The basic workflow for CFiddle is to compile some code using :func:`cfiddle.build`,
+execute it using :func:`cfiddle.run()`, and then examine results.
 
 Here's an example to set the stage before we describe the key functions below.
 
@@ -49,9 +49,9 @@ First, create a source file:
 
 .. doctest::
 
-    >>> from fiddle import  *
+    >>> from cfiddle import  *
     >>> sample = code(r"""
-    ... #include <fiddle.hpp>
+    ... #include <cfiddle.hpp>
     ... extern "C"
     ... int loop(int count) {
     ...	   int sum = 0;
@@ -135,45 +135,45 @@ Key Operations
 Creating Code
 .............
 
-Fiddle can compile existing source files or you can create an anonymous source file with :func:`code()`
+CFiddle can compile existing source files or you can create an anonymous source file with :func:`code()`
 
-.. autofunction:: fiddle.code
+.. autofunction:: cfiddle.code
 
 Building
 ........
 
-:func:`fiddle.build()` returns :obj:`fiddle.Executable` objects which make it easy to examine
+:func:`cfiddle.build()` returns :obj:`cfiddle.Executable` objects which make it easy to examine
 the assembly output or the control-flow graphs for a particular functions.
 
-.. autofunction:: fiddle.build
+.. autofunction:: cfiddle.build
 
 		  
 Executing
 .........
 
-:func:`fiddle.run()` can invoke functions in an :obj:`fiddle.Executable` and collect data
+:func:`cfiddle.run()` can invoke functions in an :obj:`cfiddle.Executable` and collect data
 about their execution.
 
-.. autofunction:: fiddle.run		  
+.. autofunction:: cfiddle.run		  
 
 Analyzing
 .........
 
-The results end up special list type (:obj:`fiddle.InvocationResultsList`) that can
+The results end up special list type (:obj:`cfiddle.InvocationResultsList`) that can
 summarize the results.  
 
-.. autoclass:: fiddle.Data.InvocationResultsList
+.. autoclass:: cfiddle.Data.InvocationResultsList
 	       :members:
 	     
 Exploring Parameter Settings
 ............................
 
-:func:`fiddle.arg_map()` lets fiddle users easily to explore the impact of compile-
+:func:`cfiddle.arg_map()` lets cfiddle users easily to explore the impact of compile-
 and run-time parameters by making it very easy to construct complex sets of
 parameter/argument values.
 
-The easiest way to use :func:`fiddle.build()` and :func:`fiddle.run()` is to call `arg_map()`
+The easiest way to use :func:`cfiddle.build()` and :func:`cfiddle.run()` is to call `arg_map()`
 to construct their `build_parameter` and `argument` function parameters.
 
-.. autofunction:: fiddle.util.arg_map
+.. autofunction:: cfiddle.util.arg_map
 

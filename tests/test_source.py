@@ -1,7 +1,7 @@
-from fiddle import *
+from cfiddle import *
 from util import *
 from fixtures import *
-from fiddle.source import FullyInstrumentedExecutable
+from cfiddle.source import FullyInstrumentedExecutable
 import pytest
 
 def test_source(test_cpp):

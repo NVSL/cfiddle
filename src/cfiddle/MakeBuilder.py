@@ -7,7 +7,7 @@ from .util import environment, invoke_process
 
 import pkg_resources
 
-DATA_PATH = pkg_resources.resource_filename('fiddle', 'resources/')
+DATA_PATH = pkg_resources.resource_filename('cfiddle', 'resources/')
 
 class MakeBuilder(Builder):
 
@@ -15,7 +15,7 @@ class MakeBuilder(Builder):
                  *argc,
                  **kwargs
                  ):
-        self._makefile = kwargs.pop("makefile",os.path.join(DATA_PATH, "make", "fiddle.make"))
+        self._makefile = kwargs.pop("makefile",os.path.join(DATA_PATH, "make", "cfiddle.make"))
         self._rebuild = kwargs.pop("rebuild", False)
         self._verbose = kwargs.pop("verbose", False)
 
@@ -31,8 +31,8 @@ class MakeBuilder(Builder):
 
         parameter_strings  = [f"{name}={value}" for name, value in self.build_parameters.items()]
         parameter_strings += [f"BUILD={self.build_directory}"]
-        parameter_strings += [f"FIDDLE_INCLUDE={os.path.join(DATA_PATH, 'include')}"]
-        parameter_strings += [f"FIDDLE_VPATH={vpath}"]
+        parameter_strings += [f"CFIDDLE_INCLUDE={os.path.join(DATA_PATH, 'include')}"]
+        parameter_strings += [f"CFIDDLE_VPATH={vpath}"]
         
         base_cmd = ["make", "-f", self._makefile] + parameter_strings
         

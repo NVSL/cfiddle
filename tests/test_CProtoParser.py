@@ -3,8 +3,8 @@ import pytest
 import re
 import os
 import ctypes
-from fiddle.CProtoParser import *
-from fiddle.ProtoParser import BadParameter, UnknownType, BadParameterName, Prototype, Parameter
+from cfiddle.CProtoParser import *
+from cfiddle.ProtoParser import BadParameter, UnknownType, BadParameterName, Prototype, Parameter
 
 @pytest.mark.parametrize("t,ct", [
     ("long", ctypes.c_long),

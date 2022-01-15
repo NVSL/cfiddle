@@ -1,7 +1,7 @@
 import pytest
-from fiddle import *
+from cfiddle import *
 from util import *
-from fiddle.config import fiddle_config
+from cfiddle.config import cfiddle_config
 import tempfile
 
 @pytest.fixture
@@ -9,9 +9,9 @@ def setup():
     yield from _pristine_dir()
 
 def _pristine_dir():
-    with tempfile.TemporaryDirectory() as fiddle_dir:
-        with fiddle_config(FIDDLE_BUILD_ROOT=fiddle_dir):
-            yield fiddle_dir
+    with tempfile.TemporaryDirectory() as cfiddle_dir:
+        with cfiddle_config(CFIDDLE_BUILD_ROOT=cfiddle_dir):
+            yield cfiddle_dir
             
 
 

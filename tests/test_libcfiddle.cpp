@@ -2,7 +2,7 @@
 #include "gtest/gtest.h"
 #include "gmock/gmock.h"
 #include <sstream>
-#include"fiddle.hpp"
+#include"cfiddle.hpp"
 #include<string.h>
 
 using ::testing::ElementsAre;
@@ -14,14 +14,14 @@ namespace Tests {
 			GTEST_SKIP();
 	}
 
-	class libfiddleTests :  public ::testing::Test {
+	class libcfiddleTests :  public ::testing::Test {
 	public:
-		libfiddleTests() {
+		libcfiddleTests() {
 			get_dataset()->clear();
 		}
 	};
 
-	TEST_F(libfiddleTests, start_end_test) {
+	TEST_F(libcfiddleTests, start_end_test) {
 		start_measurement();
 		sleep(1);
 		end_measurement();
@@ -29,14 +29,14 @@ namespace Tests {
 		ASSERT_NEAR(get_dataset()->current_row().get_datum("ET").as<double>(), 1.0, 0.15);
 	}
 	
-	TEST_F(libfiddleTests, tag_test) {
+	TEST_F(libcfiddleTests, tag_test) {
 		start_measurement("foo");
 		end_measurement();
 		
 		ASSERT_EQ(strcmp(get_dataset()->current_row().get_datum("tag").as<const char*>(), "foo"), 0);
 	}
 	
-	TEST_F(libfiddleTests, start_restart_test) {
+	TEST_F(libcfiddleTests, start_restart_test) {
 		get_dataset()->clear();
 		start_measurement();
 		sleep(1);
@@ -48,7 +48,7 @@ namespace Tests {
 		ASSERT_NEAR(get_dataset()->current_row().get_datum("ET").as<double>(), 1.0, 0.1);
 	}
 
-	TEST_F(libfiddleTests, perf_count_CPU_CYCLES) {
+	TEST_F(libcfiddleTests, perf_count_CPU_CYCLES) {
 		if (!get_perf_counter()->performance_counters_enabled()) {
 			GTEST_SKIP();
 		}

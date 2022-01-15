@@ -1,4 +1,4 @@
-from fiddle import *
+from cfiddle import *
 from util import *
 from fixtures import *
 

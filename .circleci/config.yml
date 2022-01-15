@@ -27,11 +27,11 @@ jobs:
       - run: sudo apt-get update --allow-releaseinfo-change
       - run: sudo apt-get install -y graphviz
       - run: make dist
-      - run: mkdir -p /tmp/fiddle/packages/
-      - run: cp build_release/dist/*.tar.gz /tmp/fiddle/packages/
-      - run: ls -lRa /tmp/fiddle
+      - run: mkdir -p /tmp/cfiddle/packages/
+      - run: cp build_release/dist/*.tar.gz /tmp/cfiddle/packages/
+      - run: ls -lRa /tmp/cfiddle
       - persist_to_workspace:
-          root: /tmp/fiddle
+          root: /tmp/cfiddle
           paths:
              - packages/*
     
@@ -43,15 +43,15 @@ jobs:
     steps:
       - checkout
       - attach_workspace:
-          at: /tmp/fiddle
-      - run: ls -lRa /tmp/fiddle
+          at: /tmp/cfiddle
+      - run: ls -lRa /tmp/cfiddle
       - run: sudo bash ./install_prereqs.sh
       - run:
-          name: Install fiddle
-          command: pip install /tmp/fiddle/packages/*.tar.gz
+          name: Install cfiddle
+          command: pip install /tmp/cfiddle/packages/*.tar.gz
       - run:
-          name: Test fiddle
-          command: $(set-fiddle-ld-path); cd tests; make test
+          name: Test cfiddle
+          command: $(set-cfiddle-ld-path); cd tests; make test
   python-310:
     <<: *test-template
     docker:
@@ -73,7 +73,7 @@ jobs:
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
-   build-fiddle: # This is the name of the workflow, feel free to change it to better match your workflow.
+   build-cfiddle: # This is the name of the workflow, feel free to change it to better match your workflow.
     # Inside the workflow, you define the jobs you want to run.
     jobs:
       - build-package

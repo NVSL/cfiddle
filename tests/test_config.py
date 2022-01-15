@@ -1,9 +1,9 @@
-from fiddle import *
+from cfiddle import *
 from util import *
-from fiddle.Builder import Executable
-from fiddle.config import *
+from cfiddle.Builder import Executable
+from cfiddle.config import *
 from fixtures import *
-import fiddle
+import cfiddle
 import pytest
 
 def test_configuration(setup):
@@ -28,7 +28,7 @@ def test_push_pop():
         pop_config()
 
     with tempfile.TemporaryDirectory() as tdir:
-        with fiddle_config(Executable_type=MyExecutable, FIDDLE_BUILD_ROOT=tdir):
+        with cfiddle_config(Executable_type=MyExecutable, CFIDDLE_BUILD_ROOT=tdir):
             assert isinstance(build_one("test_src/test.cpp"), MyExecutable)
 
         with pytest.raises(ValueError):

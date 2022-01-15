@@ -3,24 +3,24 @@
 
 BUILD?=build
 
-vpath %.cpp $(FIDDLE_VPATH)
-vpath %.cc $(FIDDLE_VPATH)
-vpath %.CPP $(FIDDLE_VPATH)
-vpath %.cp $(FIDDLE_VPATH)
-vpath %.cxx $(FIDDLE_VPATH)
-vpath %.C $(FIDDLE_VPATH)
-vpath %.c++ $(FIDDLE_VPATH)
-vpath %.c $(FIDDLE_VPATH)
+vpath %.cpp $(CFIDDLE_VPATH)
+vpath %.cc $(CFIDDLE_VPATH)
+vpath %.CPP $(CFIDDLE_VPATH)
+vpath %.cp $(CFIDDLE_VPATH)
+vpath %.cxx $(CFIDDLE_VPATH)
+vpath %.C $(CFIDDLE_VPATH)
+vpath %.c++ $(CFIDDLE_VPATH)
+vpath %.c $(CFIDDLE_VPATH)
 
 CXX?=g++
 CC?=gcc
 WARNINGS=-Wall -Werror
 #DEBUG_FLAGS?=
-INCLUDES=-I. -I$(FIDDLE_INCLUDE) 
+INCLUDES=-I. -I$(CFIDDLE_INCLUDE) 
 CFLAGS=$(WARNINGS) $(DEBUG_FLAGS) -fPIC $(OPTIMIZE) $(INCLUDES) $(MORE_INCLUDES) $(MORE_CFLAGS) -MMD -save-temps=obj
 CXXFLAGS=$(CFLAGS) $(CXX_STANDARD) $(MORE_CXXFLAGS)
 CXX_STANDARD=-std=gnu++11
-LIBS=-L$(FIDDLE_INCLUDE)/../libfiddle/build -lfiddle
+LIBS=-L$(CFIDDLE_INCLUDE)/../libcfiddle/build -lcfiddle
 
 LDFLAGS=$(LD_OPTS) $(MORE_LDFLAGS) $(LIBS) $(MORE_LIBS) #-pthread  #-std=gnu++11  
 
@@ -78,11 +78,11 @@ $(BUILD)/%.so: $(BUILD)/%.o $(MORE_OBJS)
 	$(CXX) $^ $(LDFLAGS) -shared -o $@
 
 -include $(wildcard *.d) $(wildcard $(BUILD)/*.d)
-.PHONY: fiddle-clean
-fiddle-clean:
+.PHONY: cfiddle-clean
+cfiddle-clean:
 	rm -rf $(BUILD)
 
-clean: fiddle-clean
+clean: cfiddle-clean
 
 .PHONY: help
 

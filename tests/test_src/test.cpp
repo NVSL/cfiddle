@@ -6,7 +6,7 @@
 
 #include<iostream>
 #include<cstring>
-#include"fiddle.hpp"
+#include"cfiddle.hpp"
 
 template<class T>
 void go(T v) {

@@ -1,14 +1,14 @@
-# Fiddle: A Tool For Studying Small Compiled rograms
+# CFiddle: A Tool For Studying Small Compiled rograms
 
 [![CircleCI](https://circleci.com/gh/circleci/circleci-docs.svg?style=svg)](https://circleci.com/gh/circleci/circleci-docs)
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/NVSL/fiddle/main?labpath=README.ipynb)
-[![Documentation Status](https://readthedocs.org/projects/fiddle-docs/badge/?version=latest)](https://fiddle-docs.readthedocs.io/en/latest/?badge=latest)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/NVSL/cfiddle/main?labpath=README.ipynb)
+[![Documentation Status](https://readthedocs.org/projects/cfiddle-docs/badge/?version=latest)](https://cfiddle-docs.readthedocs.io/en/latest/?badge=latest)
 	
-Fiddle is a tool for studying the compilation and execution of smallish programs written in C or
-C++.  If you want to know what the compiler does to your code and why your code is slow, Fiddle can help.
+CFiddle is a tool for studying the compilation and execution of smallish programs written in C or
+C++.  If you want to know what the compiler does to your code and why your code is slow, CFiddle can help.
 
 It makes it easy to ask and answer interesting questions about what happens to
-programs as they go from source code to running program.  Fiddle can run on its
+programs as they go from source code to running program.  CFiddle can run on its
 own, but it is built to work with [Jupyter Notebook/Jupyter
 Lab](https://jupyter.org/) to support interactive exploration.
 
@@ -20,25 +20,25 @@ It's features include:
 4. Easy, unified parameter and data gathering across building and running code.
 5. Works great with [Pandas](https://pandas.pydata.org/) and  [Jupyter Notebook/Lab](https://jupyter.org/).
 
-The best way to learn about Fiddle is to try it.  You can [run the
-examples](https://mybinder.org/v2/gh/NVSL/fiddle/main?labpath=README.ipynb) (this can take a while to load).
+The best way to learn about CFiddle is to try it.  You can [run the
+examples](https://mybinder.org/v2/gh/NVSL/cfiddle/main?labpath=README.ipynb) (this can take a while to load).
 
 Or run it locally with Docker:
 
 ```
-docker run -it --publish published=8888,target=8888 stevenjswanson/fiddle:latest jupyter lab --LabApp.token=''
+docker run -it --publish published=8888,target=8888 stevenjswanson/cfiddle:latest jupyter lab --LabApp.token=''
 ```
 
 and then visit http://localhost:8888/lab/tree/README.ipynb.
 
-You can also read [the documentation](https://fiddle-docs.readthedocs.io).
+You can also read [the documentation](https://cfiddle-docs.readthedocs.io).
 
 ## Examples
 
 ### What Does a `for` loop look like in assembly?
 
 ```python
->>> from fiddle import * 
+>>> from cfiddle import * 
 >>> sample = code(r""" 
 ...    extern "C"
 ...    int loop() {
@@ -106,25 +106,25 @@ loop:
 
 ## Local Installation
 
-Fiddle depends on some system packages and python's `wheel`.  Setup a virtual environment:
+CFiddle depends on some system packages and python's `wheel`.  Setup a virtual environment:
 
 ```
-python -m venv fiddle-venv
+python -m venv cfiddle-venv
 ```
 
 Become root, so you can install the systetm packages with `apt-get` with 
 
 ```
 sudo bash
-. fiddle-venv/bin/activate	
+. cfiddle-venv/bin/activate	
 make install-prereqs
 exit
 ```
 
-Install fiddle:
+Install cfiddle:
 
 ```
-. fiddle-venv/bin/activate
+. cfiddle-venv/bin/activate
 pip install .
 ```
 
@@ -136,16 +136,16 @@ make test
 
 ## Common Problems
 
-Fiddle needs `LD_LIBRARY_PATH` set properly to work, and it can't set it itself reliably.  If you get
+CFiddle needs `LD_LIBRARY_PATH` set properly to work, and it can't set it itself reliably.  If you get
 
 ```
-OSError: libfiddle.so: cannot open shared object file: No such file or directory
+OSError: libcfiddle.so: cannot open shared object file: No such file or directory
 ```
 
 You can update `LD_LIBRARY_PATH` with:
 
 ```
-$(set-fiddle-ld-path)
+$(set-cfiddle-ld-path)
 ```
 
 
@@ -154,5 +154,5 @@ $(set-fiddle-ld-path)
 If you want to save changes you make to any of the examples, you'll need to run docker something like this:
 
 ```
-docker run -it --publish published=8888,target=8888 --mount type=bind,source=$HOME,dst=/home/jovyan -w /home/jovyan/fiddle_work/fiddle  stevenjswanson/fiddle:latest  jupyter lab --LabApp.token=''
+docker run -it --publish published=8888,target=8888 --mount type=bind,source=$HOME,dst=/home/jovyan -w /home/jovyan/cfiddle_work/cfiddle  stevenjswanson/cfiddle:latest  jupyter lab --LabApp.token=''
 ```

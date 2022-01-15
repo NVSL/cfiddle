@@ -5,7 +5,7 @@
 #include<algorithm>
 #include<cassert>
 #include<map>
-#include"fiddle.hpp"
+#include"cfiddle.hpp"
 
 //These little functions are used by the heap-sort algorithm
 #define PARENT(i) ((i - 1) / 2)
