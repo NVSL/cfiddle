@@ -32,11 +32,11 @@ export CFIDDLE_DOCKER_IMAGE=cfiddle:$(BRANCH)
 
 .PHONY: docker
 docker:
-	docker build --no-cache --progress plain -t stevenjswanson/$(CFIDDLE_DOCKER_IMAGE):latest  --build-arg ARG_THIS_DOCKER_IMAGE_UUID=$(shell uuidgen) .
+	docker build --no-cache --progress plain -t stevenjswanson/$(CFIDDLE_DOCKER_IMAGE)  --build-arg ARG_THIS_DOCKER_IMAGE_UUID=$(shell uuidgen) .
 
 .PHONY: docker-test
 docker-test: docker
-	docker run -it --privileged -w /home/jovyan/cfiddle/tests docker.io/stevenjswanson/$(CFIDDLE_DOCKER_IMAGE):latest make test
+	docker run -it --privileged -w /home/jovyan/cfiddle/tests docker.io/stevenjswanson/$(CFIDDLE_DOCKER_IMAGE) make test
 
 .PHONY: docker-release
 docker-release: CFIDDLE_DOCKER_IMAGE=cfiddle
