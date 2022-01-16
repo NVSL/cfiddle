@@ -33,7 +33,7 @@ setup(
     name="cfiddle",
     version=version.strip(),
     package_data={
-        'cfiddle': ['resources/*/*'],
+        'cfiddle': ['resources/*/*', 'VERSION'],
     },
     install_requires = [
         "pytest-cpp",
