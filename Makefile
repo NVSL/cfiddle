@@ -47,8 +47,8 @@ docker-release:
 	rm -rf .clean_checkout
 	git clone . .clean_checkout
 	(cd .clean_checkout; $(MAKE) docker-push)
-	[ "$(BRANCH)" == "main" ] && docker tag stevenjswanson/$(CFIDDLE_DOCKER_IMAGE) stevenjswanson/cfiddle:latest
-	[ "$(BRANCH)" == "main" ] && docker tag stevenjswanson/$(CFIDDLE_DOCKER_IMAGE) stevenjswanson/cfiddle:v$(shell cat VERSION)
+	[ "$(BRANCH)" = "main" ] && docker tag stevenjswanson/$(CFIDDLE_DOCKER_IMAGE) stevenjswanson/cfiddle:latest
+	[ "$(BRANCH)" = "main" ] && docker tag stevenjswanson/$(CFIDDLE_DOCKER_IMAGE) stevenjswanson/cfiddle:v$(shell cat VERSION)
 
 .PHONY: docker-push
 docker-push: docker-test

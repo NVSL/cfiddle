@@ -117,7 +117,7 @@ Become root, so you can install the systetm packages with `apt-get` with
 ```
 sudo bash
 . cfiddle-venv/bin/activate	
-make install-prereqs
+./install_prereqs.sh
 exit
 ```
 
