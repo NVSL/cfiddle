@@ -28,7 +28,7 @@ package-test:
 	$(MAKE) -C tests test
 
 BRANCH=$(shell git rev-parse --abbrev-ref HEAD)
-export CFIDDLE_DOCKER_IMAGE=cfiddle-$(BRANCH)
+export CFIDDLE_DOCKER_IMAGE=cfiddle:$(BRANCH)
 
 .PHONY: docker
 docker:
@@ -47,11 +47,13 @@ docker-release:
 	rm -rf .clean_checkout
 	git clone . .clean_checkout
 	(cd .clean_checkout; $(MAKE) docker-push)
+	[ "$(BRANCH)" == "main" ] && docker tag stevenjswanson/$(CFIDDLE_DOCKER_IMAGE) stevenjswanson/cfiddle:latest
+	[ "$(BRANCH)" == "main" ] && docker tag stevenjswanson/$(CFIDDLE_DOCKER_IMAGE) stevenjswanson/cfiddle:v$(shell cat VERSION)
 
 .PHONY: docker-push
 docker-push: docker-test
-	docker push stevenjswanson/$(CFIDDLE_DOCKER_IMAGE):latest
+	docker push stevenjswanson/$(CFIDDLE_DOCKER_IMAGE)
 
 .PHONY: docker-pull
 docker-pull:
-	docker pull stevenjswanson/$(CFIDDLE_DOCKER_IMAGE):latest
+	docker pull stevenjswanson/$(CFIDDLE_DOCKER_IMAGE)

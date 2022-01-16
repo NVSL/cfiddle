@@ -26,9 +26,12 @@ class build(_build):
                 level=INFO)
             subprocess.check_call(["make","default"])
 
+with open("VERSION") as f:
+    version = f.read()
+    
 setup(
     name="cfiddle",
-    version="0.1.0",
+    version=version.strip(),
     package_data={
         'cfiddle': ['resources/*/*'],
     },
