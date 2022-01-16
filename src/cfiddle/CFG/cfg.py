@@ -366,4 +366,17 @@ if __name__ == '__main__':
 
 class CFG:
     def cfg(self, function, output, **kwargs):
+        """Return a image of the control flow graph for a function.
+
+        This extracts the CFG from the compiled object file using the `Redare2
+        <https://rada.re/n/>`_ toolkit.  Redare will sometimes fail to create a
+        coherent CFG.
+
+        Args:
+           function: function to show.
+           output: filename in which to put the resulting ``png`` file or ``None``, which an anonymous file will be created.
+        Returns:
+           ``str`` : The filename containing the file.
+
+        """
         return do_cfg(self.lib, function,  output=output, **kwargs)

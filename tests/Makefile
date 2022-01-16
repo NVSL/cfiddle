@@ -29,10 +29,10 @@ test_DataSet : test_DataSet.o
 	$(CXX) $^ $(LDFLAGS) -pthread -lgtest -lgtest_main -lcfiddle -L$(shell cfiddle-lib-path) -o $@
 
 test_PerfCounter : test_PerfCounter.o
-	$(CXX) $^ $(LDFLAGS) -pthread -lgtest -lgtest_main -o $@
+	$(CXX) $^ $(LDFLAGS) -pthread -lgtest -lgtest_main -lpfm -o $@
 
 test_libcfiddle : test_libcfiddle.o
-	$(CXX) $^ $(LDFLAGS) -pthread -lcfiddle -L$(shell cfiddle-lib-path) -lgtest -lgtest_main -o $@
+	$(CXX) $^ $(LDFLAGS) -pthread -lcfiddle -L$(shell cfiddle-lib-path) -lgtest -lgtest_main -lpfm -o $@
 
 .PHONY: help
 help:
