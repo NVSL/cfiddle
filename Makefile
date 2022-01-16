@@ -39,7 +39,6 @@ docker-test: docker
 	docker run -it --privileged -w /home/jovyan/cfiddle/tests docker.io/stevenjswanson/$(CFIDDLE_DOCKER_IMAGE) make test
 
 .PHONY: docker-release
-docker-release: CFIDDLE_DOCKER_IMAGE=cfiddle
 docker-release:
 	git update-index --refresh 
 	[ "$(BRANCH)" != "main" ] || git diff-index --quiet HEAD -- # require no local changes if we are on main
