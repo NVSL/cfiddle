@@ -1,7 +1,12 @@
 # TODOs
 
 5. Integrate libpfm4 (https://github.com/wcohen/libpfm4) so we can count everything.
-2. Set up jupyterhub so anyone can log in and try it.
+2. Set up jupyterhub so anyone can log in and try it. 
+   2.  this worked  well enough to get docker hub running with cfiddle installed.
+	   1.  Challenge:  Making a single docker image work well with Binder and docker hub.
+	   2.  CAP_PERFMON
+	   3.  The user storage configuration was not robust.
+	   3.  I don't think it scaled past one node?
    1.  adduser to create admin user.
    1.  testing jupyter hub -- this doesn't support docker, which we need.
 	   1.  https://tljh.jupyter.org/en/latest/install/custom-server.html
@@ -31,7 +36,7 @@
 			   5.  connet to proxy-public EXTERNAL_IP, but fiddle not installedh
 		   * set docker image: https://zero-to-jupyterhub.readthedocs.io/en/latest/jupyterhub/customizing/user-environment.html#choose-and-use-an-existing-docker-image
                1.  Same 'microk8s helm3 upgrade' command as above to enable changes.
-			   2.  I think it takes a long time because it's downloading the docker image?
+
 					
 # Notes
 
@@ -42,3 +47,4 @@ To get newer kernel on Ubunut 20.04:
 
 
    
+# Notes On Docker Hub

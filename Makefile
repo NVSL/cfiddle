@@ -48,6 +48,8 @@ docker-release:
 	(cd .clean_checkout; $(MAKE) docker-push)
 	[ "$(BRANCH)" = "main" ] && docker tag stevenjswanson/$(CFIDDLE_DOCKER_IMAGE) stevenjswanson/cfiddle:latest
 	[ "$(BRANCH)" = "main" ] && docker tag stevenjswanson/$(CFIDDLE_DOCKER_IMAGE) stevenjswanson/cfiddle:v$(shell cat VERSION)
+	[ "$(BRANCH)" = "main" ] && docker push stevenjswanson/cfiddle:latest
+	[ "$(BRANCH)" = "main" ] && docker push stevenjswanson/cfiddle:v$(shell cat VERSION)
 
 .PHONY: docker-push
 docker-push: docker-test
