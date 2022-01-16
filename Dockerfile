@@ -4,6 +4,7 @@ ARG NB_USER
 ARG NB_UID
 ENV USER ${NB_USER}
 ENV HOME /home/${NB_USER}
+ENV THIS_DOCKER_IMAGE ${ARG_THIS_DOCKER_IMAGE}
 USER root
 
 ##### install system packages

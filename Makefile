@@ -27,25 +27,28 @@ test:  package-test docker-test
 package-test:
 	$(MAKE) -C tests test
 
-CFIDDLE_DOCKER_IMAGE=cfiddle-devel
+BRANCH=$(shell git rev-parse --abbrev-ref HEAD)
+export CFIDDLE_DOCKER_IMAGE=cfiddle-$(BRANCH)
 
 .PHONY: docker
 docker:
-	docker build --no-cache --progress plain -t stevenjswanson/$(CFIDDLE_DOCKER_IMAGE):latest .
+	docker build --no-cache --progress plain -t stevenjswanson/$(CFIDDLE_DOCKER_IMAGE):latest  --build-arg ARG_THIS_DOCKER_IMAGE_UUID=$(shell uuidgen) .
 
 .PHONY: docker-test
 docker-test: docker
 	docker run -it --privileged -w /home/jovyan/cfiddle/tests docker.io/stevenjswanson/$(CFIDDLE_DOCKER_IMAGE):latest make test
 
-.PHONY: push-docker
+.PHONY: docker-release
 docker-release: CFIDDLE_DOCKER_IMAGE=cfiddle
-docker-release: docker-release
+docker-release:
+	git update-index --refresh 
+	[ "$(BRANCH)" != "main" ] || git diff-index --quiet HEAD -- # require no local changes if we are on main
+	[ "$(BRANCH)" != "main" ] || [ x"$$(git rev-parse main)" = x"$$(git rev-parse origin/main)" ] # make sure we are synced, if we are on main
 	rm -rf .clean_checkout
-	git clone https://github.com/NVSL/cfiddle.git .clean_checkout
-#	git clone . .clean_checkout
-	(cd .clean_checkout; pip install .; $(MAKE) docker-push)
-#	(cd .clean_checkout; pip install .; $(MAKE) docker-test)
+	git clone . .clean_checkout
+	(cd .clean_checkout; $(MAKE) docker-push)
 
+.PHONY: docker-push
 docker-push: docker-test
 	docker push stevenjswanson/$(CFIDDLE_DOCKER_IMAGE):latest
 
