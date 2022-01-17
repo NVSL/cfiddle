@@ -75,35 +75,6 @@ namespace Tests {
 		ASSERT_EQ(counter.get_counters().size(), 0);
 	}
 
-	// TEST_F(PerfCountTests, test_libpfm4_cycles) {
-	// 	PerfCounter counter;
-	// 	SKIP_FOR_NO_PERFCOUNT_PERMS;
-	// 	ASSERT_EQ(counter.check_valid(), true);
-	// 	counter.add_libpfm4_counter("UNHALTED_CORE_CYCLES");
-	// 	ASSERT_EQ(counter.check_valid(), true);
-	// 	counter.start();
-	// 	ASSERT_EQ(counter.check_valid(), true);
- 	// 	volatile int i;
- 	// 	for(i = 0; i < 10000; i++) {
- 	// 	}
-	// 	counter.stop();
-	// 	ASSERT_EQ(counter.check_valid(), true);
-	// 	auto results = counter.get_counters();
-	// 	for(auto & v: results) {
-	// 		std::cout << v.name << " = " << v.value << "\n"; 
-	// 	}
-	// 	ASSERT_EQ(counter.check_valid(), true);
-	// }
-
-
-	// TEST_F(PerfCountTests, test_disabled_perfcount) {
-	// 	PerfCounter counter;
-	// 	ASSERT_EQ(counter.performance_counters_enabled(), false);
-	// }
-	
-	class CacheNamingFixture: public ::testing::TestWithParam<std::tuple<uint64_t, uint64_t, uint64_t, const char*>> {};
-	
-	
 	TEST_F(PerfCountTests, test_CacheHits) {
 		PerfCounter counter;
 		SKIP_FOR_NO_PERFCOUNT_PERMS;
