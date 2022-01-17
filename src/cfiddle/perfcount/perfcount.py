@@ -1,31 +1,13 @@
 import ctypes
-from collections import namedtuple
-from .PerformanceCounterSpec import PerformanceCounterSpec
-from .perfcount_defs import *
-
-class CacheCounter(PerformanceCounterSpec):
-    def __init__(self, cache, op, result):
-        #https://man7.org/linux/man-pages/man2/perf_event_open.2.html
-        config = ((cache) |
-                  (op << 8) |
-                  (result << 16))
-        super().__init__(PERF_TYPE_HW_CACHE, config)
-        self.cache = cache
-        self.op = op
-        self.result = result
-
-
 
 def install_perf_counters(perf_counters):
     libcfiddle = _load_libcfiddle()
 
     for pc in perf_counters:
-        if isinstance(pc, CacheCounter):
-            libcfiddle.add_cache_perf_counter(pc.cache, pc.op, pc.result)
-        elif isinstance(pc, PerformanceCounterSpec):
-            libcfiddle.add_perf_counter(pc.type, pc.config)
+        if isinstance(pc, str):
+            libcfiddle.add_perf_counter(pc)
         else:
-            raise ValueError("Expected instance of 'PerformanceCounterSpec' not {type(pc).__name__}.")
+            raise ValueError("Expected instance of 'str' not {type(pc).__name__}.")
 
 def are_perf_counters_available():
     return _load_libcfiddle().are_perf_counters_available()

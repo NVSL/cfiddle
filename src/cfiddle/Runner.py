@@ -2,7 +2,7 @@ from .Builder import Executable
 import collections
 import os
 from .util import type_check, type_check_list
-from .perfcount import PerformanceCounterSpec
+
 
 class InvocationDescription:
     def __init__(self, executable, function, arguments, perf_counters=None):
@@ -20,7 +20,7 @@ class InvocationDescription:
         type_check(self.function, str)
         type_check(self.arguments, dict)
         type_check_list(self.arguments.keys(), str)
-        type_check_list(self.perf_counters, PerformanceCounterSpec)
+        type_check_list(self.perf_counters, str)
     
 class Runner:
 

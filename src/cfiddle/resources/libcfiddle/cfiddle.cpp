@@ -24,15 +24,9 @@ void clear_perf_counters() {
 }
 
 extern "C"
-void add_perf_counter(uint32_t type, uint64_t config){
-	get_perf_counter()->add_counter(type, config);
+void add_perf_counter(char * perf_counter_spec) {
+	get_perf_counter()->add_counter(perf_counter_spec);
 }
-
-extern "C"
-void add_cache_perf_counter(int cache, int op, int result){
-	get_perf_counter()->add_cache_counter(cache, op, result);
-}
-
 
 extern "C"
 bool are_perf_counters_available() {
