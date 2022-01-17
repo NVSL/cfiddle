@@ -5,7 +5,7 @@ def install_perf_counters(perf_counters):
 
     for pc in perf_counters:
         if isinstance(pc, str):
-            libcfiddle.add_perf_counter(pc)
+            libcfiddle.add_perf_counter(ctypes.c_char_p(pc.encode()))
         else:
             raise ValueError("Expected instance of 'str' not {type(pc).__name__}.")
 
