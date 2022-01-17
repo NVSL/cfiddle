@@ -10,7 +10,7 @@ CFiddle
    :hidden:
 
    index
-
+   perfcount
 
 CFiddle is a tool for
 studying the compilation and execution of smallish programs written in C or
