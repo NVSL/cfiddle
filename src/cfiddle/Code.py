@@ -4,16 +4,16 @@ from .util import read_file
 from .config import get_config
 
 def code(source, language=None):
-    """Generate an anonymous source file.
+    """Generate an anonymous source file and return the path to it.
 
-    Write `source` to anonymous file and return the file's name.  This function
+    Write ``source`` to anonymous file and return the file's name.  This function
     is meant to be used an the first argument of :func:`build()`.
 
     Args:
       source: The source code.  Raw strings work best (e.g., `r\"\"\" // my code \"\"\"`).
       language:  Suffix to use for the filename.  Default to `cpp`.
     Returns:
-      `str`: The file name.
+      ``str``: The file name.
     """
     
     if language is None:

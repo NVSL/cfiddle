@@ -41,18 +41,18 @@ def build_and_run(source_file, build_parameters, function, arguments):
 def build(source, build_parameters=None, **kwargs):
     """Compile one or more source files using one or more different ways.
 
-    `source` can be a single filename or a list of file names.  `build`
+    ``source`` can be a single filename or a list of file names.  ``build``
     compiles each file into an :obj:`Executable`.  A call to :func:`code()` is
-    often passed as `source`.
+    often passed as ``source``.
 
-    `build_parameters` can set parameters for the build process (e.g.,
+    ``build_parameters`` can set parameters for the build process (e.g.,
     optimization levels or the compiler to use).  It can be a :obj:`dict` or list
     of :obj:`dict` that provide values for build parameters.  If
-    `build_parameters` is `None`, defaults will be used.
+    ``build_parameters`` is ``None``, defaults will be used.
 
-    Typically, the `build_parameters` value is generated with :func:`arg_map()`.
+    Typically, the ``build_parameters`` value is generated with :func:`arg_map()`.
 
-    `build` compiles each source file using each set of build parameters, and
+    ``build`` compiles each source file using each set of build parameters, and
     returns list of resulting :obj:`Executable` objects.
 
     The :obj:`Executable` s can be studied themselves or passed to :func:`run`.
@@ -63,7 +63,7 @@ def build(source, build_parameters=None, **kwargs):
         **kwargs:  Further options to the :obj:`Builder` object that perform compilation.
 
     Returns:
-        list of :obj:`Executable`: One executable for each combination of `source` and `build_parameters`.
+        list of :obj:`Executable`: One executable for each combination of ``source`` and ``build_parameters``.
 
     """
 
@@ -98,15 +98,15 @@ def run_list(invocations, perf_counters=None, **kwargs):
 def run(executable, function, arguments=None, perf_counters=None, **kwargs):
     """Run one or more functions with one or more sets of arguments.
 
-    Run each `function` in each :obj:`Executable` using each set of arguments,
-    and collect the data provided by each `perf_counter` for each invocation.
+    Run each ``function`` in each :obj:`Executable` using each set of arguments,
+    and collect the data provided by each ``perf_counter`` for each invocation.
 
-    Each `function` must exist in each :obj:`Executable` and they must have the
+    Each ``function`` must exist in each :obj:`Executable` and they must have the
     same signature.  Further, each set of arguments must match the function
-    signature (i.e., the key-value pairs in `arguments` must align with names
+    signature (i.e., the key-value pairs in ``arguments`` must align with names
     and types of the function's arguments).
 
-    The value of `arguments` is typically provided by a call to
+    The value of ``arguments`` is typically provided by a call to
     :func:`arg_map()`.
 
     Returns an :obj:`InvocationResultsList` which is a subclass of :obj:`list`
@@ -118,8 +118,8 @@ def run(executable, function, arguments=None, perf_counters=None, **kwargs):
 
     Args:
        executable: An :obj:`Executable` or list of :obj:`Executable` objects.
-       function: A `str` or list of `str` naming functions to call.
-       arguments: A :obj:`dict` of arguments for the function.  Or a list of such :obj:`dict`.  Defaults to `{}`
+       function: A ``str`` or list of ``str`` naming functions to call.
+       arguments: A :obj:`dict` of arguments for the function.  Or a list of such :obj:`dict`.  Defaults to ``{}``
        perf_counters: A list of performance counters to collect. Default to None.
 
     Returns:
