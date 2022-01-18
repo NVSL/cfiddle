@@ -90,7 +90,7 @@ Name                                       Description
 ``PERF_COUNT_HW_CPU_CYCLES``               Total cycles. Be wary of what happens during  CPU frequency scaling. 
 ``PERF_COUNT_HW_INSTRUCTIONS``             Retired instructions. Be careful, these can  be affected by various issues, most notably  hardware interrupt counts. 
 ``PERF_COUNT_HW_CACHE_REFERENCES``         Cache accesses. Usually this indicates Last  Level Cache accesses but this may vary  depending on your CPU. This may include  prefetches and coherency messages; again this  depends on the design of your CPU. 
-``PERF_COUNT_HW_CACHE_MISSES``             Cache misses. Usually this indicates Last  Level Cache misses; this is intended to be  used in conjunction with the  ``PERF_COUNT_HW_CACHE_REFERENCES event to  calculate cache miss rates. 
+``PERF_COUNT_HW_CACHE_MISSES``             Cache misses. Usually this indicates Last  Level Cache misses; this is intended to be  used in conjunction with the  ``PERF_COUNT_HW_CACHE_REFERENCES`` event to  calculate cache miss rates. 
 ``PERF_COUNT_HW_BRANCH_INSTRUCTIONS``      Retired branch instructions.
 ``PERF_COUNT_HW_BRANCH_MISSES``            Mispredicted branch instructions. 
 ``PERF_COUNT_HW_BUS_CYCLES``               Bus cycles, which can be different from total  cycles. 
