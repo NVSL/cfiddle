@@ -3,14 +3,14 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
+.. toctree::
+      
+   perfcount
+   index
+
 CFiddle
 =======================
 
-.. toctree::
-   :hidden:
-
-   index
-   perfcount
 
 CFiddle is a tool for
 studying the compilation and execution of smallish programs written in C or
@@ -177,3 +177,7 @@ to construct their `build_parameter` and `argument` function parameters.
 
 .. autofunction:: cfiddle.util.arg_map
 
+Using Performance Counters
+..........................
+
+CFiddle makes it easy to measure :doc:`performance counters <./perfcount>` 
