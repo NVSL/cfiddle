@@ -10,7 +10,7 @@ def install_perf_counters(perf_counters):
             raise ValueError("Expected instance of 'str' not {type(pc).__name__}.")
 
 def are_perf_counters_available():
-    return _load_libcfiddle().are_perf_counters_available()
+    return bool(_load_libcfiddle().are_perf_counters_available())
 
 
 def clear_perf_counters():

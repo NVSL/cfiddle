@@ -17,7 +17,8 @@ The first step in using them is to check if they are enabled:
 .. doctest::
    
    >>> from cfiddle import *
-   >>> print(are_perf_counters_available())
+   >>> print(are_perf_counters_available()) # doctest: +SKIP
+   1
 
 If it returns `True` you are good to go.  If `False` you can enable with this shell command:
 
