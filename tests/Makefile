@@ -4,7 +4,12 @@
 .PHONY: default
 default: 
 
-EXAMPLES=../examples/sorting.ipynb  ../examples/README.ipynb ../examples/VirtualMethods.ipynb ../examples/CacheMeasurement.ipynb
+EXAMPLES=../examples/sorting.ipynb \
+	../examples/README.ipynb \
+	../examples/VirtualMethods.ipynb \
+	../examples/CacheMeasurement.ipynb \
+	../examples/Go.ipynb
+
 JUPYTER=--nbmake $(EXAMPLES)
 DOCS=--doctest-glob="*.rst" --doctest-glob="*.md" ../*.md ../docs/
 #MODULES=#../src/cfiddle/*.py

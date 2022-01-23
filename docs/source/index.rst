@@ -13,8 +13,8 @@ CFiddle
 
 
 CFiddle is a tool for
-studying the compilation and execution of smallish programs written in C or
-C++.  If you want to know what the compiler does to your code and why your code is slow, CFiddle can help.
+studying the compilation and execution of smallish programs written in compiled languages like C,
+C++, or Go.  If you want to know what the compiler does to your code and why your code is slow, CFiddle can help.
 
 It makes it easy to ask and answer interesting questions about what happens to
 programs as they go from source code to running program.  CFiddle can run on its
@@ -23,7 +23,7 @@ own, but it is built to work with `Jupyter Notebook/Jupyter Lab
 
 It's features include:
 
-1. Support for compiled languages like C and C++.
+1. Support for compiled languages like C, C++, and Go.
 2. `Control Flow Graph (CFG) <https://en.wikipedia.org/wiki/Control-flow_graph>`_ generation from compiled code.
 3. Easy support for varying build-time and run-time paremeters.
 4. Easy, unified parameter and data gathering across building and running code.

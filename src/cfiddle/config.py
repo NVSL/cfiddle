@@ -6,6 +6,7 @@ from .MakeBuilder import MakeBuilder
 from .Runner import InvocationResult, InvocationDescription
 from .LocalRunner import LocalRunner
 from .CProtoParser import CProtoParser
+from .GoProtoParser import GoProtoParser
 from .source import FullyInstrumentedExecutable
 from tqdm import tqdm
 from contextlib import contextmanager
@@ -20,7 +21,7 @@ default_config = dict(Executable_type=FullyInstrumentedExecutable,
                       InvocationResultsList_type=InvocationResultsList,
                       ExecutableDescription_type=ExecutableDescription,
                       InvocationDescription_type=InvocationDescription,
-                      ProtoParse_type=CProtoParser,
+                      ProtoParser_types=[CProtoParser, GoProtoParser],
                       CFIDDLE_BUILD_ROOT=".cfiddle/builds",
                       ProgressBar=noop_progress_bar)
 

@@ -11,11 +11,12 @@ vpath %.cxx $(CFIDDLE_VPATH)
 vpath %.C $(CFIDDLE_VPATH)
 vpath %.c++ $(CFIDDLE_VPATH)
 vpath %.c $(CFIDDLE_VPATH)
+vpath %.go $(CFIDDLE_VPATH)
 
 CXX?=g++
 CC?=gcc
+GO?=go
 WARNINGS=-Wall -Werror
-#DEBUG_FLAGS?=
 INCLUDES=-I. -I$(CFIDDLE_INCLUDE) 
 CFLAGS=$(WARNINGS) $(DEBUG_FLAGS) -fPIC $(OPTIMIZE) $(INCLUDES) $(MORE_INCLUDES) $(MORE_CFLAGS) -MMD -save-temps=obj
 CXXFLAGS=$(CFLAGS) $(CXX_STANDARD) $(MORE_CXXFLAGS)
@@ -72,10 +73,9 @@ $(BUILD)/%.so: $(BUILD)/%.o $(MORE_OBJS)
 	@mkdir -p $(BUILD)
 	$(CXX) $^ $(LDFLAGS) -shared -o $@
 
+$(BUILD)/%.so: %.go
+	$(GO) build $(OPTIMIZE) $(DEBUG_FLAGS) $(GO_FLAGS) -o $@ -buildmode=c-shared $< 
 
-$(BUILD)/%.so: $(BUILD)/%.o $(MORE_OBJS)
-	@mkdir -p $(BUILD)
-	$(CXX) $^ $(LDFLAGS) -shared -o $@
 
 -include $(wildcard *.d) $(wildcard $(BUILD)/*.d)
 .PHONY: cfiddle-clean

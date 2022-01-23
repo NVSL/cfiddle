@@ -63,7 +63,6 @@ class Preprocessed:
             return ".i"
         else:
             raise ValueError(f"Can't compute preprocessor file extension for file  '{filename}' in '{language}'.")
-
         
 class FullyInstrumentedExecutable(Preprocessed, Source, Assembly, CFG, Executable):
     
@@ -80,7 +79,8 @@ def infer_language(filename):
                             ".C" : "c++",
                             ".ii" : "c++",
                             ".c" : "c",
-                            ".i" : "c"}
+                            ".i" : "c",
+                            ".go": "go"}
 
     _, ext = os.path.splitext(filename)
     try:
@@ -123,6 +123,7 @@ def extract_code(filename, show=None, language=None, include_header=False):
 
 def build_header(filename, language, show):
     comments_syntaxes = {"c++": ("// ", ""),
+                         "go": ("// ", ""),
                          "gas": ("; ", ""),
                          "c": ("/* ", " */")}
 
@@ -135,8 +136,12 @@ def build_header(filename, language, show):
 
 
 def construct_function_regex(language, function):
-    if language == "c++":
+    if language in [ "c++", "c"]:
         return (fr"[\s\*]{re.escape(function)}\s*\(", r"^\}")
+    elif language == "gas":
+        return (fr"^{re.escape(function)}:\s*", ".cfi_endproc")
+    elif language == "go":
+        return (fr"func\s+{re.escape(function)}", r"^\}")
     elif language == "gas":
         return (fr"^{re.escape(function)}:\s*", ".cfi_endproc")
     else:

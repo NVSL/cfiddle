@@ -79,8 +79,9 @@ setup(
     },
     entry_points={
         'console_scripts' :[
-            'set-cfiddle-ld-path=cfiddle:set_ld_path_in_shell',
-            'cfiddle-lib-path=cfiddle:print_libcfiddle_dir'
+            'set-cfiddle-ld-path=cfiddle.paths:set_ld_path_in_shell',
+            'cfiddle-lib-path=cfiddle.paths:print_cfiddle_lib_path',
+            'cfiddle-include-path=cfiddle.paths:print_cfiddle_include_path'
         ]
     }
 )

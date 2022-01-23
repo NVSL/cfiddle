@@ -2,8 +2,9 @@ import hashlib
 import os
 from .util import read_file
 from .config import get_config
+from .paths import cfiddle_lib_path, cfiddle_include_path
 
-def code(source, language=None):
+def code(source, language=None, raw=False):
     """Generate an anonymous source file.
 
     Write `source` to anonymous file and return the file's name.  This function
@@ -18,11 +19,34 @@ def code(source, language=None):
     
     if language is None:
         language = "cpp"
-        
+
+    if not raw:
+        source = language_decorators[language](source)
+    
     file_name = _compute_anon_code_filename(source, language)
     _update_source(file_name, source)
     return file_name
-    
+
+def _decorate_go_code(source):
+    return f""" 
+package main
+
+// #cgo LDFLAGS: -L{cfiddle_lib_path()}  -lcfiddle
+// #cgo CFLAGS: -g -Wall -I{cfiddle_include_path()}
+// #include "cfiddle.h"
+import "C"
+
+{source}
+
+func main() {{}}
+"""
+
+def _decorate_c_code(source):
+    return source
+
+def _decorate_cpp_code(source):
+    return source
+
 def _compute_anon_code_filename(source, language):
     anon_source_directory = os.path.join(os.environ.get("CFIDDLE_BUILD_ROOT", get_config("CFIDDLE_BUILD_ROOT")), "anonymous_code")
     hash_value = hashlib.md5(source.encode('utf-8')).hexdigest()
@@ -33,3 +57,8 @@ def _update_source(source_file, source):
         os.makedirs(os.path.dirname(source_file), exist_ok=True)
         with open(source_file, "w") as r:
             r.write(source)
+
+            
+language_decorators =dict(go=_decorate_go_code,
+                          c=_decorate_c_code,
+                          cpp=_decorate_cpp_code)

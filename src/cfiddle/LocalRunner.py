@@ -39,7 +39,7 @@ class LocalRunner(Runner):
         try:
             return self.get_build_result().functions[f]
         except KeyError:
-            raise UnknownSymbol(f"Couldn't find '{f}' in '{self.get_build_result().lib}'.  Did you declare it 'extern \"C\"'?.")
+            raise UnknownSymbol(f"Couldn't find Prototype for '{f}'.  Options are [{' '.join(self.get_build_result().functions.keys())}].  Did you declare it 'extern \"C\"'?.")
         
     def _reset_data_collection(self):
         clear_perf_counters()

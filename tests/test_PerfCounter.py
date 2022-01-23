@@ -2,6 +2,7 @@ from cfiddle import *
 from cfiddle.perfcount import *
 import pytest
 from fixtures import *
+
 @pytest.fixture
 def cycle_counter(setup):
     return build(code(r"""
@@ -88,3 +89,5 @@ def skip_if_no_perf_counters():
         pytest.skip("unsupported configuration")
 
 
+
+        

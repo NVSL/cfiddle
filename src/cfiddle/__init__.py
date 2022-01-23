@@ -1,6 +1,3 @@
-import os
-import pkg_resources
-
 __all__ = [
     "InvocationResultsList",
     "ExecutableDescription",
@@ -30,7 +27,7 @@ from .util import arg_map, changes_in, exp_range
 from .Code import code
 from .config import get_config, set_config
 from .jupyter import configure_for_jupyter
-
+from .paths import setup_ld_path
 
 def build_and_run(source_file, build_parameters, function, arguments):
     executable = build_one(source_file, build_parameters)
@@ -134,32 +131,10 @@ def run(executable, function, arguments=None, perf_counters=None, **kwargs):
     return run_list(invocations, perf_counters=perf_counters, **kwargs)
         
 
-def libcfiddle_dir_path():
-    PACKAGE_DATA_PATH = pkg_resources.resource_filename('cfiddle', 'resources/')    
-    return os.path.join(PACKAGE_DATA_PATH, "libcfiddle", "build")
-
-def print_libcfiddle_dir():
-    print(libcfiddle_dir_path())
-
-def setup_ld_path():
-
-    if "LD_LIBRARY_PATH" in os.environ:
-        ld_paths = os.environ["LD_LIBRARY_PATH"].split(":")
-    else:
-        ld_paths = []
-    ld_paths.append(libcfiddle_dir_path())
-    os.environ["LD_LIBRARY_PATH"] = ":".join(ld_paths)
-    return os.environ["LD_LIBRARY_PATH"]
-
-def set_ld_path_in_shell():
-    print(f"export LD_LIBRARY_PATH={setup_ld_path()}")
-
-    
 def sanity_test():
     return run(executable=build(code('extern "C" int foo() {return 4;}')),
                function=["foo"])[0].return_value
 
-PACKAGE_DATA_PATH = pkg_resources.resource_filename('cfiddle', 'resources/')
 
 setup_ld_path()
 
