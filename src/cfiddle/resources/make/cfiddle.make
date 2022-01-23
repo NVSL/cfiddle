@@ -11,9 +11,11 @@ vpath %.cxx $(CFIDDLE_VPATH)
 vpath %.C $(CFIDDLE_VPATH)
 vpath %.c++ $(CFIDDLE_VPATH)
 vpath %.c $(CFIDDLE_VPATH)
+vpath %.go $(CFIDDLE_VPATH)
 
 CXX?=g++
 CC?=gcc
+GO?=go
 WARNINGS=-Wall -Werror
 #DEBUG_FLAGS?=
 INCLUDES=-I. -I$(CFIDDLE_INCLUDE) 
@@ -76,6 +78,11 @@ $(BUILD)/%.so: $(BUILD)/%.o $(MORE_OBJS)
 $(BUILD)/%.so: $(BUILD)/%.o $(MORE_OBJS)
 	@mkdir -p $(BUILD)
 	$(CXX) $^ $(LDFLAGS) -shared -o $@
+
+
+$(BUILD)/%.so: %.go
+	$(GO) build -o $@ -buildmode=c-shared $<
+
 
 -include $(wildcard *.d) $(wildcard $(BUILD)/*.d)
 .PHONY: cfiddle-clean

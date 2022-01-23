@@ -10,16 +10,16 @@ from cfiddle.ProtoParser import BadParameter, UnknownType, BadParameterName, Pro
     ("long", ctypes.c_long),
     ("uint64_t", ctypes.c_ulonglong)
 ])
-def test_get_ctype(t,ct):
-    assert get_ctype(t.split()) ==ct
+def test_get_ctype(CParser, t,ct):
+    assert CParser.get_ctype(t.split()) ==ct
 
 @pytest.mark.parametrize("t,ct", [
     ("void*", UnhandledIndirectParameterType),
     ("void *", UnhandledIndirectParameterType),
     ("long int *", UnhandledIndirectParameterType)
 ])
-def test_unhandled_get_ctype(t,ct ):
-    assert isinstance(get_ctype(t), ct)
+def test_unhandled_get_ctype(CParser,t,ct):
+    assert isinstance(CParser.get_ctype(t), ct)
 
 
 @pytest.mark.parametrize("parameter,parsed", [
@@ -31,8 +31,8 @@ def test_unhandled_get_ctype(t,ct ):
     ("register unsigned long int  bar", Parameter(ctypes.c_ulong, "bar")),
     ("register const unsigned long int  bar", Parameter(ctypes.c_ulong, "bar")),
 ])
-def test_parse_parameter(parameter, parsed):
-    assert parse_parameter(parameter) == parsed
+def test_parse_parameter(CParser,parameter, parsed):
+    assert CParser.parse_parameter(parameter) == parsed
 
 
 @pytest.mark.parametrize("prototype,parsed", [
@@ -61,14 +61,14 @@ def test_parse_parameter(parameter, parsed):
     ("int __attribute__((used)) foo()", Prototype(ctypes.c_int, "foo", [])),
     ('int __attribute__((optimize("noinline")) foo(int bar)', Prototype(ctypes.c_int, "foo", [Parameter(ctypes.c_int, "bar")]))
 ])
-def test_parse_prototype(prototype, parsed):
-    assert parse_prototype(prototype) == parsed
+def test_parse_prototype(CParser,prototype, parsed):
+    assert CParser.parse_prototype(prototype) == parsed
 
 @pytest.mark.parametrize("prototype,parsed", [
     ("void* foo2(uint64_t x, float y);", Prototype(None, "foo2", [Parameter(ctypes.c_uint64,"x"),
                                                                   Parameter(ctypes.c_float ,"y")]))])
-def test_parse_prototype_unhandled_types(prototype, parsed):
-    assert isinstance(parse_prototype(prototype).return_type, UnhandledIndirectParameterType)
+def test_parse_prototype_unhandled_types(CParser,prototype, parsed):
+    assert isinstance(CParser.parse_prototype(prototype).return_type, UnhandledIndirectParameterType)
 
     
 @pytest.mark.parametrize("filename,good", [
@@ -82,15 +82,14 @@ def test_parse_prototype_unhandled_types(prototype, parsed):
     ("baz/foo.d", False),
     ("baz/foo.rs", False)
     ])
-def test_can_parse(filename, good):
-    parser = CProtoParser()
-    assert parser.can_parse_file(filename) == good
+def test_can_parse(CParser,filename, good):
+    assert CParser.can_parse_file(filename) == good
 
 @pytest.mark.parametrize("line", [
     ("        return getpid();")
 ])
-def test_things_that_are_not_functions(line):
-    assert parse_prototype(line) == None
+def test_things_that_are_not_functions(CParser,line):
+    assert CParser.parse_prototype(line) == None
 
      
 @pytest.mark.parametrize("filecontents,protos", [
@@ -106,10 +105,9 @@ object(bar);
           foo3=Prototype(void, "foo3", []))
     )
     ])
-def test_parse_multi_line(filecontents, protos):
-    parser = CProtoParser()
+def test_parse_multi_line(CParser,filecontents, protos):
     f = io.StringIO(filecontents)
-    assert parser.parse_file(f) == protos
+    assert CParser.parse_file(f) == protos
     
 @pytest.mark.parametrize("prototype", [
     (r"""uint64_t** loop_func(uint64_t  *array, unsigned long int size) {"""),
@@ -118,10 +116,9 @@ def test_parse_multi_line(filecontents, protos):
     (r"""uint64_t*loop_func(uint64_t  *array, unsigned long int size) {"""),
     (r"""void* foo2(uint64_t x, float y);""")
 ])
-def test_parse_unhandled_parameter(prototype):
-    parser = CProtoParser()
+def test_parse_unhandled_parameter(CParser,prototype):
     f = io.StringIO(prototype)
-    prototypes = parser.parse_file(f)
+    prototypes = CParser.parse_file(f)
     assert len(prototypes) == 1
 
      
@@ -134,6 +131,9 @@ def test_parse_unhandled_parameter(prototype):
     ("unsigned int foo", ["unsigned", "int", "foo"]),
     ("unint64_t *array", ["unint64_t*", "array"])
 ])
-def test_split_into_tokens(string, tokens):
-    assert split_into_tokens(string) == tokens
+def test_split_into_tokens(CParser,string, tokens):
+    assert CParser.split_into_tokens(string) == tokens
     
+@pytest.fixture
+def CParser():
+    return CProtoParser()
