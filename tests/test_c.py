@@ -1,7 +1,7 @@
 from cfiddle import *
+from fixtures import setup
 
-
-def test_hello_world_c():
+def test_hello_world_c(setup):
 
     run(build(code(r""" 
 #include"cfiddle.h"
@@ -11,7 +11,7 @@ int DoubleIt(int x) {
     """, language="c")), "DoubleIt", arg_map(x=[1,2]))
 
 
-def test_c_measurement():
+def test_c_measurement(setup):
     r = run(build(code(r""" 
 #include"cfiddle.h"
 int loop(int x) {
