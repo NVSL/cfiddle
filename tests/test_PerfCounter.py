@@ -7,7 +7,7 @@ from fixtures import *
 def cycle_counter(setup):
     return build(code(r"""
     #include"cfiddle.hpp"
-
+    #include"PerfCounter.hpp"
     extern "C"
     int go(int count) {
          get_perf_counter()->add_counter(PERF_TYPE_HARDWARE, PERF_COUNT_HW_CPU_CYCLES);
