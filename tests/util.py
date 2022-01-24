@@ -20,7 +20,7 @@ def run_one(exe, function, arguments=None, **kwargs):
     return run(executable=[exe], function=[function], arguments=[arguments], **kwargs)[0]
 
 def skip_if_go_not_available():
-    go_is_available, _ = invoke_process(["go", "version"])
+    go_is_available, _ = invoke_process(["/usr/local/go/bin/go", "version"])
     if not go_is_available:
         pytest.skip("unsupported configuration")
 
