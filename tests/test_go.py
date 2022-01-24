@@ -48,18 +48,19 @@ def test_go_measurement():
     run(build(code(r""" 
 package main
 
+// #cgo LDFLAGS: -L/cse142L/fiddle/src/cfiddle/resources/libcfiddle/build  -lcfiddle
 // #cgo CFLAGS: -g -Wall -I/cse142L/fiddle/src/cfiddle/resources/include
-// #include "cfiddle.hpp"
+// #include "cfiddle.h"
 import "C"
 
 //export loop
 func loop(x int) int {
     sum := 0
-    C.start_measurement()
+    C.start_measurement(nil)
     for i := 0; i < x; i++ {
         sum += i;
     }
-    C.start_measurement()
+    C.start_measurement(nil)
     return sum
 }
 
