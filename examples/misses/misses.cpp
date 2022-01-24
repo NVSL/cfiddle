@@ -1,6 +1,7 @@
 #include"cfiddle.hpp"
 #include<algorithm>
-  
+#include<vector>
+
 struct MM {
     struct MM* next;  // Assume pointers are 8 bytes and 
                       // cache lines are 64.

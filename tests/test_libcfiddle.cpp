@@ -4,6 +4,8 @@
 #include <sstream>
 #include"cfiddle.hpp"
 #include<string.h>
+#include"PerfCounter.hpp"
+#include"DataSet.hpp"
 
 using ::testing::ElementsAre;
 
