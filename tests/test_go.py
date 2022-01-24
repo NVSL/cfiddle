@@ -1,8 +1,9 @@
 from cfiddle import *
+from fixtures import setup
 from util import skip_if_go_not_available
 import os
 
-def test_hello_world_build():
+def test_hello_world_build(setup):
     skip_if_go_not_available()
 
     src = code(r""" 
@@ -24,7 +25,7 @@ func main() {}
     assert os.path.exists(r[0].lib)
 
     
-def test_hello_world_go():
+def test_hello_world_go(setup):
     skip_if_go_not_available()
 
     run(build(code(r""" 
@@ -42,7 +43,7 @@ func main() {}
     """, language="go")), "DoubleIt", arg_map(x=[1,2]))
 
 
-def test_go_measurement():
+def test_go_measurement(setup):
     skip_if_go_not_available()
 
     run(build(code(r""" 

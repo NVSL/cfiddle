@@ -15,7 +15,7 @@ vpath %.go $(CFIDDLE_VPATH)
 
 CXX?=g++
 CC?=gcc
-GO?=go
+GO?=/usr/local/go/bin/go
 WARNINGS=-Wall -Werror
 #DEBUG_FLAGS?=
 INCLUDES=-I. -I$(CFIDDLE_INCLUDE) 
