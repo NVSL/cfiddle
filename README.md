@@ -112,7 +112,8 @@ CFiddle depends on some system packages and python's `wheel`.  Setup a virtual e
 python -m venv cfiddle-venv
 ```
 
-Become root, so you can install the systetm packages with `apt-get` with 
+So you can install the systetm packages CFiddle needs.  Check
+`install_prereqs.sh` to see what this entails.
 
 ```
 sudo bash

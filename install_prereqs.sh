@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-
-
 apt-get update --fix-missing --allow-releaseinfo-change
 apt-get install -y make less emacs-nox gcc make g++ cmake gdb build-essential graphviz curl && apt-get clean -y
 #gcc-8 g++-8 libhdf5-dev uuid-runtime  openssh-client time  default-jdk
