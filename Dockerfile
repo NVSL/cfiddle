@@ -19,7 +19,7 @@ RUN  chown -R ${NB_USER} ./cfiddle
 USER ${NB_USER}
 RUN cd cfiddle;  pip install  .
 ENV LD_LIBRARY_PATH  /opt/conda/lib/python3.9/site-packages/cfiddle/resources/libcfiddle/build
-
+ENV PATH /usr/local/go/bin:$PATH
 RUN mkdir -p .jupyter
 COPY jupyter_notebook_config.py .jupyter/
 

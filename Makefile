@@ -36,7 +36,7 @@ docker:
 
 .PHONY: docker-test
 docker-test: docker
-	docker run -it --privileged -w /home/jovyan/cfiddle/tests docker.io/stevenjswanson/$(CFIDDLE_DOCKER_IMAGE) make test
+	docker run -it --privileged -w /home/jovyan/cfiddle/tests docker.io/stevenjswanson/$(CFIDDLE_DOCKER_IMAGE) make test PYTEST_OPTS="-s -vv"
 
 .PHONY: docker-release
 docker-release:

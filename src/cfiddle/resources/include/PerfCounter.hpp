@@ -10,10 +10,14 @@
 #include <asm/unistd.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <perfmon/pfmlib.h>
+#include <perfmon/pfmlib_perf_event.h>
 
 #include <string>
 #include <vector>
 #include <map>
+#include <fstream>
+#include <iostream>
 
 #include "PerfCounterDefs.hpp"
 
@@ -31,46 +35,40 @@ class PerfCounter {
 	int lead_fd;
 	std::vector<CounterValue> counter_values;
 	bool valid;
+	bool initialization_successful;
 
-	std::map<uint64_t, std::string> COUNTER_NAME_MAP;
-	
-	std::map<uint64_t, std::string> CACHE_TYPE_MAP;
-	std::map<uint64_t, std::string> CACHE_OP_MAP;
-	std::map<uint64_t, std::string> CACHE_RESULT_MAP;
 	
 public:
-	PerfCounter() {
-		build_maps();
+	PerfCounter() : valid(true), initialization_successful(true){
+		init_libpfm4();
 		clear();
 	}
 
-	void add_counter(uint32_t type, uint64_t config, const std::string & name = "") {
+	void add_counter(const std::string & event_spec) {
+		
+ 		pfm_perf_encode_arg_t arg;
+		int ret;
 		struct perf_event_attr perf_event;
+		
+		init_perf_event_attr(perf_event);
+		
+		memset(&arg, 0, sizeof(arg));
 
-		init_perf_event_attr(perf_event, type, config);
-		auto new_fd = perf_event_open(perf_event, 0, -1, lead_fd, 0);
-		if (new_fd == -1) {
+		arg.attr = & perf_event;
+		arg.fstr = NULL;
+		arg.size = sizeof(arg);
+		
+		ret = pfm_get_os_event_encoding(event_spec.c_str(), PFM_PLM3, PFM_OS_PERF_EVENT, &arg);
+		if (ret != PFM_SUCCESS){
+			std::cerr << "Cannot get encoding for "
+				  << event_spec
+				  << ": "
+				  << pfm_strerror(ret) << "\n";
 			flag_error();
-		}			
-		if (lead_fd == -1) {
-			lead_fd = new_fd;
+			return;
 		}
 
-		std::string final_name;
-
-		if (name == "") {
-			final_name = COUNTER_NAME_MAP[config];
-		} else {
-			final_name = name;
-		}
-
- 		counter_values.push_back(CounterValue(final_name, new_fd));
-	}
-
-	void add_cache_counter(int cache, int op, int result){
-		uint64_t config = cache | (op << 8) | (result << 16);
-		std::string name = CACHE_TYPE_MAP[cache] + "_" + CACHE_OP_MAP[op] + "_" + CACHE_RESULT_MAP[result];
-		add_counter(PERF_TYPE_HW_CACHE, config, name);
+		add_perf_event(perf_event, event_spec);
 	}
 
 	void start() {
@@ -89,6 +87,16 @@ public:
 		}
 	}
 
+	void init_libpfm4() {
+		int ret;
+		ret = pfm_initialize();
+		if (ret != PFM_SUCCESS) {
+			std::cerr << "Failed to initialize libpfm: " 
+				  << pfm_strerror(ret) << "\n";
+			initialization_successful = false;
+		}
+	}
+	
 	void clear() {
 		for(auto & cv : counter_values) {
 			if (cv.fd != -1) {
@@ -104,7 +112,7 @@ public:
 	}
 
 	bool check_valid() {
-		return valid;
+		return valid && initialization_successful;
 	}
 
 	bool performance_counters_enabled() const {
@@ -135,13 +143,29 @@ public:
 	}
 
 private:
+	void add_perf_event(struct perf_event_attr & perf_event,
+			    const std::string & name) {
+		auto new_fd = perf_event_open(perf_event, 0, -1, lead_fd, 0);
+		if (new_fd == -1) {
+			std::cerr << "Couldn't monitor event '"
+				  << name
+				  << "': "
+				  << strerror(errno) << "\n";
+			flag_error();
+		}			
+		if (lead_fd == -1) {
+			lead_fd = new_fd;
+		}
+ 		counter_values.push_back(CounterValue(name, new_fd));
+	}
+	
 	long perf_event_open(struct perf_event_attr &hw_event, pid_t pid,
 			     int cpu, int group_fd, unsigned long flags) {
 		return syscall(__NR_perf_event_open, &hw_event, pid, cpu,
 			       group_fd, flags);
 	}
 	
-	void init_perf_event_attr(struct perf_event_attr & pe, uint32_t type, uint64_t config) {
+	void init_perf_event_attr(struct perf_event_attr & pe, uint32_t type = 0, uint64_t config = 0) {
 	        memset(&pe, 0, sizeof(struct perf_event_attr));
 		pe.size = sizeof(struct perf_event_attr);
 		pe.read_format = PERF_FORMAT_GROUP;
@@ -200,41 +224,6 @@ private:
 		valid = false;
 	}
 
-	void build_maps() {
-#define HW_COUNTER(x) {PERF_COUNT_HW_ ## x, std::string(#x)},
-#define SW_COUNTER(x) {PERF_COUNT_SW_ ## x, std::string(#x)},
-		COUNTER_NAME_MAP =
-			{
-			 PERF_HW_COUNTERS
-			 PERF_SW_COUNTERS
-			};
-#undef HW_COUNTER
-#undef SW_COUNTER
-
-#define CACHE(X) {PERF_COUNT_HW_CACHE_ ## X, #X},
-		CACHE_TYPE_MAP =
-			{
-			 PERF_CACHES
-			};
-#undef CACHE
-
-#define CACHE_OP(X) {PERF_COUNT_HW_CACHE_OP_ ## X, #X},
-		CACHE_OP_MAP =
-			{
-			 PERF_CACHE_OPS
-			};
-#undef CACHE_OP
-		
-#define CACHE_RESULT(X) {PERF_COUNT_HW_CACHE_RESULT_ ## X, #X},
-		
-		CACHE_RESULT_MAP =
-			{
-			 PERF_CACHE_RESULTS
-			};
-#undef CACHE_RESULT
-
-	
-	}
 };
 
 

@@ -4,20 +4,22 @@
 .PHONY: default
 default: 
 
+JUPYTER=--nbmake $(EXAMPLES)
+DOCS=--doctest-glob="*.rst" --doctest-glob="*.md" ../*.md ../docs/
+CPP_TESTS=test_DataSet.exe test_libcfiddle.exe test_PerfCounter.exe
+
+test: $(CPP_TESTS)
+	rm -rf ../examples/.cfiddle # give these a clean directory.
+	pytest $(PYTEST_OPTS) -n auto .  $(DOCS) $(JUPYTER)
+.PHONY: test
+
+
 EXAMPLES=../examples/sorting.ipynb \
 	../examples/README.ipynb \
 	../examples/VirtualMethods.ipynb \
 	../examples/CacheMeasurement.ipynb \
 	../examples/Go.ipynb
 
-JUPYTER=--nbmake $(EXAMPLES)
-DOCS=--doctest-glob="*.rst" --doctest-glob="*.md" ../*.md ../docs/
-#MODULES=#../src/cfiddle/*.py
-CPP_TESTS=test_DataSet test_libcfiddle test_PerfCounter
-test: $(CPP_TESTS)
-	rm -rf ../examples/.cfiddle # give these a clean directory.
-	pytest -n auto .  $(DOCS) $(JUPYTER)
-.PHONY: test
 examples:
 	rm -rf ../examples/.cfiddle # give these a clean directory.
 	pytest --nbmake $(EXAMPLES)
@@ -30,14 +32,14 @@ docs:
 CXXFLAGS=-I../src/cfiddle/resources/include -MMD -g -Wall -Werror
 -include $(wildcard *.d)
 
-test_DataSet : test_DataSet.o
+test_DataSet.exe : test_DataSet.o
 	$(CXX) $^ $(LDFLAGS) -pthread -lgtest -lgtest_main -lcfiddle -L$(shell cfiddle-lib-path) -o $@
 
-test_PerfCounter : test_PerfCounter.o
-	$(CXX) $^ $(LDFLAGS) -pthread -lgtest -lgtest_main -o $@
+test_PerfCounter.exe : test_PerfCounter.o
+	$(CXX) $^ $(LDFLAGS) -pthread -lgtest -lgtest_main -lpfm -o $@
 
-test_libcfiddle : test_libcfiddle.o
-	$(CXX) $^ $(LDFLAGS) -pthread -lcfiddle -L$(shell cfiddle-lib-path) -lgtest -lgtest_main -o $@
+test_libcfiddle.exe : test_libcfiddle.o
+	$(CXX) $^ $(LDFLAGS) -pthread -lcfiddle -L$(shell cfiddle-lib-path) -lgtest -lgtest_main -lpfm -o $@
 
 .PHONY: help
 help:

@@ -1,0 +1,13 @@
+build
+build_release
+**/.cfiddle
+**/*~
+**/.ipynb_checkpoints
+**/*.so
+**/*.o
+**/*.d
+venv
+**.ii
+**.s
+**/__pycache__
+**/*.exe

@@ -11,6 +11,23 @@ from .CFG.cfg import CFG
 class Source:
     
     def source(self, show=None, language=None, **kwargs):
+        """Return the source code for a function.
+        
+        This function uses regular expression-based heuristics to find the
+        function, rather than actually parsing the code, this can lead to
+        unexpected outputs.
+
+        The heuristics assume that the function prototype is on a single line
+        and that the function ends with a ``}`` on a line by itself.
+        
+        Args:
+           show: What to show.  Either a function name or a 2-tuple: either ``(start_regex,end_regex)`` or ``(start_line_number,end_line_number``).  Defaults to ``None`` which shows the whole file.
+           language:  What language to assume.  Defaults to ``c++``.
+        Returns:
+           ``str`` : The source code.
+
+        """
+
         if language is None:
             language = infer_language(self.build_spec.source_file)
         return extract_code(self.build_spec.source_file, show=show, language=language, **kwargs)
@@ -19,6 +36,23 @@ class Source:
 class Assembly:
 
     def asm(self, show=None, demangle=True, **kwargs):
+        """Return the compiled assembly for a function.
+
+        The output is from the assembly output of the compiler (e.g., the
+        result of ``g++ -S``), not the compiled object code.
+
+        This function uses regular expression-based heuristics to find the
+        function, rather than actually parsing the code, this can lead to
+        unexpected outputs.
+
+        Args:
+           show: What to show.  Either a function name or a 2-tuple: either ``(start_regex,end_regex)`` or ``(start_line_number,end_line_number``).  Defaults to ``None`` which shows the whole file.
+           demangle: Pass the assembly through ``c++filt`` first, so C++ symbols are more readable.  Defaults to ``True``.
+        Returns:
+           ``str`` : The source code.
+
+        """
+        
         source_base_name = self.extract_build_name(self.build_spec.source_file)
         asm_file = self.compute_built_filename(f"{source_base_name}.s")
 
@@ -44,6 +78,23 @@ class Assembly:
 class Preprocessed:
 
     def preprocessed(self, show=None, language=None,  **kwargs):
+        """Return the preprocessed source code for a function.
+
+        This function uses regular expression-based heuristics to find the
+        function, rather than actually parsing the code, this can lead to
+        unexpected outputs.
+
+        The heuristics assume that the function prototype is on a single line
+        and that the function ends with a ``}`` on a line by itself.
+
+        Args:
+           show: What to show.  Either a function name or a 2-tuple: either ``(start_regex,end_regex)`` or ``(start_line_number,end_line_number``).  Defaults to ``None`` which shows the whole file.
+           demangle: Pass the assembly through ``c++filt`` first, so C++ symbols are more readable.  Defaults to ``True``.
+        Returns:
+           ``str`` : The source code.
+        
+        """
+        
         if language is None:
             language = infer_language(self.build_spec.source_file)
 
@@ -65,7 +116,7 @@ class Preprocessed:
             raise ValueError(f"Can't compute preprocessor file extension for file  '{filename}' in '{language}'.")
         
 class FullyInstrumentedExecutable(Preprocessed, Source, Assembly, CFG, Executable):
-    
+
     def __init__(self, *argc, **kwargs):
         super().__init__(*argc, **kwargs)
 

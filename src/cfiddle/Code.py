@@ -5,16 +5,17 @@ from .config import get_config
 from .paths import cfiddle_lib_path, cfiddle_include_path
 
 def code(source, language=None, raw=False):
-    """Generate an anonymous source file.
+    """Generate an anonymous source file and return the path to it.
 
-    Write `source` to anonymous file and return the file's name.  This function
+    Write ``source`` to anonymous file and return the file's name.  This function
     is meant to be used an the first argument of :func:`build()`.
 
     Args:
-      source: The source code.  Raw strings work best (e.g., `r\"\"\" // my code \"\"\"`).
+      source:    The source code.  Raw strings work best (e.g., `r\"\"\" // my code \"\"\"`).
       language:  Suffix to use for the filename.  Default to `cpp`.
+      raw:       Don't add language-specific boilerplate. (Default: :code:`False`)
     Returns:
-      `str`: The file name.
+      ``str``: The file name.
     """
     
     if language is None:

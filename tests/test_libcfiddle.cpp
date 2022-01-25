@@ -54,7 +54,7 @@ namespace Tests {
 		if (!get_perf_counter()->performance_counters_enabled()) {
 			GTEST_SKIP();
 		}
-		get_perf_counter()->add_counter(PERF_TYPE_HARDWARE, PERF_COUNT_HW_CPU_CYCLES);
+		get_perf_counter()->add_counter("PERF_COUNT_HW_CPU_CYCLES");
 
 		start_measurement();
 		volatile int i;
@@ -63,7 +63,7 @@ namespace Tests {
 			s += i;
 		}
 		end_measurement();
-		ASSERT_GT(get_dataset()->current_row().get_datum("CPU_CYCLES").as<uint64_t>(), 1000);
+		ASSERT_GT(get_dataset()->current_row().get_datum("PERF_COUNT_HW_CPU_CYCLES").as<uint64_t>(), 1000);
 	}
 }
 

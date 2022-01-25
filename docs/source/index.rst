@@ -3,13 +3,9 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
+
 CFiddle
 =======================
-
-.. toctree::
-   :hidden:
-
-   index
 
 
 CFiddle is a tool for
@@ -32,6 +28,15 @@ It's features include:
 The best way to learn about CFiddle is to try it.  You can `run the
 examples <https://mybinder.org/v2/gh/NVSL/cfiddle/main?labpath=README.ipynb>`_ (this can take a while to load).
 
+Manual Contents
+---------------
+
+.. toctree::
+   :maxdepth: 2
+   
+   coreapi
+   perfcount
+	      
 Installation
 ------------
 
@@ -128,52 +133,4 @@ And the run both versions with different arguments and render them as a datafram
    8      -O3     loop   1000  0.000006
    9      -O3     loop  10000  0.000010
 
-
-Key Operations
---------------
-
-Creating Code
-.............
-
-CFiddle can compile existing source files or you can create an anonymous source file with :func:`code()`
-
-.. autofunction:: cfiddle.code
-
-Building
-........
-
-:func:`cfiddle.build()` returns :obj:`cfiddle.Executable` objects which make it easy to examine
-the assembly output or the control-flow graphs for a particular functions.
-
-.. autofunction:: cfiddle.build
-
-		  
-Executing
-.........
-
-:func:`cfiddle.run()` can invoke functions in an :obj:`cfiddle.Executable` and collect data
-about their execution.
-
-.. autofunction:: cfiddle.run		  
-
-Analyzing
-.........
-
-The results end up special list type (:obj:`cfiddle.InvocationResultsList`) that can
-summarize the results.  
-
-.. autoclass:: cfiddle.Data.InvocationResultsList
-	       :members:
-	     
-Exploring Parameter Settings
-............................
-
-:func:`cfiddle.arg_map()` lets cfiddle users easily to explore the impact of compile-
-and run-time parameters by making it very easy to construct complex sets of
-parameter/argument values.
-
-The easiest way to use :func:`cfiddle.build()` and :func:`cfiddle.run()` is to call `arg_map()`
-to construct their `build_parameter` and `argument` function parameters.
-
-.. autofunction:: cfiddle.util.arg_map
 
