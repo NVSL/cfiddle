@@ -72,6 +72,9 @@ setup(
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10',
     ],
+    url="https://github.com/NVSL/cfiddle",
+    author="Steven Swanson",
+    author_email="swanson@cs.ucsd.edu",
     packages=find_packages('src'),
     package_dir={'': 'src'},
     cmdclass={

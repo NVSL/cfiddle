@@ -14,7 +14,7 @@ dist:
 .PHONY:do-dist
 do-dist:
 	pip install --upgrade pytest wheel build 
-	python -m build
+	python3 -m build
 
 .PHONY:pypi
 pypi: dist
@@ -64,5 +64,12 @@ docker-push: docker-test
 docker-pull:
 	docker pull stevenjswanson/$(CFIDDLE_DOCKER_IMAGE)
 
+
 .PHONY: release
 release: pypi docker-release
+
+.PHONY: wc
+wc:
+	wc -l tests/*.py | sort -n
+	wc -l $$(find src/cfiddle -name '*.py') | sort -n
+

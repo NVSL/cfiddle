@@ -11,8 +11,9 @@ curl -L https://github.com/radareorg/radare2/releases/download/5.3.1/radare2_5.3
 apt install /tmp/radare2_5.3.1_amd64.deb  /tmp/radare2-dev_5.3.1_amd64.deb
 
 ##### Go (for go support)
-curl -OL https://golang.org/dl/go1.16.7.linux-amd64.tar.gz
-tar -C /usr/local -xvf go1.16.7.linux-amd64.tar.gz
+apt-get install -y golang-go
+#curl -OL https://golang.org/dl/go1.16.7.linux-amd64.tar.gz
+#tar -C /usr/local -xvf go1.16.7.linux-amd64.tar.gz
 
 ##### python stuff
 pip install wheel
