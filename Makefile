@@ -1,5 +1,9 @@
 default:
 
+
+BRANCH=$(shell git rev-parse --abbrev-ref HEAD)
+export CFIDDLE_DOCKER_IMAGE=cfiddle:$(BRANCH)
+
 .PHONY: dist
 dist:
 	rm -rf build_release
@@ -14,6 +18,10 @@ do-dist:
 
 .PHONY:pypi
 pypi: dist
+	git update-index --refresh 
+	[ "$(BRANCH)" = "main" ]  # make sure we are on main
+	git diff-index --quiet HEAD -- # require that there be no local changes
+	[ x"$$(git rev-parse main)" = x"$$(git rev-parse origin/main)" ] # make sure we are synced
 	twine upload --verbose  build_release/dist/*
 
 .PHONY:
@@ -26,9 +34,6 @@ test:  package-test docker-test
 .PHONY: package-test
 package-test:
 	$(MAKE) -C tests test
-
-BRANCH=$(shell git rev-parse --abbrev-ref HEAD)
-export CFIDDLE_DOCKER_IMAGE=cfiddle:$(BRANCH)
 
 .PHONY: docker
 docker:
