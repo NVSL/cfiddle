@@ -101,3 +101,24 @@ func loop(x int) int {
 
     """, language="go"), verbose=True), "loop", arg_map(x=[10000,100000]))
 
+def test_compile_options(setup):
+    pytest.skip("Not sure how to set this effectively")
+    skip_if_go_not_available()
+
+    build(code(r""" 
+    //export loop
+func loop(x int) {
+    }
+    """, language="go"), verbose=True, build_parameters=arg_map(OPTMIZE=["","-N"]))
+    
+def test_assembly(setup):
+    pytest.skip("Not sure how to generate assembly")
+    skip_if_go_not_available()
+
+    b = build(code(r""" 
+    //export loop
+func loop(x int) {
+    }
+    """, language="go"), verbose=True)
+    
+    b[0].asm()
