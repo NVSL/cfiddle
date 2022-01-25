@@ -14,6 +14,10 @@ do-dist:
 
 .PHONY:pypi
 pypi: dist
+	git update-index --refresh 
+	[ "$(BRANCH)" != "main" ]  # make sure we are on main
+	git diff-index --quiet HEAD -- # require that there be no local changes
+	[ x"$$(git rev-parse main)" = x"$$(git rev-parse origin/main)" ] # make sure we are synced
 	twine upload --verbose  build_release/dist/*
 
 .PHONY:
@@ -58,3 +62,6 @@ docker-push: docker-test
 .PHONY: docker-pull
 docker-pull:
 	docker pull stevenjswanson/$(CFIDDLE_DOCKER_IMAGE)
+
+.PHONY: release
+release: pypi docker-release
