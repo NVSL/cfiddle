@@ -4,32 +4,36 @@
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/NVSL/cfiddle/main?labpath=README.ipynb)
 [![Documentation Status](https://readthedocs.org/projects/cfiddle/badge/?version=latest)](https://cfiddle.readthedocs.io/en/latest/?badge=latest)
 	
-CFiddle is a tool for studying the compilation and execution of smallish programs written in compiled languages like C,
-C++, or Go.  If you want to know what the compiler does to your code and why your code is slow, CFiddle can help.
+CFiddle is a tool for studying the compilation, execution, and performance of
+smallish programs written in compiled languages like C, C++, or Go.  If you
+want to know what the compiler does to your code, how your code interacts with
+hardware, and why it's slow, CFiddle can help.
 
-It makes it easy to ask and answer interesting questions about what happens to
-programs as they go from source code to running program.  CFiddle can run on its
-own, but it is built to work with [Jupyter Notebook/Jupyter
-Lab](https://jupyter.org/) to support interactive exploration.
+CFiddle makes it easy to ask and answer interesting questions about what happens to
+programs as they go from source code to running program.  CFiddle can run on
+its own, but it is built to work with [Jupyter Notebook/Jupyter
+Lab](https://jupyter.org/) to support interactive exploration.  It provides
+first-class support for accessing hardware performance counters.
 
 It's features include:
 
 1. Support for compiled languages like C, C++, and Go.
-2. [Control Flow Graph (CFG)](https://en.wikipedia.org/wiki/Control-flow_graph) generation from compiled code.
-3. Easy support for varying build-time and run-time paremeters.
-4. Easy, unified parameter and data gathering across building and running code.
-5. Works great with [Pandas](https://pandas.pydata.org/) and  [Jupyter Notebook/Lab](https://jupyter.org/).
+2. Easy access to OS and hardware performance counters.
+3. [Control Flow Graph (CFG)](https://en.wikipedia.org/wiki/Control-flow_graph) generation from compiled code.
+4. Easy support for varying build-time and run-time paremeters.
+5. Easy, unified parameter and data gathering across building and running code.
+6. Works great with [Pandas](https://pandas.pydata.org/) and  [Jupyter Notebook/Lab](https://jupyter.org/).
 
 The best way to learn about CFiddle is to try it.  You can [run the
 examples](https://mybinder.org/v2/gh/NVSL/cfiddle/main?labpath=README.ipynb) (this can take a while to load).
 
-Or run it locally with Docker:
+Or run it locally with Docker (`--privileged` is required if you want to access performance counters):
 
 ```
-docker run -it --publish published=8888,target=8888 stevenjswanson/cfiddle:latest jupyter lab --LabApp.token=''
+docker run -it --privileged --publish published=8889,target=8888 stevenjswanson/cfiddle:latest jupyter lab --LabApp.token='sesame'
 ```
 
-and then visit http://localhost:8888/lab/tree/README.ipynb.
+and then visit http://localhost:8889/lab/tree/README.ipynb .
 
 You can also read [the documentation](https://cfiddle.readthedocs.io).
 
