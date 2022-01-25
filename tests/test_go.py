@@ -1,8 +1,10 @@
+import os
+import pytest
+
 from cfiddle import *
 import cfiddle
 from fixtures import setup
 from util import skip_if_go_not_available
-import os
 
 def test_hello_world_build(setup):
     skip_if_go_not_available()
@@ -13,9 +15,6 @@ def test_hello_world_build(setup):
 func DoubleIt(x int) int {
         return x * 2
 }
-
-func main() {}
-
     """, language="go")
 
     r = build(src)
