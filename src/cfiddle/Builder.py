@@ -27,8 +27,8 @@ class Executable:
     
     """
     
-    def __init__(self, path_to_library, build_dir, output, build_command, build_spec, functions):
-        self.lib = path_to_library
+    def __init__(self, lib, build_dir, output, build_command, build_spec, functions):
+        self.lib = lib
         self.build_dir = build_dir
         self.output = output
         self.build_command = build_command

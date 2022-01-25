@@ -12,6 +12,7 @@ def arg_map(**parameters):
 
     For example:
 
+
     .. doctest::
 
       >>> from cfiddle import *
