@@ -15,7 +15,7 @@ vpath %.go $(CFIDDLE_VPATH)
 
 CXX?=g++
 CC?=gcc
-GO?=/usr/local/go/bin/go
+GO?=go
 WARNINGS=-Wall -Werror
 INCLUDES=-I. -I$(CFIDDLE_INCLUDE) 
 CFLAGS=$(WARNINGS) $(DEBUG_FLAGS) -fPIC $(OPTIMIZE) $(INCLUDES) $(MORE_INCLUDES) $(MORE_CFLAGS) -MMD -save-temps=obj
