@@ -33,7 +33,7 @@ Inspecting Compiled Code
 Executing Code
 ..............
 
-:func:`cfiddle.run()` can invoke functions in an :obj:`cfiddle.Executable` and collect data
+:func:`cfiddle.run()` can invoke functions in a :obj:`cfiddle.Executable` and collect data
 about their execution.  CFiddle provides easy access to :doc:`performance counters <./perfcount>` .
 
 
@@ -48,15 +48,15 @@ summarize the results in several useful formats.
 .. autoclass:: cfiddle.Data.InvocationResultsList
 	       :members:
 	     
-Parameterizing Compilation ond Execution
+Parameterizing Compilation and Execution
 ........................................
 
 :func:`cfiddle.arg_map()` lets CFiddle explore the impact of compile-
 and run-time parameters by making it very easy to construct complex sets of
 parameter/argument values.
 
-The easiest way to use :func:`cfiddle.build()` and :func:`cfiddle.run()` is to call `arg_map()`
-to construct their `build_parameter` and `argument` function parameters.
+The easiest way to use :func:`cfiddle.build()` and :func:`cfiddle.run()` is to call :func:`arg_map()`
+to construct their :code:`build_parameter` and :code:`argument` function parameters.
 
 .. autofunction:: cfiddle.util.arg_map
 

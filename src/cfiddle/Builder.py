@@ -21,9 +21,14 @@ class ExecutableDescription:
 
 
 class Executable:
+    """A compiled source file.
 
-    def __init__(self, lib, build_dir, output, build_command, build_spec, functions):
-        self.lib = lib
+    :obj:`Builder` objects create these when they compile code.   They can be passed to :func:`cfiddle.run` for execution.
+    
+    """
+    
+    def __init__(self, path_to_library, build_dir, output, build_command, build_spec, functions):
+        self.lib = path_to_library
         self.build_dir = build_dir
         self.output = output
         self.build_command = build_command
@@ -35,7 +40,6 @@ class Executable:
     
     def compute_built_filename(self, filename):
         return os.path.join(self.build_dir, filename)
-
     
     def extract_build_name(self, filename):
         _, source_name = os.path.split(self.build_spec.source_file)

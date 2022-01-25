@@ -12,7 +12,8 @@ def arg_map(**parameters):
 
     For example:
 
-    .. doctest
+    .. doctest::
+
       >>> from cfiddle import *
       >>> from pprint import pprint
       >>> pprint(arg_map(foo=[1,2], bar=[3,4], baz=5))

@@ -50,7 +50,7 @@ def build(source, build_parameters=None, **kwargs):
     of :obj:`dict` that provide values for build parameters.  If
     ``build_parameters`` is ``None``, defaults will be used.
 
-    Typically, the ``build_parameters`` value is generated with :func:`arg_map()`.
+    Typically, the :code:`build_parameters` value is generated with :func:`cfiddle.util.arg_map()`.
 
     ``build`` compiles each source file using each set of build parameters, and
     returns list of resulting :obj:`Executable` objects.
@@ -107,7 +107,7 @@ def run(executable, function, arguments=None, perf_counters=None, **kwargs):
     and types of the function's arguments).
 
     The value of ``arguments`` is typically provided by a call to
-    :func:`arg_map()`.
+    :func:`cfiddle.util.arg_map()`.
 
     Returns an :obj:`InvocationResultsList` which is a subclass of :obj:`list`
     that can format results in useful ways (e.g., as a Panda dataframe or CSV
