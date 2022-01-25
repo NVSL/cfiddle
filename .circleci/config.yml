@@ -39,7 +39,7 @@ jobs:
 
     docker:
       - image: cimg/python:3.9
-
+	
     steps:
       - checkout
       - attach_workspace:
@@ -49,6 +49,9 @@ jobs:
       - run:
           name: Install cfiddle
           command: pip install /tmp/cfiddle/packages/*.tar.gz
+      - run:
+          name: setup PATH
+          command: echo 'export PATH=/usr/local/go/bin:$PATH' >> $BASH_ENV
       - run:
           name: Test cfiddle
           command: $(set-cfiddle-ld-path); cd tests; make test
