@@ -32,9 +32,6 @@ def test_hello_world_go(setup):
 func DoubleIt(x int) int {
         return x * 2
 }
-
-func main() {}
-
     """, language="go")), "DoubleIt", arg_map(x=[1,2]))
 
 
@@ -53,6 +50,39 @@ func loop() {}
     assert "package main" not in undecorated_lines[1]
     assert raw in undecorated_source
                   
+
+def test_go_inspection(setup):
+    skip_if_go_not_available()
+
+    b = build(code(r""" 
+//export loop
+func loop(x int) int {
+    sum := 0
+    C.start_measurement(nil)
+    for i := 0; i < x; i++ {
+        sum += i;
+    }
+    C.start_measurement(nil)
+    return sum
+}
+
+    """, language="go"), verbose=True)
+
+    print(b[0].source())
+
+    
+def test_go_function_extraction(setup):
+    skip_if_go_not_available()
+    src = r""" 
+//export loop
+func loop(x int){
+}
+"""
+    b = build(code(src, language="go"), verbose=True)
+
+    assert b[0].source("loop").strip() ==  """func loop(x int){
+}"""
+
     
 def test_go_measurement(setup):
     skip_if_go_not_available()
@@ -68,8 +98,6 @@ func loop(x int) int {
     C.start_measurement(nil)
     return sum
 }
-
-func main() {}
 
     """, language="go"), verbose=True), "loop", arg_map(x=[10000,100000]))
 

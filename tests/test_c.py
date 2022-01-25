@@ -11,6 +11,17 @@ int DoubleIt(int x) {
     """, language="c")), "DoubleIt", arg_map(x=[1,2]))
 
 
+def test_c_source_inspect(setup):
+
+    src=r""" 
+void DoubleIt(int x) {
+}
+"""
+    b = build(code(src, language="c"))
+    b[0].source()
+    assert b[0].source("DoubleIt").strip() == src.strip()
+
+
 def test_c_measurement(setup):
     r = run(build(code(r""" 
 #include"cfiddle.h"

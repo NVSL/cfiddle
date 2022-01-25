@@ -36,7 +36,10 @@ package main
 // #include "cfiddle.h"
 import "C"
 
-{source}"""
+{source}
+
+func main() {{}}
+"""
 
 def _decorate_c_code(source):
     return source

@@ -16,6 +16,6 @@ def test_set_ld_path():
 def test_set_ld_path_in_shell():
     set_ld_path_in_shell()
     
-def test_cfiddle_paths():
+def test_cfiddle_paths(): 
     assert os.path.exists(os.path.join(cfiddle_lib_path(), "libcfiddle.so"))
     print_cfiddle_lib_path()
