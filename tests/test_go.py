@@ -1,4 +1,5 @@
 from cfiddle import *
+import cfiddle
 from fixtures import setup
 from util import skip_if_go_not_available
 import os
@@ -7,9 +8,6 @@ def test_hello_world_build(setup):
     skip_if_go_not_available()
 
     src = code(r""" 
-package main
-
-import "C"
 
 //export DoubleIt
 func DoubleIt(x int) int {
@@ -29,9 +27,6 @@ def test_hello_world_go(setup):
     skip_if_go_not_available()
 
     run(build(code(r""" 
-package main
-
-import "C"
 
 //export DoubleIt
 func DoubleIt(x int) int {
@@ -43,17 +38,26 @@ func main() {}
     """, language="go")), "DoubleIt", arg_map(x=[1,2]))
 
 
+def test_decoration(setup):
+    raw = r"""
+func loop() {}
+"""
+    source = code(raw, language="go")
+    decorated_source = cfiddle.util.read_file(source)
+    decorated_lines = decorated_source.split("\n")
+    assert "package main" in decorated_lines[1]
+    assert raw in decorated_source
+
+    undecorated_source = cfiddle.util.read_file(code(raw, language="go", raw=True))
+    undecorated_lines = undecorated_source.split("\n")
+    assert "package main" not in undecorated_lines[1]
+    assert raw in undecorated_source
+                  
+    
 def test_go_measurement(setup):
     skip_if_go_not_available()
 
     run(build(code(r""" 
-package main
-
-// #cgo LDFLAGS: -L/cse142L/fiddle/src/cfiddle/resources/libcfiddle/build  -lcfiddle
-// #cgo CFLAGS: -g -Wall -I/cse142L/fiddle/src/cfiddle/resources/include
-// #include "cfiddle.h"
-import "C"
-
 //export loop
 func loop(x int) int {
     sum := 0
@@ -67,5 +71,5 @@ func loop(x int) int {
 
 func main() {}
 
-    """, language="go")), "loop", arg_map(x=[10000,100000]))
+    """, language="go"), verbose=True), "loop", arg_map(x=[10000,100000]))
 

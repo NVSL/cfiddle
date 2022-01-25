@@ -45,6 +45,7 @@ class MakeBuilder(Builder):
 
         if self._verbose:
             print(base_cmd + make_targets)
+            print(" ".join(base_cmd + make_targets))
         output = self._invoke_make(base_cmd + make_targets)
         if self._verbose:
             print(output)
