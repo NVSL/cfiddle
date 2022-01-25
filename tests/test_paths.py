@@ -1,6 +1,6 @@
 from cfiddle import *
 from cfiddle.util import environment, invoke_process
-from cfiddle import PACKAGE_DATA_PATH, setup_ld_path, set_ld_path_in_shell, libcfiddle_dir_path, print_libcfiddle_dir
+from cfiddle.paths import *
 import os
 
 def test_set_ld_path():
@@ -16,10 +16,6 @@ def test_set_ld_path():
 def test_set_ld_path_in_shell():
     set_ld_path_in_shell()
     
-def test_libcfiddle_path():
-    assert os.path.exists(os.path.join(libcfiddle_dir_path(), "libcfiddle.so"))
-    print_libcfiddle_dir()
-    success, output = invoke_process(["cfiddle-lib-path"])
-    assert success
-    assert os.path.exists(os.path.join(output.strip(), "libcfiddle.so"))
-    
+def test_cfiddle_paths():
+    assert os.path.exists(os.path.join(cfiddle_lib_path(), "libcfiddle.so"))
+    print_cfiddle_lib_path()

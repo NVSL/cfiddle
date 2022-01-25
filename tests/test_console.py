@@ -15,3 +15,4 @@ def test_print_cfiddle_include_path():
     success, output = cfiddle.util.invoke_process("cfiddle-include-path")
     assert success
     assert output.strip() == cfiddle_include_path()
+
