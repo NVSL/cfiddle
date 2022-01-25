@@ -102,11 +102,14 @@ class Builder:
             if p.can_parse_file(self.source_file):
                 self.parser = p
                 return
-        raise UnknownFileType(f"No parser is availabe for file '{self.source_file}'.")
+        raise UnknownFileType(f"No parser is available for file '{self.source_file}'.")
             
 class BuildFailure(Exception):
     def __str__(self):
         return f"Build command failed:\n\n{self.args[0]}\n\n{self.args[1]}"
     
 class BadBuildParameter(Exception):
+    pass
+
+class UnknownFileType(Exception):
     pass

@@ -1,5 +1,3 @@
-import pkg_resources
-
 __all__ = [
     "InvocationResultsList",
     "ExecutableDescription",

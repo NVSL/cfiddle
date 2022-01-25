@@ -45,7 +45,7 @@ def test_nop_build(test_cpp_nop_builder, setup):
     
 
 def test_alt_build_directory(setup):
-    t = NopBuilder(build_spec = ExecutableDescription(source="", build_parameters={}), build_root="/tmp")
+    t = NopBuilder(build_spec = ExecutableDescription(source=code(""), build_parameters={}), build_root="/tmp")
     assert t.build_root == "/tmp"
     
 
@@ -54,7 +54,7 @@ def test_mixins(setup):
         def my_result(self):
             return "my_result"
         
-    t = NopBuilder(build_spec = ExecutableDescription(source="", build_parameters={}), result_factory=MyResult)
+    t = NopBuilder(build_spec = ExecutableDescription(source=code(""), build_parameters={}), result_factory=MyResult)
     result = t.build()
     assert isinstance(result, MyResult)
     assert result.my_result() == "my_result"
