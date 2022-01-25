@@ -1,6 +1,6 @@
 # CFiddle: A Tool For Studying Small Compiled Programs
 
-[![CircleCI](https://circleci.com/gh/circleci/circleci-docs.svg?style=svg)](https://circleci.com/gh/circleci/circleci-docs)
+[![CircleCI](https://circleci.com/gh/NVSL/cfiddle.svg?style=svg)](https://circleci.com/gh/NVSL/cfiddle)
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/NVSL/cfiddle/main?labpath=README.ipynb)
 [![Documentation Status](https://readthedocs.org/projects/cfiddle/badge/?version=latest)](https://cfiddle.readthedocs.io/en/latest/?badge=latest)
 	
