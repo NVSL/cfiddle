@@ -65,10 +65,11 @@ docker-pull:
 	docker pull stevenjswanson/$(CFIDDLE_DOCKER_IMAGE)
 
 
+.PHONY: release
+release: pypi docker-release
+
 .PHONY: wc
 wc:
 	wc -l tests/*.py | sort -n
 	wc -l $$(find src/cfiddle -name '*.py') | sort -n
 
-.PHONY: release
-release: pypi docker-release
