@@ -31,7 +31,7 @@ apt-get install -y golang-go
 #tar -C /usr/local -xvf go1.16.7.linux-amd64.tar.gz
 
 ##### python stuff
-pip install wheel
+#pip install wheel
 
 ##### Google test
 (cd /tmp; rm -rf googletest; git clone https://github.com/google/googletest.git && cd googletest && cmake CMakeLists.txt; make install)
