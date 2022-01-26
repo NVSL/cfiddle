@@ -14,7 +14,7 @@ apt-get install -y make less emacs-nox gcc make g++ cmake gdb build-essential gr
 #    git clone https://github.com/radareorg/radare2
 #    radare2/sys/install.sh
 #else
-(cd tmp; git clone -b 5.5.4 https://github.com/radareorg/radare2;
+(cd /tmp; git clone -b 5.5.4 https://github.com/radareorg/radare2;
  cd radare2;
  ./sys/install.sh --install;
 )
