@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+
+set -ex
+
 #### development tools
 apt-get update --fix-missing --allow-releaseinfo-change
 apt-get install -y make less emacs-nox gcc make g++ cmake gdb build-essential graphviz curl  && apt-get clean -y
@@ -13,7 +16,7 @@ apt-get install -y make less emacs-nox gcc make g++ cmake gdb build-essential gr
 #else
 (cd tmp; git clone -b 5.5.4 https://github.com/radareorg/radare2;
  cd radare2;
- sudo ./sys/install.sh --install;
+ ./sys/install.sh --install;
 )
 #    curl -L https://github.com/radareorg/radare2/releases/download/5.3.1/radare2-dev_5.3.1_amd64.deb -o /tmp/radare2-dev_5.3.1_amd64.deb
 #    curl -L https://github.com/radareorg/radare2/releases/download/5.3.1/radare2_5.3.1_amd64.deb -o /tmp/radare2_5.3.1_amd64.deb
