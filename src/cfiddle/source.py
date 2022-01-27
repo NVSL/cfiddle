@@ -3,10 +3,12 @@ import os
 import subprocess
 import pytest
 import tempfile
+import io
 
 from .Builder import Executable
 from .util import invoke_process
 from .CFG.cfg import CFG
+from .DebugInfo import DebugInfo
 
 class Source:
     
@@ -114,8 +116,9 @@ class Preprocessed:
             return ".i"
         else:
             raise ValueError(f"Can't compute preprocessor file extension for file  '{filename}' in '{language}'.")
-        
-class FullyInstrumentedExecutable(Preprocessed, Source, Assembly, CFG, Executable):
+
+                
+class FullyInstrumentedExecutable(Preprocessed, Source, Assembly, CFG, DebugInfo, Executable):
 
     def __init__(self, *argc, **kwargs):
         super().__init__(*argc, **kwargs)
@@ -213,5 +216,3 @@ def find_region_by_regex(lines, show):
                 end_line = n + 1
                 return start_line, end_line
     raise ValueError(f"Couldn't find code for {show}")
-
-    
