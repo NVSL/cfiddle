@@ -3,10 +3,12 @@ import os
 import subprocess
 import pytest
 import tempfile
+import io
 
 from .Builder import Executable
 from .util import invoke_process
 from .CFG.cfg import CFG
+from .DebugInfo import DebugInfo
 
 class Source:
     
@@ -49,7 +51,7 @@ class Assembly:
            show: What to show.  Either a function name or a 2-tuple: either ``(start_regex,end_regex)`` or ``(start_line_number,end_line_number``).  Defaults to ``None`` which shows the whole file.
            demangle: Pass the assembly through ``c++filt`` first, so C++ symbols are more readable.  Defaults to ``True``.
         Returns:
-           ``str`` : The source code.
+           ``str`` : The assembly.
 
         """
         
@@ -91,7 +93,7 @@ class Preprocessed:
            show: What to show.  Either a function name or a 2-tuple: either ``(start_regex,end_regex)`` or ``(start_line_number,end_line_number``).  Defaults to ``None`` which shows the whole file.
            demangle: Pass the assembly through ``c++filt`` first, so C++ symbols are more readable.  Defaults to ``True``.
         Returns:
-           ``str`` : The source code.
+           ``str`` : The preprocessed source code.
         
         """
         
@@ -114,8 +116,9 @@ class Preprocessed:
             return ".i"
         else:
             raise ValueError(f"Can't compute preprocessor file extension for file  '{filename}' in '{language}'.")
-        
-class FullyInstrumentedExecutable(Preprocessed, Source, Assembly, CFG, Executable):
+
+                
+class FullyInstrumentedExecutable(Preprocessed, Source, Assembly, CFG, DebugInfo, Executable):
 
     def __init__(self, *argc, **kwargs):
         super().__init__(*argc, **kwargs)
@@ -213,5 +216,3 @@ def find_region_by_regex(lines, show):
                 end_line = n + 1
                 return start_line, end_line
     raise ValueError(f"Couldn't find code for {show}")
-
-    
