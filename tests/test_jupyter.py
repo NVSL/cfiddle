@@ -17,7 +17,7 @@ def test_jupyter(setup):
         assert isinstance(test_cpp.asm(), Code)
         assert isinstance(test_cpp.source(), Code)
         assert isinstance(test_cpp.preprocessed(), Code)
-        assert isinstance(test_cpp.debug_info(), TextDisplayObject)
+        assert isinstance(test_cpp.debug_info(), str)
         assert isinstance(test_cpp.cfg("sum"), SVG)
         assert os.path.exists(os.path.join(test_cpp.build_dir, "sum.svg"))
 

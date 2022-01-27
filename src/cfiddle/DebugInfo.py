@@ -113,10 +113,10 @@ class DebugInfo:
         def _output_element(self, e):
             if self.printing > 0:
                 indent =  "  " * self.indent
-                self.output.write(f"[{e.offset:4}]{indent}{self._render_element(e)}\n")
+                self.output.write(f"[{e.offset:4}] {indent}{self._render_element(e)}\n")
 
         def _render_element(self, e):
             if isinstance(e, AttributeValue) :
                 return f"{e.name} = {e.value}"
             elif  isinstance(e, DIE) :
-                return f"tag = {e.tag}"
+                return f"{e.tag}"

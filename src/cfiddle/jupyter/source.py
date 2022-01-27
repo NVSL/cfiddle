@@ -39,7 +39,7 @@ class Preprocessed(cfiddle.source.Preprocessed):
 
 class DebugInfo(cfiddle.DebugInfo.DebugInfo):
     def debug_info(self, *argc, **kwargs):
-        return IPython.display.TextDisplayObject(super().debug_info(*argc, **kwargs))
+        return super().debug_info(*argc, **kwargs)
     
 class CFG(CFG):
     def cfg(self, function, *argc, **kwargs):
