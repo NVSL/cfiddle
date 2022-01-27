@@ -51,7 +51,7 @@ class Assembly:
            show: What to show.  Either a function name or a 2-tuple: either ``(start_regex,end_regex)`` or ``(start_line_number,end_line_number``).  Defaults to ``None`` which shows the whole file.
            demangle: Pass the assembly through ``c++filt`` first, so C++ symbols are more readable.  Defaults to ``True``.
         Returns:
-           ``str`` : The source code.
+           ``str`` : The assembly.
 
         """
         
@@ -93,7 +93,7 @@ class Preprocessed:
            show: What to show.  Either a function name or a 2-tuple: either ``(start_regex,end_regex)`` or ``(start_line_number,end_line_number``).  Defaults to ``None`` which shows the whole file.
            demangle: Pass the assembly through ``c++filt`` first, so C++ symbols are more readable.  Defaults to ``True``.
         Returns:
-           ``str`` : The source code.
+           ``str`` : The preprocessed source code.
         
         """
         

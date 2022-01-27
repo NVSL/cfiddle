@@ -75,7 +75,7 @@ $(BUILD)/%.so: $(BUILD)/%.o $(MORE_OBJS)
 	$(CXX) $^ $(LDFLAGS) -shared -o $@
 
 $(BUILD)/%.so: %.go
-	$(GO) build $(OPTIMIZE) $(DEBUG_FLAGS) $(GO_FLAGS) -o $@ -buildmode=c-shared $< 
+	$(GO) build $(OPTIMIZE) $(GO_FLAGS) -o $@ -buildmode=c-shared $< 
 
 
 -include $(wildcard *.d) $(wildcard $(BUILD)/*.d)

@@ -38,10 +38,10 @@ class DebugInfo:
 
     @contextlib.contextmanager
     def DWARFInfo(self):
-        """Get the raw :code:`DWARFInfo` object for the the compiled code.
+        """Context manager for the raw :code:`DWARFInfo` object for the  compiled code.
 
         Returns:
-           The raw :code:`DWARFInfo` object for the compiled code as created by `pyelftools <https://github.com/eliben/pyelftools>`_.
+           :code:`DWARFInfo`: :code:`DWARFInfo` object created by `pyelftools <https://github.com/eliben/pyelftools>`_.
         """
         try:
             with self.ELFFile() as elffile:
@@ -55,10 +55,10 @@ class DebugInfo:
 
     @contextlib.contextmanager
     def ELFFile(self):
-        """Get the raw :code:`ELFFile` object for the the compiled code.
-
+        """Context manager for the raw :code:`ELFFile` object for the compiled code.
+        
         Returns:
-           The raw :code:`ELFFile` object for the compiled code as created by `pyelftools <https://github.com/eliben/pyelftools>`_.
+           :code:`ELFFile`: :code:`ELFFile` object created by `pyelftools <https://github.com/eliben/pyelftools>`_.
         """
         try:
             with open(self.lib, 'rb') as f:
