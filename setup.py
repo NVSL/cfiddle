@@ -40,9 +40,6 @@ setup(
         "pytest-xdist",
         "click",
         "pytest",
-        "r2pipe",
-        "pydot",
-        "networkx",
         "pandas",
         "IPython",
         "nbmake",
@@ -51,7 +48,11 @@ setup(
         "ipywidgets",
         "wheel",
         "sphinx",
-        "twine"
+        "twine",
+        "r2pipe",
+        "pydot",
+        "networkx",
+        "pyelftools"
     ],
     description="CFiddle makes it easy to ask and answers questions about the compilation and execution of smallish programs written in C or C++.",
     long_description=open("README.md").read(),

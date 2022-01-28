@@ -1,5 +1,8 @@
 BUILD=build
 CFIDDLE_INCLUDE=../include
+
+DEBUG_FLAGS=-g3
+
 include ../make/cfiddle.make
 
 clean:

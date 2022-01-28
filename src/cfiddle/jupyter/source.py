@@ -1,13 +1,14 @@
-import cfiddle.source
 import os
-
 try:
     import IPython
 except ImportError:
     pass
+from IPython.display import Image,SVG
 
 import cfiddle.source
+import cfiddle.DebugInfo
 from cfiddle import Executable
+from cfiddle.CFG.cfg import CFG
 
 class Source(cfiddle.source.Source):
 
@@ -35,16 +36,18 @@ class Preprocessed(cfiddle.source.Preprocessed):
 
     def raw_preprocessed(self, *argc, **kwargs):
         return super().preprocessed_source(*argc, **kwargs)
-from IPython.display import Image,SVG
 
-from cfiddle.CFG.cfg import CFG
+class DebugInfo(cfiddle.DebugInfo.DebugInfo):
+    def debug_info(self, *argc, **kwargs):
+        return super().debug_info(*argc, **kwargs)
+    
 class CFG(CFG):
     def cfg(self, function, *argc, **kwargs):
         filename = os.path.join(self.build_dir, function) + ".svg"
         return SVG(super().cfg(function, output=filename, *argc, **kwargs, jupyter=True))
     
     
-class FullyInstrumentedExecutable(Preprocessed, Source, Assembly, CFG,Executable):
+class FullyInstrumentedExecutable(Preprocessed, Source, Assembly, CFG, DebugInfo, Executable):
     def __init__(self, *argc, **kwargs):
         super().__init__(*argc, **kwargs)
 
