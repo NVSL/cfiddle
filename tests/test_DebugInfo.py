@@ -60,3 +60,6 @@ def test_selective(setup):
 
 def test_stack_frame(test_cpp):
     assert "simple_print" in test_cpp.stack_frame("simple_print") 
+    for variable in ["a", "b", "c"]:
+        assert f"{variable}:" in test_cpp.stack_frame("simple_print") 
+    assert "sum" not in test_cpp.stack_frame("simple_print") 
