@@ -25,5 +25,5 @@ def test_compare(setup):
     with cfiddle_config():
         configure_for_jupyter()
         test_cpp = build_one("test_src/test.cpp")
-        assert isinstance(compare([test_cpp.cfg("sum"), test_cpp.cfg("sum")]), HTML)
+        assert isinstance(compare([test_cpp.cfg("sum"), test_cpp.cfg("sum"), "AOEU"]), HTML)
     
