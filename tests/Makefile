@@ -14,13 +14,10 @@ test: $(CPP_TESTS)
 .PHONY: test
 
 
-EXAMPLES=../examples/sorting.ipynb \
-	../examples/README.ipynb \
-	../examples/VirtualMethods.ipynb \
-	../examples/CacheMeasurement.ipynb \
-	../examples/Go.ipynb
+EXAMPLES=$(shell ls ../examples/*.ipynb | grep -v Untitled |grep -v CompilerExplorer)
 
 examples:
+	@echo Testing $(EXAMPLES)
 	rm -rf ../examples/.cfiddle # give these a clean directory.
 	pytest --nbmake $(EXAMPLES)
 
