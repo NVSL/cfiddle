@@ -19,6 +19,9 @@ def changes_in(filename):
             return
 
 def _render_hack(c):
+    if isinstance(c, str):
+        return f"""<pre>{c}</pre>"""
+    
     try:
         return c._repr_html_()
     except:

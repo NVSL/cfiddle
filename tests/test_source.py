@@ -38,7 +38,6 @@ def test_asm(test_cpp):
     assert asm.split("\n")[0] == "nop:"
     assert ".cfi_endproc" in asm.split("\n")[-1]
 
-
 def test_CPP_flags(setup):
 
     build = MakeBuilder(build_spec=ExecutableDescription("test_src/test.cpp", build_parameters=dict(MORE_CXXFLAGS="-DINCLUDE_MORE")),

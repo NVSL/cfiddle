@@ -17,6 +17,7 @@ CXX?=g++
 CC?=gcc
 GO?=go
 WARNINGS=-Wall -Werror
+DEBUG_FLAGS?=-g3
 INCLUDES=-I. -I$(CFIDDLE_INCLUDE) 
 CFLAGS=$(WARNINGS) $(DEBUG_FLAGS) -fPIC $(OPTIMIZE) $(INCLUDES) $(MORE_INCLUDES) $(MORE_CFLAGS) -MMD -save-temps=obj
 CXXFLAGS=$(CFLAGS) $(CXX_STANDARD) $(MORE_CXXFLAGS)
@@ -74,7 +75,7 @@ $(BUILD)/%.so: $(BUILD)/%.o $(MORE_OBJS)
 	$(CXX) $^ $(LDFLAGS) -shared -o $@
 
 $(BUILD)/%.so: %.go
-	$(GO) build $(OPTIMIZE) $(DEBUG_FLAGS) $(GO_FLAGS) -o $@ -buildmode=c-shared $< 
+	$(GO) build $(OPTIMIZE) $(GO_FLAGS) -o $@ -buildmode=c-shared $< 
 
 
 -include $(wildcard *.d) $(wildcard $(BUILD)/*.d)
