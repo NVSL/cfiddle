@@ -54,7 +54,7 @@ setup(
         "networkx",
         "pyelftools"
     ],
-    description="CFiddle makes it easy to ask and answers questions about the compilation and execution of smallish programs written in C or C++.",
+    description="CFiddle makes it easy to ask and answers questions about the compilation and execution of smallish programs written in compiled languages like C, C++, and Go.",
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
     classifiers=[
