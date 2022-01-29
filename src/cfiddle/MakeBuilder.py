@@ -4,6 +4,7 @@ import subprocess
 import pytest
 from shutil import copyfile
 from .util import environment, invoke_process
+from .Toolchain import TheToolchainRegistry
 
 import pkg_resources
 
@@ -23,6 +24,9 @@ class MakeBuilder(Builder):
 
 
     def build(self):
+
+        self.toolchain = self._resolve_toolchain()
+        self._set_toolchain_parameters()
         
         so_make_target = self._compute_so_make_target(self.build_directory)
         so_unique_name = self._compute_so_unique_name(self.build_directory)
@@ -58,6 +62,7 @@ class MakeBuilder(Builder):
 
 
         return self.result_factory(lib=so_unique_name,
+                                   toolchain=self.toolchain,
                                    functions=functions,
                                    build_command=self._build_manual_make_cmd(base_cmd + make_targets),
                                    build_dir=self.build_directory,
@@ -76,6 +81,24 @@ class MakeBuilder(Builder):
     def verbose(self, verbose=True):
         self._verbose = verbose
 
+    def _set_toolchain_parameters(self):
+        if "ARCH" in self.build_spec.get_build_parameters():
+            self.build_spec.set_build_parameter("CC", self.toolchain.get_compiler_for_language("C"))
+            self.build_spec.set_build_parameter("CXX", self.toolchain.get_compiler_for_language("C++"))
+            
+    def _get_multiarch_string(self, tool):
+        success, value = invoke_process([tool, "-print-multiarch"])
+        if not success:
+            raise Exception(f"Couldn't extract  multiarch string from {tool}")
+        else:
+            return value.strip()
+        
+    def _resolve_toolchain(self):
+        architecture = self.build_spec.build_parameters.get("ARCH", "native")
+        
+        toolchain_type =  TheToolchainRegistry.get_toolchain(architecture=architecture,
+                                                             language=self.build_spec.get_language())
+        return toolchain_type()
         
     def _build_manual_make_cmd(self, cmd):
         return " ".join(cmd)

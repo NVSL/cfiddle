@@ -6,7 +6,7 @@ import tempfile
 import io
 
 from .Builder import Executable
-from .util import invoke_process
+from .util import invoke_process, infer_language
 from .CFG.cfg import CFG
 from .DebugInfo import DebugInfo
 
@@ -32,7 +32,7 @@ class Source:
 
         if language is None:
             language = infer_language(self.build_spec.source_file)
-        return extract_code(self.build_spec.source_file, show=show, language=language, **kwargs)
+        return extract_code(self.build_spec.source_file, self, show=show, language=language, **kwargs)
 
 
 class Assembly:
@@ -57,13 +57,13 @@ class Assembly:
         
         source_base_name = self.extract_build_name(self.build_spec.source_file)
         asm_file = self.compute_built_filename(f"{source_base_name}.s")
-
+        print(asm_file)
         with open(asm_file) as f:
             assembly = f.read()
 
         assembly = self.demangle_assembly(assembly) if demangle else assembly
 
-        return extract_code(asm_file, show=show, language="gas", **kwargs)
+        return extract_code(asm_file, self, show=show, language="gas", **kwargs)
 
     
     def demangle_assembly(self, assembly):
@@ -104,7 +104,7 @@ class Preprocessed:
         preprocessed_suffix = self.compute_preprocessed_suffix(self.build_spec.source_file, language=language)
         source_file_to_search = self.compute_built_filename(f"{compiled_source_base_name}{preprocessed_suffix}")
 
-        return extract_code(source_file_to_search, show=show, language=language, **kwargs)
+        return extract_code(source_file_to_search, self, show=show, language=language, **kwargs)
 
     def compute_preprocessed_suffix(self, filename, language):
         if language is None:
@@ -124,26 +124,8 @@ class FullyInstrumentedExecutable(Preprocessed, Source, Assembly, CFG, DebugInfo
         super().__init__(*argc, **kwargs)
 
 
-def infer_language(filename):
-    suffixes_to_language = {".CPP" : "c++",
-                            ".cpp" : "c++",
-                            ".cc" : "c++",
-                            ".cp" : "c++",
-                            ".c++" : "c++",
-                            ".C" : "c++",
-                            ".ii" : "c++",
-                            ".c" : "c",
-                            ".i" : "c",
-                            ".go": "go"}
 
-    _, ext = os.path.splitext(filename)
-    try:
-        return suffixes_to_language[ext]
-    except KeyError:
-        raise ValueError(f"I don't know what language {filename} is written in.")
-
-
-def extract_code(filename, show=None, language=None, include_header=False):
+def extract_code(filename, executable, show=None, language=None, include_header=False):
 
     with open(filename) as f:
         lines = f.read().split("\n")
@@ -154,8 +136,9 @@ def extract_code(filename, show=None, language=None, include_header=False):
     if language is None:
         language = infer_language(filename)
 
+
     if isinstance(show, str):
-        show = construct_function_regex(language, show)
+        show = construct_function_regex(executable, language, show)
 
     if len(show) == 2:
         if all([isinstance(x, str) for x in show]): 
@@ -189,15 +172,15 @@ def build_header(filename, language, show):
     return f"{c[0]}{filename}:{show[0]+1}-{show[1]} ({show[1] - show[0]} lines){c[1]}\n"
 
 
-def construct_function_regex(language, function):
+def construct_function_regex(executable, language, function):
     if language in [ "c++", "c"]:
         return (fr"[\s\*]{re.escape(function)}\s*\(", r"^\}")
+    elif language == "gas":
+        return executable.get_toolchain().get_asm_function_bookends(function)
     elif language == "gas":
         return (fr"^{re.escape(function)}:\s*", ".cfi_endproc")
     elif language == "go":
         return (fr"func\s+{re.escape(function)}", r"^\}")
-    elif language == "gas":
-        return (fr"^{re.escape(function)}:\s*", ".cfi_endproc")
     else:
         raise Exception(f"Don't know how to find functions in {language}")
 
@@ -206,7 +189,9 @@ def find_region_by_regex(lines, show):
     started = False
     start_line = 0
     end_line = len(lines)
+
     for n, l in enumerate(lines):
+
         if not started:
             if re.search(show[0], l):
                 start_line = n

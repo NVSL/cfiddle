@@ -1,6 +1,6 @@
 import collections
 from .CProtoParser import CProtoParser
-from .util import arg_map, read_file, ListDelegator, type_check, type_check_list
+from .util import arg_map, read_file, ListDelegator, type_check, type_check_list, infer_language
 import types
 import os
 import pytest
@@ -9,7 +9,6 @@ class ExecutableDescription:
     def __init__(self, source=None, build_parameters=None):
         self.source_file = source
         self.build_parameters = build_parameters
-
         self._raise_on_invalid_types()
 
     def _raise_on_invalid_types(self):
@@ -19,7 +18,15 @@ class ExecutableDescription:
             if not any([isinstance(v, t) for t in [int, str, float]]) or isinstance(v, bool): # bool is an int!
                 raise ValueError(f"Can't have '{v}' as build_parameter value.")
 
+    def get_language(self):
+        return infer_language(self.source_file)
 
+    def get_build_parameters(self):
+        return self.build_parameters
+
+    def set_build_parameter(self, name, value):
+        self.build_parameters[name] = value
+        
 class Executable:
     """A compiled source file.
 
@@ -27,14 +34,14 @@ class Executable:
     
     """
     
-    def __init__(self, lib, build_dir, output, build_command, build_spec, functions):
+    def __init__(self, lib, toolchain, build_dir, output, build_command, build_spec, functions):
         self.lib = lib
         self.build_dir = build_dir
         self.output = output
         self.build_command = build_command
         self.build_spec = build_spec
         self.functions = functions
-
+        self.toolchain = toolchain
         self._raise_on_invalid_types()
     
     
@@ -46,7 +53,6 @@ class Executable:
         source_name_base, _ = os.path.splitext(source_name)
         return source_name_base
 
-
     def get_default_function_name(self):
         if len(self.functions) == 1:
             return list(self.functions.values())[0].name
@@ -55,7 +61,10 @@ class Executable:
 
     def get_build_parameters(self):
         return self.build_spec.build_parameters
-        
+
+    def get_toolchain(self):
+        return self.toolchain
+    
     def _raise_on_invalid_types(self):
         type_check(self.lib, str)
         type_check(self.build_dir, str)
@@ -90,7 +99,6 @@ class Builder:
     def build(self):
         raise NotImplemented
 
-    
     def _compute_build_directory(self):
         return os.path.join(self.build_root, "__".join([f"{p}_{v.replace(' ', '')}" for p,v in self.build_parameters.items()]) + "_" + self.source_name_base)
 
