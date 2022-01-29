@@ -34,7 +34,9 @@ class MakeBuilder(Builder):
         parameter_strings += [f"CFIDDLE_INCLUDE={os.path.join(DATA_PATH, 'include')}"]
         parameter_strings += [f"CFIDDLE_VPATH={vpath}"]
         
-        base_cmd = ["make", "-f", self._makefile] + parameter_strings
+        base_cmd = ["make",
+                    "-R", # turn off automatic variables
+                    "-f", self._makefile] + parameter_strings
         
         if self._rebuild:
             make_targets = ["clean"]

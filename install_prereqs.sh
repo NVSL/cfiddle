@@ -39,3 +39,4 @@ apt-get install -y golang-go
 ##### libpfm4
 # we do this instead of apt-get because showevtinfo is very useful and it's not installed by default.
 (cd /tmp; rm -rf libpfm4; git clone https://github.com/wcohen/libpfm4.git && cd libpfm4 && make && make install && cp examples/showevtinfo /usr/local/bin)
+

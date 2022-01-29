@@ -1,8 +1,6 @@
 #-*- Makefile -*-
 .SUFFIXES:
 
-BUILD?=build
-
 vpath %.cpp $(CFIDDLE_VPATH)
 vpath %.cc $(CFIDDLE_VPATH)
 vpath %.CPP $(CFIDDLE_VPATH)
@@ -13,16 +11,22 @@ vpath %.c++ $(CFIDDLE_VPATH)
 vpath %.c $(CFIDDLE_VPATH)
 vpath %.go $(CFIDDLE_VPATH)
 
-CXX?=g++
-CC?=gcc
+GCC_ARCH_PREFIX?=
+
+CXX?=$(GCC_ARCH_PREFIX)g++
+CC?=$(GCC_ARCH_PREFIX)gcc
 GO?=go
-WARNINGS=-Wall -Werror
+
+BUILD_ROOT?=build
+BUILD=$(BUILD_ROOT)/$(shell $(CXX) -print-multiarch)
+
+WARNINGS=-Wall -Werror -Wno-psabi
 DEBUG_FLAGS?=-g3
-INCLUDES=-I. -I$(CFIDDLE_INCLUDE) 
+INCLUDES=-I. -I$(CFIDDLE_INCLUDE) -I/usr/local/include
 CFLAGS=$(WARNINGS) $(DEBUG_FLAGS) -fPIC $(OPTIMIZE) $(INCLUDES) $(MORE_INCLUDES) $(MORE_CFLAGS) -MMD -save-temps=obj
 CXXFLAGS=$(CFLAGS) $(CXX_STANDARD) $(MORE_CXXFLAGS)
 CXX_STANDARD=-std=gnu++11
-LIBS=-L$(CFIDDLE_INCLUDE)/../libcfiddle/build -lcfiddle
+LIBS=-L$(CFIDDLE_INCLUDE)/../libcfiddle/build/$(shell $(CXX) -print-multiarch) -lcfiddle
 
 LDFLAGS=$(LD_OPTS) $(MORE_LDFLAGS) $(LIBS) $(MORE_LIBS) #-pthread  #-std=gnu++11  
 

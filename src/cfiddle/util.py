@@ -81,7 +81,11 @@ def invoke_process(cmd, stdin=None):
     except subprocess.CalledProcessError as e:
         return False, e.output.decode()
 
-    
+def get_native_arch():
+    success, arch = invoke_process(["gcc", "-print-multiarch"])
+    assert success
+    return arch.strip()
+
 class ListDelegator(list):
     
     def __getattr__(self, requested_attribute):     
