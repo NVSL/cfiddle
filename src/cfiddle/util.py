@@ -80,6 +80,8 @@ def invoke_process(cmd, stdin=None):
         return True, p.stdout.decode()
     except subprocess.CalledProcessError as e:
         return False, e.output.decode()
+    except FileNotFoundError as e:
+        return False, str(e)
 
 def get_native_arch():
     success, arch = invoke_process(["gcc", "-print-multiarch"])

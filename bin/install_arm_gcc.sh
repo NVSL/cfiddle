@@ -1,4 +1,4 @@
-
+#!/usr/bin/env bash
 set -ex
 apt-get install -y binutils-arm-linux-gnueabi g++-arm-linux-gnueabi gcc-arm-linux-gnueabi
 
