@@ -22,7 +22,7 @@ first-class support for accessing hardware performance counters.
 It's features include:
 
 1. Support for compiled languages like C, C++, and Go.
-2. Multi-architecture support -- x86, ARM, etc.
+2. Multi-architecture support -- x86, ARM, PowerPC, etc.
 2. Easy access to OS and hardware performance counters.
 3. `Control Flow Graph (CFG) <https://en.wikipedia.org/wiki/Control-flow_graph>`_ generation from compiled code.
 4. Easy support for varying build-time and run-time paremeters.
