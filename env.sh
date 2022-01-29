@@ -1,2 +1,3 @@
-LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/src/cfiddle/resources/libcfiddle/build
-PATH=$PATH:/usr/local/go/bin
+if set-cfiddle-ld-path; then
+    `set-cfiddle-ld-path`
+fi

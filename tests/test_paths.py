@@ -7,11 +7,12 @@ def test_set_ld_path():
     with environment(LD_LIBRARY_PATH=None):
         assert "LD_LIBRARY_PATH" not in os.environ
         setup_ld_path()
-        assert os.environ["LD_LIBRARY_PATH"] == os.path.join(PACKAGE_DATA_PATH, "libcfiddle", "build")
+        # startswith so we don't have check the architecture
+        assert os.environ["LD_LIBRARY_PATH"].startswith(os.path.join(PACKAGE_DATA_PATH, "libcfiddle", "build"))
 
     with environment(LD_LIBRARY_PATH="foo:bar"):
         setup_ld_path()
-        assert os.environ["LD_LIBRARY_PATH"] == "foo:bar:" + os.path.join(PACKAGE_DATA_PATH, "libcfiddle", "build")
+        assert os.environ["LD_LIBRARY_PATH"].startswith("foo:bar:" + os.path.join(PACKAGE_DATA_PATH, "libcfiddle", "build"))
 
 def test_set_ld_path_in_shell():
     set_ld_path_in_shell()

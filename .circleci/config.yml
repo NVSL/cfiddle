@@ -23,9 +23,9 @@ jobs:
           pkg-manager: pip
           # app-dir: ~/project/package-directory/  # If you're requirements.txt isn't in the root directory.
           # pip-dependency-file: test-requirements.txt  # if you have a different name for your requirements file, maybe one that combines your runtime and test requirements.
-
+      - run: echo -ne "Host *\n    StrictHostKeyChecking no\n" | sudo tee -a ~/.ssh/config; sudo chmod 400 ~/.ssh/config
       - run: sudo apt-get update --allow-releaseinfo-change
-      - run: sudo bash ./install_prereqs.sh
+      - run: sudo -E bash -c "(export CFIDDLE_INSTALL_CROSS_COMPILERS=yes; bash ./install_prereqs.sh)"
       - run: make dist
       - run: mkdir -p /tmp/cfiddle/packages/
       - run: cp build_release/dist/*.tar.gz /tmp/cfiddle/packages/
@@ -45,32 +45,29 @@ jobs:
       - attach_workspace:
           at: /tmp/cfiddle
       - run: ls -lRa /tmp/cfiddle
-      - run: sudo bash ./install_prereqs.sh
+      - run: sudo bash -c "(export CFIDDLE_INSTALL_CROSS_COMPILERS=yes; bash ./install_prereqs.sh)"
       - run:
           name: Install cfiddle
           command: pip install /tmp/cfiddle/packages/*.tar.gz
-      - run:
-          name: setup PATH
-          command: echo 'export PATH=/usr/local/go/bin:$PATH' >> $BASH_ENV
       - run:
           name: Test cfiddle
           command: $(set-cfiddle-ld-path); cd tests; make test
   python-310:
     <<: *test-template
     docker:
-      - image: circleci/python:3.10
+      - image: cimg/python:3.10
   python-38:
     <<: *test-template
     docker:
-      - image: circleci/python:3.8
+      - image: cimg/python:3.8
   python-37:
     <<: *test-template
     docker:
-      - image: circleci/python:3.7
+      - image: cimg/python:3.7
   python-36:
     <<: *test-template
     docker:
-      - image: circleci/python:3.6
+      - image: cimg/python:3.6
 
       
 # Invoke jobs via workflows
@@ -92,6 +89,6 @@ workflows:
       - python-37:
           requires: 
             - build-package
-      - python-36:
-          requires: 
-            - build-package
+#      - python-36:
+#          requires: 
+#            - build-package

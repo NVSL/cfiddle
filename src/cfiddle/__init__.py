@@ -16,7 +16,8 @@ __all__ = [
     "UnknownSymbol",
     "changes_in",
     "exp_range",
-    "are_perf_counters_available"
+    "are_perf_counters_available",
+    "list_architectures"
 ]
 
 from .Data import InvocationResultsList
@@ -30,7 +31,7 @@ from .config import get_config, set_config
 from .jupyter import configure_for_jupyter
 from .paths import setup_ld_path
 from .perfcount import are_perf_counters_available
-
+from .Toolchain import list_architectures
 
 def build_and_run(source_file, build_parameters, function, arguments):
     executable = build_one(source_file, build_parameters)
@@ -81,6 +82,7 @@ def build(source, build_parameters=None, **kwargs):
         l.append(Builder(ExeDesc(**p), **kwargs).build())
     return l
 
+
 def run_list(invocations, perf_counters=None, **kwargs):
     if perf_counters is None:
         perf_counters = []
@@ -94,6 +96,7 @@ def run_list(invocations, perf_counters=None, **kwargs):
     for i in progress_bar(invocations, miniters=1):
         l.append(Runner(InvDesc(**i, perf_counters=perf_counters), **kwargs).run())
     return l
+
 
 def run(executable, function, arguments=None, perf_counters=None, **kwargs):
     """Run one or more functions with one or more sets of arguments.

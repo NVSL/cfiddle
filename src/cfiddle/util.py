@@ -35,6 +35,27 @@ def arg_map(**parameters):
     t = [(k, listify(v)) for k,v in parameters.items()]
     return _cross_product(t)
 
+def infer_language(filename):
+    suffixes_to_language = {".CPP" : "c++",
+                            ".cpp" : "c++",
+                            ".cc" : "c++",
+                            ".cp" : "c++",
+                            ".c++" : "c++",
+                            ".cxx" : "c++",
+                            ".C" : "c++",
+                            ".ii" : "c++",
+                            ".c" : "c",
+                            ".i" : "c",
+                            ".go": "go"}
+
+    _, ext = os.path.splitext(filename)
+    try:
+        return suffixes_to_language[ext]
+    except KeyError:
+        raise ValueError(f"I don't know what language {filename} is written in.")
+
+
+
 def exp_range(low, high, multiplier=2):
     last = None
     while low < high:
@@ -80,8 +101,20 @@ def invoke_process(cmd, stdin=None):
         return True, p.stdout.decode()
     except subprocess.CalledProcessError as e:
         return False, e.output.decode()
+    except FileNotFoundError as e:
+        return False, str(e)
 
     
+def get_native_architecture():
+    return os.uname().machine
+    
+    
+def get_native_toolchain():
+    success, arch = invoke_process(["gcc", "-print-multiarch"])
+    if not success:
+        raise Exception("Unable to determine native toolchain.")
+    return arch.strip()
+
 class ListDelegator(list):
     
     def __getattr__(self, requested_attribute):     

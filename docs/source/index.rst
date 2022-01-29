@@ -7,7 +7,6 @@
 CFiddle
 =======================
 
-
 CFiddle is a tool for studying the compilation, execution, and performance of
 smallish programs written in compiled languages like C, C++, or Go.  If you
 want to know what the compiler does to your code, how your code interacts with
@@ -22,6 +21,7 @@ first-class support for accessing hardware performance counters.
 It's features include:
 
 1. Support for compiled languages like C, C++, and Go.
+2. Cross-compilation support -- x86, ARM, PowerPC, etc.
 2. Easy access to OS and hardware performance counters.
 3. `Control Flow Graph (CFG) <https://en.wikipedia.org/wiki/Control-flow_graph>`_ generation from compiled code.
 4. Easy support for varying build-time and run-time paremeters.
@@ -39,6 +39,7 @@ Manual Contents
    
    coreapi
    perfcount
+   multiarch
 	      
 Installation
 ------------
@@ -56,7 +57,7 @@ Here's an example to set the stage before we describe the key functions below.
 First, create a source file:
 
 .. doctest::
-
+   
     >>> from cfiddle import  *
     >>> sample = code(r"""
     ... #include <cfiddle.hpp>

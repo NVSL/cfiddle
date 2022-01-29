@@ -4,6 +4,7 @@ import os, sys
 from distutils.command.build import build as _build
 from distutils.log import INFO
 from contextlib import contextmanager
+import platform
 
 @contextmanager
 def working_directory(path):
@@ -52,8 +53,8 @@ setup(
         "r2pipe",
         "pydot",
         "networkx",
-        "pyelftools"
-    ],
+        "pyelftools"]# + (["jpeg"] if platform.python_version().startswith("3.6") else [])
+    ,
     description="CFiddle makes it easy to ask and answers questions about the compilation and execution of smallish programs written in compiled languages like C, C++, and Go.",
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
@@ -66,8 +67,8 @@ setup(
         'Topic :: Software Development :: Compilers',
         'Framework :: Jupyter',
         'License :: OSI Approved :: MIT License',   # Again, pick a license
-        'Programming Language :: Python :: 3',      #Specify which pyhton versions that you want to support
-        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3', 
+#        'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',

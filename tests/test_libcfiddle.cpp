@@ -47,7 +47,7 @@ namespace Tests {
 		end_measurement();
 		ASSERT_EQ(get_dataset()->size(), 2);
 		ASSERT_EQ(strcmp(get_dataset()->current_row().get_datum("tag").as<const char*>(), "bar"), 0);
-		ASSERT_NEAR(get_dataset()->current_row().get_datum("ET").as<double>(), 1.0, 0.1);
+		ASSERT_NEAR(get_dataset()->current_row().get_datum("ET").as<double>(), 1.0, 0.15);
 	}
 
 	TEST_F(libcfiddleTests, perf_count_CPU_CYCLES) {

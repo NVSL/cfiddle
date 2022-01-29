@@ -4,6 +4,7 @@ import subprocess
 import pytest
 from shutil import copyfile
 from .util import environment, invoke_process
+from .Toolchain import TheToolchainRegistry
 
 import pkg_resources
 
@@ -23,6 +24,7 @@ class MakeBuilder(Builder):
 
 
     def build(self):
+        self.toolchain = self._resolve_toolchain()
         
         so_make_target = self._compute_so_make_target(self.build_directory)
         so_unique_name = self._compute_so_unique_name(self.build_directory)
@@ -34,7 +36,9 @@ class MakeBuilder(Builder):
         parameter_strings += [f"CFIDDLE_INCLUDE={os.path.join(DATA_PATH, 'include')}"]
         parameter_strings += [f"CFIDDLE_VPATH={vpath}"]
         
-        base_cmd = ["make", "-f", self._makefile] + parameter_strings
+        base_cmd = ["make",
+                    "-R", # turn off automatic variables
+                    "-f", self._makefile] + parameter_strings
         
         if self._rebuild:
             make_targets = ["clean"]
@@ -56,6 +60,7 @@ class MakeBuilder(Builder):
 
 
         return self.result_factory(lib=so_unique_name,
+                                   toolchain=self.toolchain,
                                    functions=functions,
                                    build_command=self._build_manual_make_cmd(base_cmd + make_targets),
                                    build_dir=self.build_directory,
@@ -75,6 +80,27 @@ class MakeBuilder(Builder):
         self._verbose = verbose
 
         
+    def _get_multiarch_string(self, tool):
+        success, value = invoke_process([tool, "-print-multiarch"])
+        if not success:
+            raise Exception(f"Couldn't extract  multiarch string from {tool}")
+        else:
+            return value.strip()
+
+        
+    def _resolve_toolchain(self):
+        default_compiler, make_var = self._default_compiler_for_language(self.build_spec.get_language())
+        raw_compiler = self.build_spec.get_build_parameters().get(make_var, default_compiler)
+
+        toolchain = TheToolchainRegistry.get_toolchain(language=self.build_spec.get_language(),
+                                                       build_parameters=self.build_spec.get_build_parameters(),
+                                                       tool=raw_compiler)
+        
+        if make_var not in self.build_spec.get_build_parameters() and default_compiler != toolchain.get_compiler():
+            self.build_spec.set_build_parameter(make_var, toolchain.get_compiler())
+
+        return toolchain
+    
     def _build_manual_make_cmd(self, cmd):
         return " ".join(cmd)
 
@@ -100,3 +126,11 @@ class MakeBuilder(Builder):
             number += 1
 
         return unique_path
+
+    def _default_compiler_for_language(self, language):
+        if language.upper() == "C":
+            return "gcc", "CC"
+        elif language.upper() == "C++":
+            return "g++", "CXX"
+        elif language.upper() == "GO":
+            return "go", "GO"
