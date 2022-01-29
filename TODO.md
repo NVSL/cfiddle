@@ -10,8 +10,9 @@
    2.  Add devel instructions to README.md
    3.  Update cross refs in docstrings.
 4. Write a function decorator to catch exception and print nice error messages in Jupyter
-4. Build C-friendly version of cfiddle.hpp
 6. Multiple workflow support
+   1. Workflow components should be selected based language, complier, architecture, etc.
+   2. Install relevante inspectors on Executables
    1. Encapsulate a configuration in a Workflow object. (One for C, one for Rust,  remote execution, etc.)
    2. from cfiddle import * would pull in the default.
 7. Arm support
@@ -22,14 +23,17 @@
 		  3. bunch of "notes" in output of compiling libcfiddle.so
 	      2. libcfiddle.so needs to be compiled for it.
 		  3. searching for asm functions needs to search for `.fnend` instead of `.cfi_endproc`
-8. Support for Rust and Go
+8. Support for Rust
    1. Use the FFI interfaces in each language to get access to libcfiddle.
    2. Extend the makefile.
 9. Executable-based execution (rather than .so)
+   1. It'd be usef to be able to run programs at the command line
+	  1. e.g. to use gdb to interact with debug information while enhancing DebugINfo
    1. Auto-generate code from python.
 10. MacOS support
 11. Windows support
 12. Generalized measurement mechanism of which perf counters would be a special case.
+	1.  Measure IO
 13. Use `run()` to check characteristics of execution envirnoment
 	1.  E.g. for remote execution, run a program to find the list of perf
         counters.  If you run it in on the execution environment, you'll get
