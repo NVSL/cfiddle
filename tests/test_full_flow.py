@@ -7,6 +7,7 @@ from cfiddle.Runner import InvocationResult
 import pandas as pd
 import numpy as np
 
+@pytest.mark.smoke
 def test_simplest(setup):
     assert sanity_test() == 4
 

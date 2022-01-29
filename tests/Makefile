@@ -8,11 +8,19 @@ JUPYTER=--nbmake $(EXAMPLES)
 DOCS=--doctest-glob="*.rst" --doctest-glob="*.md" ../*.md ../docs/
 CPP_TESTS=test_DataSet.exe test_libcfiddle.exe test_PerfCounter.exe
 
+
 test: $(CPP_TESTS)
 	rm -rf ../examples/.cfiddle # give these a clean directory.
 	pytest $(PYTEST_OPTS) -n auto .  $(DOCS) $(JUPYTER)
 .PHONY: test
 
+smoke:
+	rm -rf ../examples/.cfiddle # give these a clean directory.
+	pytest $(PYTEST_OPTS) -m smoke . 
+
+core:
+	rm -rf ../examples/.cfiddle # give these a clean directory.
+	pytest $(PYTEST_OPTS) -n auto .
 
 EXAMPLES=$(shell ls ../examples/*.ipynb | grep -v Untitled |grep -v CompilerExplorer)
 
