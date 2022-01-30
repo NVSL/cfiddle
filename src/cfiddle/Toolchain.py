@@ -58,7 +58,7 @@ class GCCX86(GCCToolchain):
 
     def __init__(self):
         self.architecture_name = "x86_64" # value returned by os.uname().machine
-        self._tool_prefix = "x86_64-linux-gnu"
+        self._tool_prefix = "x86_64-linux-gnu-"
         self.update_suffix_for_native()
         
 

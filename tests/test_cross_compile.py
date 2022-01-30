@@ -2,6 +2,7 @@ import pytest
 from cfiddle import *
 from cfiddle.util import get_native_toolchain, invoke_process
 from fixtures import *
+
 @pytest.fixture
 def simple_code():
     return code(r"""extern "C" void foo(){}""")
