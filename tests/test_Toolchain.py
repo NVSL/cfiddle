@@ -17,3 +17,10 @@ def test_native():
 def test_failure():
     with pytest.raises(UnknownToolchain):
         Toolchain.TheToolchainRegistry.get_toolchain("foo", "bar")
+
+@pytest.mark.parametrize("arch,tool,result",
+                         [("native", "c++filt", "c++filt"),
+                          ("arm", "c++filt", "arm-linux-gnueabi-c++filt")])
+def test_tool(arch, tool,result):
+    assert Toolchain.TheToolchainRegistry.get_toolchain(arch, "C++")().get_tool(tool) == result
+    

@@ -71,7 +71,8 @@ class Assembly:
             asm_file.write(assembly.encode())
             asm_file.flush()
             with open(asm_file.name, "r"):
-                success, demangled = invoke_process(['c++filt'], stdin=asm_file)
+                success, demangled = invoke_process([self.get_toolchain().get_tool('c++filt')],
+                                                    stdin=asm_file)
             if not success:
                 raise Exception("Demangling failed.")
         return demangled

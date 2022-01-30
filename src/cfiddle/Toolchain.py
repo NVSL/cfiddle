@@ -52,7 +52,9 @@ class GCCToolchain(Toolchain):
 
     def get_asm_function_bookends(self, function):
         return (f"^{re.escape(function)}:\s*", ".cfi_endproc")
-        
+
+    def get_tool(self, tool):
+        return f"{self._tool_prefix}{tool}"
         
 class GCC_X86_64(GCCToolchain):
 
