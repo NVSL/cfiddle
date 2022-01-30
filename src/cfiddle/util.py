@@ -106,10 +106,7 @@ def invoke_process(cmd, stdin=None):
 
     
 def get_native_architecture():
-    success, arch = invoke_process(["uname", "-i"])
-    if not success:
-        raise Exception("Unable to determine native architecture.")
-    return arch.strip()
+    return os.uname().machine
     
     
 def get_native_toolchain():

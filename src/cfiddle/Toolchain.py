@@ -31,8 +31,10 @@ class ToolchainRegistry:
 
 TheToolchainRegistry = ToolchainRegistry()    
 
+
 class UnknownToolchain(Exception):
     pass
+
 
 class GCCToolchain(Toolchain):
     def __init__(self):
@@ -43,34 +45,57 @@ class GCCToolchain(Toolchain):
             return f"{self._tool_prefix}gcc"
         if language.upper() == "C++":
             return f"{self._tool_prefix}g++"
-    
-class GCCX86(GCCToolchain):
-    def __init__(self):
-        self._tool_prefix = ""
+
+    def update_suffix_for_native(self):
+        if self.architecture_name == get_native_architecture():
+            self._tool_prefix = ""
+
     def get_asm_function_bookends(self, function):
         return (f"^{re.escape(function)}:\s*", ".cfi_endproc")
+        
+        
+class GCCX86(GCCToolchain):
 
-class GCCARM(GCCToolchain):
     def __init__(self):
-        self._tool_prefix = "arm-linux-gnueabi-"
+        self.architecture_name = "x86_64" # value returned by os.uname().machine
+        self._tool_prefix = "x86_64-linux-gnu"
+        self.update_suffix_for_native()
+        
 
+class GCCARM64(GCCToolchain):
+    def __init__(self):
+        self.architecture_name = "aarch64" # value returned by os.uname().machine
+        self._tool_prefix = "arm-linux-gnueabi-"
+        self.update_suffix_for_native()
+        
     def get_asm_function_bookends(self, function):
         return (f"^{re.escape(function)}:\s*", ".fnend")
 
+    
+class GCCPowerPC(GCCToolchain):
+    def __init__(self):
+        self._tool_prefix = "powerpc-linux-gnu-"
+        self.architecture_name = "ppc64" # value returned by os.uname().machine.
+        # a guess based on https://stackoverflow.com/questions/45125516/possible-values-for-uname-m  I don't have ppc machine
+        self.update_suffix_for_native()
+
+
 
 class GoNative(Toolchain):
-    
+
+    # Go cross compilation: https://stackoverflow.com/questions/32557438/how-do-i-cross-compile-my-go-program-from-mac-os-x-to-ubuntu-64-bit
+    # and here https://stackoverflow.com/questions/23377271/how-do-i-cross-compile-a-go-program-on-a-mac-for-ubuntu
+    # and here https://dave.cheney.net/2015/03/03/cross-compilation-just-got-a-whole-lot-better-in-go-1-5
     def __init__(self):
-        self._bintools_delegate = TheToolchainRegistry.get_toolchain(get_native_architecture(),
-                                                                     "C")
+        self._bintools_delegate = TheToolchainRegistry.get_toolchain(get_native_architecture(), "C")
         
     def get_asm_function_bookends(self, function):
         return self._bintools_delegate.get_asm_function_bookends()
     
 
-TheToolchainRegistry.register_toolchain(architecture_names=["x86_64", "x86"], languages=["C++", "C"], tc_type=GCCX86)
-TheToolchainRegistry.register_toolchain(architecture_names=["ARM"], languages=["C++", "C"], tc_type=GCCARM)
-
+TheToolchainRegistry.register_toolchain(architecture_names=["x86_64","x86"], languages=["C++", "C"], tc_type=GCCX86)
+TheToolchainRegistry.register_toolchain(architecture_names=["aarch64","arm"], languages=["C++", "C"], tc_type=GCCARM64)
+TheToolchainRegistry.register_toolchain(architecture_names=["ppc64", "ppc"], languages=["C++", "C"], tc_type=GCCPowerPC)
 TheToolchainRegistry.register_toolchain(architecture_names=[get_native_architecture()], languages=["GO"], tc_type=GoNative)
 
 
