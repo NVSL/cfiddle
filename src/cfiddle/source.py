@@ -57,7 +57,7 @@ class Assembly:
         
         source_base_name = self.extract_build_name(self.build_spec.source_file)
         asm_file = self.compute_built_filename(f"{source_base_name}.s")
-        print(asm_file)
+
         with open(asm_file) as f:
             assembly = f.read()
 

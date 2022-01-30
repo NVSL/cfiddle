@@ -1,8 +1,5 @@
 from .util import get_native_architecture
 import re
-
-class Toolchain:
-    pass
         
 class ToolchainRegistry:
     def __init__(self):
@@ -36,6 +33,10 @@ class UnknownToolchain(Exception):
     pass
 
 
+class Toolchain:
+    pass
+
+
 class GCCToolchain(Toolchain):
     def __init__(self):
         self._tool_prefix = ""
@@ -55,7 +56,8 @@ class GCCToolchain(Toolchain):
 
     def get_tool(self, tool):
         return f"{self._tool_prefix}{tool}"
-        
+
+    
 class GCC_X86_64(GCCToolchain):
 
     def __init__(self):
