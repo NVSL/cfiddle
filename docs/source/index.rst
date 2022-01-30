@@ -7,7 +7,6 @@
 CFiddle
 =======================
 
-
 CFiddle is a tool for studying the compilation, execution, and performance of
 smallish programs written in compiled languages like C, C++, or Go.  If you
 want to know what the compiler does to your code, how your code interacts with
