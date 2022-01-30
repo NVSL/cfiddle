@@ -54,7 +54,7 @@ class GCCToolchain(Toolchain):
         return (f"^{re.escape(function)}:\s*", ".cfi_endproc")
         
         
-class GCCX86(GCCToolchain):
+class GCC_X86_64(GCCToolchain):
 
     def __init__(self):
         self.architecture_name = "x86_64" # value returned by os.uname().machine
@@ -62,7 +62,7 @@ class GCCX86(GCCToolchain):
         self.update_suffix_for_native()
         
 
-class GCCARM64(GCCToolchain):
+class GCC_ARM_64(GCCToolchain):
     def __init__(self):
         self.architecture_name = "aarch64" # value returned by os.uname().machine
         self._tool_prefix = "arm-linux-gnueabi-"
@@ -72,7 +72,7 @@ class GCCARM64(GCCToolchain):
         return (f"^{re.escape(function)}:\s*", ".fnend")
 
     
-class GCCPowerPC(GCCToolchain):
+class GCC_PowerPC_64(GCCToolchain):
     def __init__(self):
         self._tool_prefix = "powerpc-linux-gnu-"
         self.architecture_name = "ppc64" # value returned by os.uname().machine.
@@ -81,7 +81,7 @@ class GCCPowerPC(GCCToolchain):
 
 
 
-class GoNative(Toolchain):
+class Go_Native(Toolchain):
 
     # Go cross compilation: https://stackoverflow.com/questions/32557438/how-do-i-cross-compile-my-go-program-from-mac-os-x-to-ubuntu-64-bit
     # and here https://stackoverflow.com/questions/23377271/how-do-i-cross-compile-a-go-program-on-a-mac-for-ubuntu
@@ -93,10 +93,10 @@ class GoNative(Toolchain):
         return self._bintools_delegate.get_asm_function_bookends()
     
 
-TheToolchainRegistry.register_toolchain(architecture_names=["x86_64","x86"], languages=["C++", "C"], tc_type=GCCX86)
-TheToolchainRegistry.register_toolchain(architecture_names=["aarch64","arm"], languages=["C++", "C"], tc_type=GCCARM64)
-TheToolchainRegistry.register_toolchain(architecture_names=["ppc64", "ppc"], languages=["C++", "C"], tc_type=GCCPowerPC)
-TheToolchainRegistry.register_toolchain(architecture_names=[get_native_architecture()], languages=["GO"], tc_type=GoNative)
+TheToolchainRegistry.register_toolchain(architecture_names=["x86_64","x86"], languages=["C++", "C"], tc_type=GCC_X86_64)
+TheToolchainRegistry.register_toolchain(architecture_names=["aarch64","arm"], languages=["C++", "C"], tc_type=GCC_ARM_64)
+TheToolchainRegistry.register_toolchain(architecture_names=["ppc64", "ppc"], languages=["C++", "C"], tc_type=GCC_PowerPC_64)
+TheToolchainRegistry.register_toolchain(architecture_names=[get_native_architecture()], languages=["GO"], tc_type=Go_Native)
 
 
 
