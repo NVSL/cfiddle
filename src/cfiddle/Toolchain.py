@@ -44,14 +44,13 @@ class GCCToolchain(Toolchain):
         if language.upper() == "C++":
             return f"{self._tool_prefix}g++"
     
-class X86(GCCToolchain):
+class GCCX86(GCCToolchain):
     def __init__(self):
         self._tool_prefix = ""
     def get_asm_function_bookends(self, function):
         return (f"^{re.escape(function)}:\s*", ".cfi_endproc")
 
-
-class ARM(GCCToolchain):
+class GCCARM(GCCToolchain):
     def __init__(self):
         self._tool_prefix = "arm-linux-gnueabi-"
 
@@ -59,8 +58,20 @@ class ARM(GCCToolchain):
         return (f"^{re.escape(function)}:\s*", ".fnend")
 
 
-TheToolchainRegistry.register_toolchain(architecture_names=["x86_64", "x86"], languages=["C++", "C"], tc_type=X86)
-TheToolchainRegistry.register_toolchain(architecture_names=["ARM"], languages=["C++", "C"], tc_type=ARM)
+class GoNative(Toolchain):
+    
+    def __init__(self):
+        self._bintools_delegate = TheToolchainRegistry.get_toolchain(get_native_architecture(),
+                                                                     "C")
+        
+    def get_asm_function_bookends(self, function):
+        return self._bintools_delegate.get_asm_function_bookends()
+    
+
+TheToolchainRegistry.register_toolchain(architecture_names=["x86_64", "x86"], languages=["C++", "C"], tc_type=GCCX86)
+TheToolchainRegistry.register_toolchain(architecture_names=["ARM"], languages=["C++", "C"], tc_type=GCCARM)
+
+TheToolchainRegistry.register_toolchain(architecture_names=[get_native_architecture()], languages=["GO"], tc_type=GoNative)
 
 
 
