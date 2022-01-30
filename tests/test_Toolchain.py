@@ -24,3 +24,13 @@ def test_failure():
 def test_tool(arch, tool,result):
     assert Toolchain.TheToolchainRegistry.get_toolchain(arch, "C++")().get_tool(tool) == result
     
+def test_list():
+    from cfiddle import list_toolchains
+    list_toolchains()
+    Toolchain.list_toolchains()
+
+
+def test_toolchain():
+    for t in Toolchain.list_toolchains():
+        Toolchain.TheToolchainRegistry.get_toolchain(*t)().describe()
+        Toolchain.TheToolchainRegistry.get_toolchain(*t)().get_asm_function_bookends("foo")

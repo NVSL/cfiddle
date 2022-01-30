@@ -18,11 +18,12 @@ first-class support for accessing hardware performance counters.
 It's features include:
 
 1. Support for compiled languages like C, C++, and Go.
-2. Easy access to OS and hardware performance counters.
-3. [Control Flow Graph (CFG)](https://en.wikipedia.org/wiki/Control-flow_graph) generation from compiled code.
-4. Easy support for varying build-time and run-time paremeters.
-5. Easy, unified parameter and data gathering across building and running code.
-6. Works great with [Pandas](https://pandas.pydata.org/) and  [Jupyter Notebook/Lab](https://jupyter.org/).
+2. Cross-compilation support -- x86, ARM, PowerPC, etc.
+3. Easy access to OS and hardware performance counters.
+4. [Control Flow Graph (CFG)](https://en.wikipedia.org/wiki/Control-flow_graph) generation from compiled code.
+5. Easy support for varying build-time and run-time paremeters.
+6. Easy, unified parameter and data gathering across building and running code.
+7. Works great with [Pandas](https://pandas.pydata.org/) and  [Jupyter Notebook/Lab](https://jupyter.org/).
 
 The best way to learn about CFiddle is to try it.  You can [run the
 examples](https://mybinder.org/v2/gh/NVSL/cfiddle/main?labpath=README.ipynb) (this can take a while to load).

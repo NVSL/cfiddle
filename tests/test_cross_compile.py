@@ -45,6 +45,6 @@ def test_multiarch(setup, simple_code):
     for b in builds:
         print(b.get_toolchain())
         print(b.asm("foo"))
-
+        print(b.describe())
 
 

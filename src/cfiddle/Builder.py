@@ -26,7 +26,7 @@ class ExecutableDescription:
 
     def set_build_parameter(self, name, value):
         self.build_parameters[name] = value
-        
+
 class Executable:
     """A compiled source file.
 
@@ -44,7 +44,10 @@ class Executable:
         self.toolchain = toolchain
         self._raise_on_invalid_types()
     
-    
+
+    def get_toolchain(self):
+        return self.toolchain
+        
     def compute_built_filename(self, filename):
         return os.path.join(self.build_dir, filename)
     
