@@ -2,7 +2,7 @@ from cfiddle import *
 from fixtures import *
 from cfiddle.Builder import Builder, ExecutableDescription, Executable
 from cfiddle.config import get_config
-from cfiddle.Toolchain import GCC_X86_64
+from cfiddle.Toolchain import GCCToolchain
 import os
 import pytest
 
@@ -10,7 +10,7 @@ class NopBuilder(Builder):
     def build(self):
         return self.result_factory(lib=f"{self.source_file}.so",
                                    build_dir=self.build_directory,
-                                   toolchain=GCC_X86_64(),
+                                   toolchain=GCCToolchain("C", {}),
                                    output="no output",
                                    build_command="build something",
                                    build_spec=self.build_spec, 

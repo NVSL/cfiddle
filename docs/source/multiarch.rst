@@ -6,8 +6,13 @@ CFiddle support cross-compilation so you can compare assembly across architectur
 Compiling for Other Architectures
 *********************************
 
-To compile for multiple architecture just add :code:`ARCH` to your
-:code:`build_parameters` argument to :func:`cfiddle.build()`:
+To compile for multiple architecture you have two choices
+
+1.  Add :code:`ARCH` to your
+    :code:`build_parameters` argument to :func:`cfiddle.build()`
+2.  Specify the relevent compiler as :code:`CC` or :code:`CXX` in :code:`build_parameters`.
+
+For example, using :code:`ARCH`:
 
 .. doctest::
    
@@ -68,6 +73,34 @@ To compile for multiple architecture just add :code:`ARCH` to your
    	.cantunwind									       
    	.fnend
 
+And using :code:`CXX`:
+
+   >>> from cfiddle import  *
+   >>> sample = code(r"""extern "C" int answer() {return 42;}""")
+   >>> b = build(sample, arg_map(CXX=["g++", "arm-linux-gnueabi-g++"]))
+   >>> print(b[0].get_toolchain().describe()) # doctest: +SKIP
+   gcc toolchain compiling for x86_64
+   >>> print(b[1].get_toolchain().describe())
+   arm-linux-gnueabi-gcc toolchain compiling for aarch64
+
+
+You can also combine them to specific, for example, compiler versions:
+
+   >>> from cfiddle import  *
+   >>> sample = code(r"""extern "C" int answer() {return 42;}""")
+   >>> b = build(sample, arg_map(ARCH="aarch64", CXX=["g++-9", "g++-8"]))
+   >>> print(b[0].get_toolchain().describe()) # doctest: +SKIP
+   gcc toolchain compiling for x86_64
+   >>> print(b[1].get_toolchain().describe())
+   arm-linux-gnueabi-gcc toolchain compiling for aarch64
+
+
+If the values of :code:`ARCH`, :code:`CXX`, and :code:`CC` are contradictory,
+the results are undefined.
+
+
+Available Architectures
+***********************
 CFiddle identifies architectures by value returned by Python's
 :code:`os.uname().machine` and some aliases.
 

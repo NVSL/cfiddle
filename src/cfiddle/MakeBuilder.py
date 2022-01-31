@@ -24,9 +24,7 @@ class MakeBuilder(Builder):
 
 
     def build(self):
-
         self.toolchain = self._resolve_toolchain()
-        self._set_toolchain_parameters()
         
         so_make_target = self._compute_so_make_target(self.build_directory)
         so_unique_name = self._compute_so_unique_name(self.build_directory)
@@ -81,25 +79,28 @@ class MakeBuilder(Builder):
     def verbose(self, verbose=True):
         self._verbose = verbose
 
-    def _set_toolchain_parameters(self):
-        if "ARCH" in self.build_spec.get_build_parameters():
-            self.build_spec.set_build_parameter("CC", self.toolchain.get_compiler_for_language("C"))
-            self.build_spec.set_build_parameter("CXX", self.toolchain.get_compiler_for_language("C++"))
-            
+        
     def _get_multiarch_string(self, tool):
         success, value = invoke_process([tool, "-print-multiarch"])
         if not success:
             raise Exception(f"Couldn't extract  multiarch string from {tool}")
         else:
             return value.strip()
+
         
     def _resolve_toolchain(self):
-        architecture = self.build_spec.build_parameters.get("ARCH", "native")
+        default_compiler, make_var = self._default_compiler_for_language(self.build_spec.get_language())
+        raw_compiler = self.build_spec.get_build_parameters().get(make_var, default_compiler)
+
+        toolchain = TheToolchainRegistry.get_toolchain(language=self.build_spec.get_language(),
+                                                       build_parameters=self.build_spec.get_build_parameters(),
+                                                       tool=raw_compiler)
         
-        toolchain_type =  TheToolchainRegistry.get_toolchain(architecture=architecture,
-                                                             language=self.build_spec.get_language())
-        return toolchain_type()
-        
+        if make_var not in self.build_spec.get_build_parameters() and default_compiler != toolchain.get_compiler():
+            self.build_spec.set_build_parameter(make_var, toolchain.get_compiler())
+
+        return toolchain
+    
     def _build_manual_make_cmd(self, cmd):
         return " ".join(cmd)
 
@@ -125,3 +126,11 @@ class MakeBuilder(Builder):
             number += 1
 
         return unique_path
+
+    def _default_compiler_for_language(self, language):
+        if language.upper() == "C":
+            return "gcc", "CC"
+        elif language.upper() == "C++":
+            return "g++", "CXX"
+        elif language.upper() == "GO":
+            return "go", "GO"

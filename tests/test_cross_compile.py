@@ -20,7 +20,8 @@ def tool_chain_present(cross_toolchain):
                          [("arm-linux-gnueabi", "aarch64", "ldr"),
                           ("powerpc-linux-gnu", "ppc64", "stw"),
                           ("x86_64-linux-gnu", "x86_64", "rbp")])
-def test_asm_extraction(setup, simple_code, toolchain, arch, search):
+def test_asm_extraction(setup, simple_code,
+                        toolchain, arch, search):
     skip_without_toolchain(toolchain)
     asm = build(simple_code, arg_map(ARCH=arch, DEBUG_FLAGS=""), verbose=True)[0].asm("foo")
     print(asm)
@@ -45,6 +46,19 @@ def test_multiarch(setup, simple_code):
     for b in builds:
         print(b.get_toolchain())
         print(b.asm("foo"))
-        print(b.describe())
+        print(b.get_toolchain().describe())
 
 
+def test_toolchain_spec_1():
+    sample = code(r"""extern "C" int answer() {return 42;}""")
+    b = build(sample, arg_map(CXX=["g++", "arm-linux-gnueabi-g++"]))
+    assert b[0].get_toolchain()._tool_prefix == ""
+    assert b[1].get_toolchain()._tool_prefix == "arm-linux-gnueabi-"
+
+def test_toolchain_spec_2():
+    sample = code(r"""extern "C" int answer() {return 42;}""")
+    b = build(sample, arg_map(ARCH="aarch64", CXX=["g++-9", "g++-8"]))
+    assert b[0].get_toolchain()._tool_prefix == "arm-linux-gnueabi-"
+    assert b[0].get_toolchain()._compiler == "arm-linux-gnueabi-g++-9"
+    assert b[1].get_toolchain()._tool_prefix == "arm-linux-gnueabi-"
+    assert b[1].get_toolchain()._compiler == "arm-linux-gnueabi-g++-8"

@@ -1,7 +1,7 @@
 BUILD_ROOT=build
 CFIDDLE_INCLUDE=../include
 
-default: native arm-cross
+default: native arm-cross ppc-cross
 
 DEBUG_FLAGS=-g3
 
