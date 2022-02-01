@@ -5,7 +5,7 @@ set -ex
 
 #### development tools
 apt-get update --fix-missing --allow-releaseinfo-change
-apt-get install -y make less emacs-nox gcc g++ gcc-8 g++-8 cmake gdb build-essential graphviz curl   && apt-get clean -y
+apt-get install -y make less emacs-nox gcc g++  cmake gdb build-essential graphviz curl   && apt-get clean -y
 
 
 ##### Redare2 (for CFG generation)
