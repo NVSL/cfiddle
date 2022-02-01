@@ -123,6 +123,7 @@ So you can install the system packages CFiddle needs.  Check
 ```
 sudo bash
 . cfiddle-venv/bin/activate	
+# export CFIDDLE_INSTALL_CROSS_COMPILERS=yes # uncomment if you want all the cross compilers
 ./install_prereqs.sh
 exit
 ```

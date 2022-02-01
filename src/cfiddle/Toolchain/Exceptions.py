@@ -1,0 +1,2 @@
+class UnknownToolchain(Exception):
+    pass

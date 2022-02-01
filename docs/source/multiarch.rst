@@ -19,10 +19,10 @@ For example, using :code:`ARCH`:
    >>> from cfiddle import  *
    >>> sample = code(r"""extern "C" int answer() {return 42;}""")
    >>> b = build(sample, arg_map(ARCH=["native", "aarch64"]))
-   >>> print(b[0].get_toolchain().describe()) # doctest: +SKIP
-   gcc toolchain compiling for x86_64
+   >>> print(b[0].get_toolchain().describe())
+   g++ compiling for X86_64
    >>> print(b[1].get_toolchain().describe())
-   arm-linux-gnueabi-gcc toolchain compiling for aarch64
+   arm-linux-gnueabi-g++ compiling for AARCH64
    >>> print(b[0].asm("answer")) # doctest: +SKIP
    answer:											       
    .LFB0:											       
@@ -73,66 +73,53 @@ For example, using :code:`ARCH`:
    	.cantunwind									       
    	.fnend
 
-And using :code:`CXX`:
+You can also set :code:`CXX`: or :code:`CC`: to any GCC compiler and CFiddle
+will figure out the tool chain:
 
+.. doctest::
+   
    >>> from cfiddle import  *
    >>> sample = code(r"""extern "C" int answer() {return 42;}""")
    >>> b = build(sample, arg_map(CXX=["g++", "arm-linux-gnueabi-g++"]))
-   >>> print(b[0].get_toolchain().describe()) # doctest: +SKIP
-   gcc toolchain compiling for x86_64
+   >>> print(b[0].get_toolchain().describe())
+   g++ compiling for X86_64
    >>> print(b[1].get_toolchain().describe())
-   arm-linux-gnueabi-gcc toolchain compiling for aarch64
+   arm-linux-gnueabi-g++ compiling for AARCH64
 
 
-You can also combine them to specific, for example, compiler versions:
+You can also set :code:`ARCH` and :code:`CXX` or :code:`CC` to specify, for example, compiler versions:
 
+.. doctest::
+   
    >>> from cfiddle import  *
    >>> sample = code(r"""extern "C" int answer() {return 42;}""")
    >>> b = build(sample, arg_map(ARCH="aarch64", CXX=["g++-9", "g++-8"]))
    >>> print(b[0].get_toolchain().describe()) # doctest: +SKIP
-   gcc toolchain compiling for x86_64
-   >>> print(b[1].get_toolchain().describe())
-   arm-linux-gnueabi-gcc toolchain compiling for aarch64
+   arm-linux-gnueabi-g++-9 compiling for AARCH64
+   >>> print(b[1].get_toolchain().describe()) # doctest: +SKIP
+   arm-linux-gnueabi-g++-8 compiling for AARCH64
 
-
-If the values of :code:`ARCH`, :code:`CXX`, and :code:`CC` are contradictory,
-the results are undefined.
 
 
 Available Architectures
 ***********************
-CFiddle identifies architectures by value returned by Python's
-:code:`os.uname().machine` and some aliases.
 
-Currently it knows about:
-
-* :code:`x86_64` (alias :code:`x86`)
-* :code:`aarch64` (alias :code:`arm`)
-* :code:`ppc64` (alias :code:`powerpc`)
-* :code:`native` -- whatever is returned by `os.uname().machine`
-
-The names are not case-sensitive.
-  
-You can list all combinations of architectures and languages supported with :func:`cfiddle.list_toolchains()`:
+:code:`ARCH` just provides a shorthand for setting a prefix on your compiler.
+The valid values are:
 
 .. doctest::
-	      
-   >>> from cfiddle import  *
-   >>> toolchains = list_toolchains()
-   >>> print("\n".join(map(str, toolchains)))
-   ('X86_64', 'C++')
-   ('X86_64', 'C')
-   ('X86', 'C++')
-   ('X86', 'C')
-   ('AARCH64', 'C++')
-   ('AARCH64', 'C')
-   ('ARM', 'C++')
-   ('ARM', 'C')
-   ('PPC64', 'C++')
-   ('PPC64', 'C')
-   ('PPC', 'C++')
-   ('PPC', 'C')
-   ('X86_64', 'GO')
+
+   >>> print("\n".join(map(str,list_architectures())))
+   ('AARCH64', 'arm-linux-gnueabi')
+   ('ARM', 'arm-linux-gnueabi')
+   ('X86_64', 'x86_64-linux-gnu')
+   ('X86', 'x86_64-linux-gnu')
+   ('PPC64', 'powerpc-linux-gnu')
+   ('PPC', 'powerpc-linux-gnu')
+   ('POWERPC', 'powerpc-linux-gnu')
+   ('NATIVE', '')
+
+The names are not case sensitive.
 
 
 Installing Cross Compilers
@@ -155,18 +142,19 @@ architecture with :
    make clean
    make
 
-   
 To support for a new architecture, you'll need to:
 
 1. Build and install :code:`libpfm4` for your architecture (follow the model in the scripts above).
 2. Build :code:`libcfiddle.so` -- follow the model in :code:`src/cfiddle/resources/libcfiddle/Makefile`.
 
-Finally, you'll need to add a subclass of :code:`cfiddle.Toolchain.Toolchain`.
+For new GCC-based toolchains, that should be it.
+
+For others, you'll need to add a subclass of :code:`cfiddle.Toolchain.Toolchain`.
 Follow the examples under :code:`src/cfiddle/toolchains/`.
 
 
 Key Functions
 *************
 
-.. autofunction:: cfiddle.list_toolchains
+.. autofunction:: cfiddle.list_architectures
 

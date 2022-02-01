@@ -17,7 +17,7 @@ __all__ = [
     "changes_in",
     "exp_range",
     "are_perf_counters_available",
-
+    "list_architectures"
 ]
 
 from .Data import InvocationResultsList
@@ -31,7 +31,7 @@ from .config import get_config, set_config
 from .jupyter import configure_for_jupyter
 from .paths import setup_ld_path
 from .perfcount import are_perf_counters_available
-
+from .Toolchain import list_architectures
 
 def build_and_run(source_file, build_parameters, function, arguments):
     executable = build_one(source_file, build_parameters)

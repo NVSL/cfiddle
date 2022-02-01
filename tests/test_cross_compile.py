@@ -49,6 +49,12 @@ def test_multiarch(setup, simple_code):
         print(b.get_toolchain().describe())
 
 
+def test_naming(simple_code):
+    b = build(simple_code, arg_map(ARCH=["arm", "aarch64"]))
+    assert b[0].get_toolchain()._architecture_name == "aarch64".upper()
+    assert b[1].get_toolchain()._architecture_name == "aarch64".upper()
+
+
 def test_toolchain_spec_1():
     sample = code(r"""extern "C" int answer() {return 42;}""")
     b = build(sample, arg_map(CXX=["g++", "arm-linux-gnueabi-g++"]))
