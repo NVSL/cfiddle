@@ -5,14 +5,7 @@ set -ex
 
 #### development tools
 apt-get update --fix-missing --allow-releaseinfo-change
-apt-get install -y make less emacs-nox gcc make g++ cmake gdb build-essential graphviz curl gcc-8 g++-8 && apt-get clean -y
-
-if [ x"$CFIDDLE_INSTALL_CROSS_COMPILERS" = x"yes" ]; then
-    for i in bin/install_*.sh; do
-	$i
-    done
-fi
-	    
+apt-get install -y less emacs-nox gcc g++ gdb build-essential graphviz curl gcc-8 g++-8 cmake make  && apt-get clean -y
 
 #gcc-8 g++-8 libhdf5-dev uuid-runtime  openssh-client time  default-jdk
 

@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
 
-gcc-
-
-
 set -ex
 apt-get install -y binutils-x86-64-linux-gnu g++-x86-64-linux-gnu gcc-x86-64-linux-gnu
 
