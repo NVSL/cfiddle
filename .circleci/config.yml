@@ -16,7 +16,7 @@ orbs:
 jobs:
   build-package:
     docker:
-      - image: circleci/python:3.9
+      - image: cimg/python:3.9
     steps:
       - checkout
       - python/install-packages:
@@ -38,7 +38,7 @@ jobs:
   python-39: &test-template
 
     docker:
-      - image: circleci/python:3.9
+      - image: cimg/python:3.9
 
     steps:
       - checkout
@@ -55,19 +55,19 @@ jobs:
   python-310:
     <<: *test-template
     docker:
-      - image: circleci/python:3.10
+      - image: cimg/python:3.10
   python-38:
     <<: *test-template
     docker:
-      - image: circleci/python:3.8
+      - image: cimg/python:3.8
   python-37:
     <<: *test-template
     docker:
-      - image: circleci/python:3.7
+      - image: cimg/python:3.7
   python-36:
     <<: *test-template
     docker:
-      - image: circleci/python:3.6
+      - image: cimg/python:3.6
 
       
 # Invoke jobs via workflows
