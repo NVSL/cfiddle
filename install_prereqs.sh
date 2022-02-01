@@ -5,9 +5,8 @@ set -ex
 
 #### development tools
 apt-get update --fix-missing --allow-releaseinfo-change
-apt-get install -y less emacs-nox gcc g++ gdb build-essential graphviz curl gcc-8 g++-8 cmake make  && apt-get clean -y
+apt-get install -y make less emacs-nox gcc g++ gcc-8 g++-8 cmake gdb build-essential graphviz curl   && apt-get clean -y
 
-#gcc-8 g++-8 libhdf5-dev uuid-runtime  openssh-client time  default-jdk
 
 ##### Redare2 (for CFG generation)
 #apt-get install -y radare2  # doesn't work because the version is old
@@ -38,4 +37,11 @@ apt-get install -y golang-go
 ##### libpfm4
 # we do this instead of apt-get because showevtinfo is very useful and it's not installed by default.
 (cd /tmp; rm -rf libpfm4; git clone https://github.com/wcohen/libpfm4.git && cd libpfm4 && make && make install && cp examples/showevtinfo /usr/local/bin)
+
+if [ x"$CFIDDLE_INSTALL_CROSS_COMPILERS" = x"yes" ]; then
+    for i in bin/install_*.sh; do
+	$i
+    done
+fi
+	    
 
