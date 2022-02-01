@@ -7,21 +7,17 @@ ENV HOME /home/${NB_USER}
 ENV THIS_DOCKER_IMAGE ${ARG_THIS_DOCKER_IMAGE}
 USER root
 
-##### install system packages
-COPY install_prereqs.sh ./
-RUN bash ./install_prereqs.sh
-
-
 ##### Install cfiddle
 
 COPY  . ./cfiddle
+RUN (export CFIDDLE_INSTALL_CROSS_COMPILERS=yes;cd cfiddle; bash ./install_prereqs.sh)
 RUN  chown -R ${NB_USER} ./cfiddle
 USER ${NB_USER}
 RUN cd cfiddle;  pip install  .
-ENV LD_LIBRARY_PATH  /opt/conda/lib/python3.9/site-packages/cfiddle/resources/libcfiddle/build
-ENV PATH /usr/local/go/bin:$PATH
-RUN mkdir -p .jupyter
-COPY jupyter_notebook_config.py .jupyter/
+RUN mkdir -p ${HOME}/.jupyter
+COPY jupyter_notebook_config.py ${HOME}/.jupyter/
 
 WORKDIR ${HOME}/cfiddle/examples
 
+ENTRYPOINT  [ "/home/jovyan/cfiddle/bin/with_env.sh",  "tini",  "-g",  "--"  ]
+CMD start-notebook.sh
