@@ -15,7 +15,7 @@ apt-get install -y gcc-8 g++-8 || true # this fails on circleci for some reason
 #    git clone https://github.com/radareorg/radare2
 #    radare2/sys/install.sh
 #else
-(cd /tmp; echo yes | git clone -b 5.5.4 https://github.com/radareorg/radare2;
+(cd /tmp; echo yes | git clone -b 5.5.4 http://github.com/radareorg/radare2;
  cd radare2;
  chmod a+rwX -R . # Redare's install script gives up root.  This ensures we can still build.
  ./sys/install.sh --install;
@@ -36,11 +36,11 @@ apt-get install -y golang-go
 pip3 install jpeg || pip install jpeg
 
 ##### Google test
-(cd /tmp; rm -rf googletest; git clone https://github.com/google/googletest.git && cd googletest && cmake CMakeLists.txt; make install)
+(cd /tmp; rm -rf googletest; git clone http://github.com/google/googletest.git && cd googletest && cmake CMakeLists.txt; make install)
 
 ##### libpfm4
 # we do this instead of apt-get because showevtinfo is very useful and it's not installed by default.
-(cd /tmp; rm -rf libpfm4; echo yes | git clone https://github.com/wcohen/libpfm4.git && cd libpfm4 && make && make install && cp examples/showevtinfo /usr/local/bin)
+(cd /tmp; rm -rf libpfm4; echo yes | git clone http://github.com/wcohen/libpfm4.git && cd libpfm4 && make && make install && cp examples/showevtinfo /usr/local/bin)
 
 if [ x"$CFIDDLE_INSTALL_CROSS_COMPILERS" = x"yes" ]; then
     for i in bin/install_*.sh; do
