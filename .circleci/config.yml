@@ -19,7 +19,7 @@ jobs:
       - image: cimg/python:3.9
     steps:
       - checkout
-      - pip install --upgrade pip
+      - run: pip install --upgrade pip
       - python/install-packages:
           pkg-manager: pip
           # app-dir: ~/project/package-directory/  # If you're requirements.txt isn't in the root directory.
