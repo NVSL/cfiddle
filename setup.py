@@ -52,7 +52,8 @@ setup(
         "r2pipe",
         "pydot",
         "networkx",
-        "pyelftools"
+        "pyelftools",
+        "djpeg" # why? because in python 3.6 it fails without it.
     ],
     description="CFiddle makes it easy to ask and answers questions about the compilation and execution of smallish programs written in compiled languages like C, C++, and Go.",
     long_description=open("README.md").read(),
