@@ -39,6 +39,6 @@ ppc-cross:
 	@if powerpc-linux-gnu-g++ -v 2>/dev/null; then \
 		$(MAKE) CXX=powerpc-linux-gnu-g++ native;\
 	else \
-		echo "ARM cross compiler not available." ;\
+		echo "PowerPC cross compiler not available." ;\
 	fi
 
