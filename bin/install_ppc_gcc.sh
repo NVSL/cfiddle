@@ -7,6 +7,6 @@ export CC=powerpc-linux-gnu-gcc
 
 cd /tmp
 rm -rf libpfm4;
-git clone https://github.com/wcohen/libpfm4.git
+git clone http://github.com/wcohen/libpfm4.git
 cd libpfm4
 make PREFIX=/usr/$($CC -print-multiarch) ARCH=powerpc lib install
