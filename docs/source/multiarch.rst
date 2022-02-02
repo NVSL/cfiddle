@@ -1,5 +1,5 @@
-Multi-Architecture Support
-==========================
+Cross-Compilation Support
+=========================
 
 CFiddle support cross-compilation so you can compare assembly across architectures.
 
