@@ -33,7 +33,7 @@ apt-get install -y golang-go
 
 
 # Python packages to fix broken deps in other packages for python 3.6
-pip install jpeg
+pip3 install jpeg || pip install jpeg
 
 ##### Google test
 (cd /tmp; rm -rf googletest; git clone https://github.com/google/googletest.git && cd googletest && cmake CMakeLists.txt; make install)
