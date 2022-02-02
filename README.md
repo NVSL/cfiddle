@@ -34,7 +34,7 @@ Or run it locally with Docker (`--privileged` is required if you want to access 
 docker run -it --privileged --publish published=8889,target=8888 stevenjswanson/cfiddle:latest jupyter lab --LabApp.token='sesame'
 ```
 
-and then visit http://localhost:8889/lab/tree/README.ipynb .
+and then visit http://localhost:8889/lab/tree/README.ipynb  -- the token is "sesame".
 
 You can also read [the documentation](https://cfiddle.readthedocs.io).
 
