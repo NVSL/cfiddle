@@ -32,6 +32,9 @@ apt-get install -y golang-go
 #tar -C /usr/local -xvf go1.16.7.linux-amd64.tar.gz
 
 
+# Python packages to fix broken deps in other packages for python 3.6
+pip install jpeg
+
 ##### Google test
 (cd /tmp; rm -rf googletest; git clone https://github.com/google/googletest.git && cd googletest && cmake CMakeLists.txt; make install)
 
