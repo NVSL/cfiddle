@@ -64,10 +64,10 @@ jobs:
     <<: *test-template
     docker:
       - image: cimg/python:3.7
-#  python-36:
-#    <<: *test-template
-#    docker:
-#      - image: cimg/python:3.6
+  python-36:
+    <<: *test-template
+    docker:
+      - image: cimg/python:3.6
 
       
 # Invoke jobs via workflows
@@ -89,6 +89,6 @@ workflows:
       - python-37:
           requires: 
             - build-package
-      - python-36:
-          requires: 
-            - build-package
+#      - python-36:
+#          requires: 
+#            - build-package
