@@ -10,19 +10,11 @@
    2.  Add devel instructions to README.md
    3.  Update cross refs in docstrings.
 4. Write a function decorator to catch exception and print nice error messages in Jupyter
-6. Multiple workflow support
-   1. Workflow components should be selected based language, complier, architecture, etc.
-   2. Install relevante inspectors on Executables
+   1. replace all raised Exceptions with CFiddleException
+6. Multiple workflow support (mostly runners)
+   1. Install relevante inspectors on Executables
    1. Encapsulate a configuration in a Workflow object. (One for C, one for Rust,  remote execution, etc.)
    2. from cfiddle import * would pull in the default.
-7. Arm support
-   1. cross-compiler support
-	  1. This mostly works "out of the box".  Issues/instructions:
-		  1. apt-get install -y binutils-arm-linux-gnueabi g++-arm-linux-gnueabi gcc-arm-linux-gnueabi
-		  2. set CXX=arm-linux-gnueabi-g++
-		  3. bunch of "notes" in output of compiling libcfiddle.so
-	      2. libcfiddle.so needs to be compiled for it.
-		  3. searching for asm functions needs to search for `.fnend` instead of `.cfi_endproc`
 8. Support for Rust
    1. Use the FFI interfaces in each language to get access to libcfiddle.
    2. Extend the makefile.

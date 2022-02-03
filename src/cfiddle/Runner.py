@@ -1,4 +1,5 @@
 from .Builder import Executable
+from .Exceptions import CFiddleException
 import collections
 import os
 from .util import type_check, type_check_list
@@ -16,12 +17,14 @@ class InvocationDescription:
 
     def _raise_on_invalid_types(self):
 
-        type_check(self.executable, Executable)
-        type_check(self.function, str)
-        type_check(self.arguments, dict)
-        type_check_list(self.arguments.keys(), str)
-        type_check_list(self.perf_counters, str)
-    
+        try:
+            type_check(self.executable, Executable)
+            type_check(self.function, str)
+            type_check(self.arguments, dict)
+            type_check_list(self.arguments.keys(), str)
+        except (ValueError, TypeError) as e:
+            raise InvalidInvocation(e)
+            
 class Runner:
 
     def __init__(self, invocation, result_factory=None):
@@ -52,7 +55,15 @@ class Runner:
         for a in signature.parameters:
             if a.name not in arguments:
                 raise MissingArgument(a.name)
-            r.append(a.type(arguments[a.name]))
+
+            argument_value = arguments[a.name]
+
+            try:
+                ctype_value = a.type(argument_value)
+            except TypeError as e:
+                raise IncorrectArgumentType(f"Invalid value for argument '{a.name}' of function '{signature.name}'.  Expeted value compatible with '{a.type}' got '{argument_value}' (type '{type(argument_value)}'")
+
+            r.append(ctype_value)
 
         for p in arguments:
             if not any(map(lambda x: x.name == p, signature.parameters)):
@@ -76,9 +87,17 @@ class InvocationResult:
         return self.results
     
 
-class UnusedArgument(Exception):
+class RunnerException(CFiddleException):
     pass
 
-class MissingArgument(Exception):
+class UnusedArgument(CFiddleException):
     pass
 
+class MissingArgument(CFiddleException):
+    pass
+
+class IncorrectArgumentType(CFiddleException):
+    pass
+
+class InvalidInvocation(CFiddleException):
+    pass

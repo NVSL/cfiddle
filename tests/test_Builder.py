@@ -1,7 +1,7 @@
 from cfiddle import *
 from fixtures import *
-from cfiddle.Builder import Builder, ExecutableDescription, Executable
-from cfiddle.config import get_config
+from cfiddle.Builder import Builder, ExecutableDescription, Executable, InvalidBuildParameter
+from cfiddle.config import get_config, cfiddle_config
 from cfiddle.Toolchain import GCCToolchain
 import os
 import pytest
@@ -63,20 +63,25 @@ def test_mixins(setup):
 
     
 def test_invalid_parameters(setup):
-    with pytest.raises(ValueError):
-        build("test_src/test.cpp", dict(OPTIMIZE=None))
+    with cfiddle_config():
+        enable_debug()
+        with pytest.raises(CFiddleException):
+            build(1, dict(OPTIMIZE=None))
 
-    with pytest.raises(ValueError):
-        build("test_src/test.cpp", dict(OPTIMIZE=True))
+        with pytest.raises(InvalidBuildParameter):
+            build("test_src/test.cpp", dict(OPTIMIZE=None))
 
-    with pytest.raises(ValueError):
-        build("test_src/test.cpp", dict(OPTIMIZE=[]))
+        with pytest.raises(InvalidBuildParameter):
+            build("test_src/test.cpp", dict(OPTIMIZE=True))
 
-    with pytest.raises(ValueError):
-        build("test_src/test.cpp", dict(OPTIMIZE={}))
+        with pytest.raises(InvalidBuildParameter):
+            build("test_src/test.cpp", dict(OPTIMIZE=[]))
 
-    with pytest.raises(ValueError):
-        build("test_src/test.cpp", {4:""})
+        with pytest.raises(InvalidBuildParameter):
+            build("test_src/test.cpp", dict(OPTIMIZE={}))
 
-        
+        with pytest.raises(InvalidBuildParameter):
+            build("test_src/test.cpp", {4:""})
+
+
     

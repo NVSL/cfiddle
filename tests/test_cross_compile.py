@@ -1,6 +1,7 @@
 import pytest
 from cfiddle import *
-from cfiddle.util import get_native_toolchain, invoke_process
+from cfiddle.util import  invoke_process
+from cfiddle.Toolchain import get_native_toolchain
 from fixtures import *
 
 @pytest.fixture

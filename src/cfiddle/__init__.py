@@ -13,32 +13,35 @@ __all__ = [
     "run_list",
     "configure_for_jupyter",
     "sanity_test",
-    "UnknownSymbol",
     "changes_in",
     "exp_range",
     "are_perf_counters_available",
-    "list_architectures"
+    "list_architectures",
+    "CFiddleException",
+    "enable_debug",
+    "enable_interactive",
 ]
 
 from .Data import InvocationResultsList
 from .Builder import ExecutableDescription, Executable
 from .MakeBuilder import MakeBuilder
 from .Runner import InvocationDescription, InvocationResult
-from .LocalRunner import LocalRunner, UnknownSymbol
+from .LocalRunner import LocalRunner
 from .util import arg_map, changes_in, exp_range
 from .Code import code
-from .config import get_config, set_config
+from .config import get_config, set_config, enable_debug, enable_interactive
 from .jupyter import configure_for_jupyter
 from .paths import setup_ld_path
 from .perfcount import are_perf_counters_available
 from .Toolchain import list_architectures
+from .Exceptions import CFiddleException, handle_cfiddle_exceptions
 
 def build_and_run(source_file, build_parameters, function, arguments):
     executable = build_one(source_file, build_parameters)
 
     return run_one(executable, function, arguments)
 
-
+@handle_cfiddle_exceptions
 def build(source, build_parameters=None, **kwargs):
     """Compile one or more source files using one or more different ways.
 
@@ -97,7 +100,7 @@ def run_list(invocations, perf_counters=None, **kwargs):
         l.append(Runner(InvDesc(**i, perf_counters=perf_counters), **kwargs).run())
     return l
 
-
+@handle_cfiddle_exceptions
 def run(executable, function, arguments=None, perf_counters=None, **kwargs):
     """Run one or more functions with one or more sets of arguments.
 

@@ -1,7 +1,7 @@
 from cfiddle import *
 from util import *
 from fixtures import *
-from cfiddle.source import FullyInstrumentedExecutable
+from cfiddle.source import FullyInstrumentedExecutable, InspectionError
 import pytest
 
 def test_source(test_cpp):
@@ -24,12 +24,12 @@ def test_source(test_cpp):
 // 1
 // 2"""
 
-    with pytest.raises(ValueError):
+    with pytest.raises(InspectionError):
         test_cpp.source(show=("AOEU", "AOEU"))
 
         
 def  test_preprocessed(test_cpp):
-    with pytest.raises(ValueError):
+    with pytest.raises(InspectionError):
         test_cpp.preprocessed(show="more")
 
         

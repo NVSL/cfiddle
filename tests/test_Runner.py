@@ -1,6 +1,6 @@
 from cfiddle import *
 from util import *
-from cfiddle.Runner import Runner, InvocationDescription
+from cfiddle.Runner import Runner, InvocationDescription, IncorrectArgumentType, InvalidInvocation
 from fixtures import *
 import ctypes
 import pytest
@@ -17,13 +17,13 @@ test_prototype = Prototype(None, None, (Parameter(type=ctypes.c_float, name="a")
      [1,2]),
     (dict(a=object(), b=2),
      test_prototype,
-     TypeError),
+     IncorrectArgumentType),
     (dict(a="aoeu", b=2),
      test_prototype,
-     TypeError),
+     IncorrectArgumentType),
     (dict(a="aoeu", b=2),
      test_prototype,
-     TypeError)
+     IncorrectArgumentType)
 ]
 )
 def test_bind_arguments(params, proto, result,setup):
@@ -41,12 +41,12 @@ def test_return_values(test_cpp):
     assert r.return_value == 4
 
 
-def test_InvocationDescription_types(test_cpp):
-    with pytest.raises(ValueError):
+def test_Invocation_types(test_cpp):
+    with pytest.raises(InvalidInvocation):
         InvocationDescription(1,1,1)
     
-    with pytest.raises(ValueError):
+    with pytest.raises(InvalidInvocation):
         InvocationDescription(test_cpp,"",{1:1})
 
-    with pytest.raises(ValueError):
+    with pytest.raises(InvalidInvocation):
         InvocationDescription(test_cpp,"",{1:1})

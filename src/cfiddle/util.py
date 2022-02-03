@@ -108,13 +108,6 @@ def invoke_process(cmd, stdin=None):
 def get_native_architecture():
     return os.uname().machine
     
-    
-def get_native_toolchain():
-    success, arch = invoke_process(["gcc", "-print-multiarch"])
-    if not success:
-        raise Exception("Unable to determine native toolchain.")
-    return arch.strip()
-
 class ListDelegator(list):
     
     def __getattr__(self, requested_attribute):     
@@ -180,10 +173,8 @@ def read_file(f, *argc, **kwargs):
 
 
 class CompiledFunctionDelegator:
-    def __init__(self, build_result, function_name=None):
+    def __init__(self, build_result, function_name):
         self.build_result = build_result
-        if function_name is None:
-            function_name = build_result.get_default_function_name()
 
         self.function_name = function_name
 
@@ -199,9 +190,9 @@ class CompiledFunctionDelegator:
 
 def type_check(value, the_type):
     if not isinstance(value, the_type):
-        raise ValueError(f"Expected '{the_type.__name__}' not '{type(value).__name__}' in {value}")
+        raise TypeError(f"Expected '{the_type.__name__}' not '{type(value).__name__}' in {value}")
 
 def type_check_list(values, the_type):
     if not all(isinstance(v, the_type) for v in values):
-        raise ValueError(f"Expected sequence of '{the_type.__name__}' not '{[type(v).__name__ for v in values]}' in {values}")
+        raise TypeError(f"Expected sequence of '{the_type.__name__}' not '{[type(v).__name__ for v in values]}' in {values}")
     

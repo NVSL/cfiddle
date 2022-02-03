@@ -1,5 +1,6 @@
 from cfiddle import *
 from cfiddle.perfcount import *
+from cfiddle.config import cfiddle_config
 import pytest
 from fixtures import *
 
@@ -80,8 +81,10 @@ def test_perf_count_cache(mem_loop):
     
 
 def test_perf_count_type(cycle_counter):
-    with pytest.raises(ValueError):
-        run(cycle_counter, "go", {}, perf_counters=[4])
+    with cfiddle_config():
+        enable_debug()
+        with pytest.raises(UnknownPerformanceCounter):
+            run(cycle_counter, "go", {}, perf_counters=[4])
 
 
 def skip_if_no_perf_counters():

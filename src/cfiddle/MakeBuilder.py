@@ -1,4 +1,4 @@
-from .Builder import Builder, Executable, BadBuildParameter, BuildFailure
+from .Builder import Builder, Executable, InvalidBuildParameter, BuildFailure
 import os
 import subprocess
 import pytest
@@ -83,7 +83,7 @@ class MakeBuilder(Builder):
     def _get_multiarch_string(self, tool):
         success, value = invoke_process([tool, "-print-multiarch"])
         if not success:
-            raise Exception(f"Couldn't extract  multiarch string from {tool}")
+            raise ToolError(f"Couldn't extract multiarch string from {tool}")
         else:
             return value.strip()
 

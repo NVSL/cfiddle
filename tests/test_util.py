@@ -35,10 +35,10 @@ def test_arg_map(inp, output):
 
 
 def test_type_check():
-    with pytest.raises(ValueError):
+    with pytest.raises(TypeError):
         type_check(1, str)
     type_check(1,int)
-    with pytest.raises(ValueError):
+    with pytest.raises(TypeError):
         type_check_list([1, str], str)
     type_check_list([1,1], int)
 
