@@ -1,3 +1,5 @@
+from ..util import invoke_process
+
 from .GCC import GCCToolchain
 from .Go import GoToolchain
 from .Registry import ToolchainRegistry, TheToolchainRegistry
@@ -12,4 +14,9 @@ def list_architectures():
     return list(GCCToolchain._gcc_architectures.items())
 
 
+def get_native_toolchain():
+    success, arch = invoke_process(["gcc", "-print-multiarch"])
+    if not success:
+        raise ToolchainException("Unable to determine native toolchain.")
+    return arch.strip()
 

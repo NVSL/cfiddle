@@ -1,11 +1,10 @@
 import os
 import pkg_resources
-from .util import get_native_toolchain
+from .Toolchain import get_native_toolchain
 
 PACKAGE_DATA_PATH = pkg_resources.resource_filename('cfiddle', 'resources/')
 
 def cfiddle_lib_path():
-    
     return os.path.join(PACKAGE_DATA_PATH, "libcfiddle", "build", get_native_toolchain())
 
 def cfiddle_include_path():

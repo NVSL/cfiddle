@@ -3,14 +3,16 @@ import re
 import ctypes
 import collections
 
+from .Exceptions import CFiddleException
 
-class BadParameter(Exception):
+
+class BadParameter(CFiddleException):
     pass
 
-class UnknownType(Exception):
+class UnknownType(CFiddleException):
     pass
 
-class BadParameterName(Exception):
+class BadParameterName(CFiddleException):
     pass
 
 class ProtoParser:

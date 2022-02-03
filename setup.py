@@ -53,7 +53,8 @@ setup(
         "r2pipe",
         "pydot",
         "networkx",
-        "pyelftools"]# + (["jpeg"] if platform.python_version().startswith("3.6") else [])
+        "click",
+        "pyelftools"]
     ,
     description="CFiddle makes it easy to ask and answers questions about the compilation and execution of smallish programs written in compiled languages like C, C++, and Go.",
     long_description=open("README.md").read(),

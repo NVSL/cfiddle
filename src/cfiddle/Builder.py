@@ -1,6 +1,7 @@
 import collections
 from .CProtoParser import CProtoParser
 from .util import arg_map, read_file, ListDelegator, type_check, type_check_list, infer_language
+from .Exceptions import *
 import types
 import os
 import pytest
@@ -12,12 +13,20 @@ class ExecutableDescription:
         self._raise_on_invalid_types()
 
     def _raise_on_invalid_types(self):
-        type_check(self.source_file, str)
-        type_check_list(self.build_parameters.keys(), str)
+        try:
+            type_check(self.source_file, str)
+        except (TypeError, ValueError) as e:
+            raise CFiddleException(e)
+            
+        try:
+            type_check_list(self.build_parameters.keys(), str)
+        except (ValueError, TypeError) as e:
+            raise InvalidBuildParameter(e)
+
         for v in self.build_parameters.values():
             if not any([isinstance(v, t) for t in [int, str, float]]) or isinstance(v, bool): # bool is an int!
-                raise ValueError(f"Can't have '{v}' as build_parameter value.")
-
+                raise InvalidBuildParameter(f"Can't have '{v}' as build_parameter value.")
+        
     def get_language(self):
         return infer_language(self.source_file)
 
@@ -55,12 +64,6 @@ class Executable:
         _, source_name = os.path.split(self.build_spec.source_file)
         source_name_base, _ = os.path.splitext(source_name)
         return source_name_base
-
-    def get_default_function_name(self):
-        if len(self.functions) == 1:
-            return list(self.functions.values())[0].name
-        else:
-            raise ValueError(f"There's is not exactly one function ({list(self.functions.keys())}), so you need to provide one.")
 
     def get_build_parameters(self):
         return self.build_spec.build_parameters
@@ -119,12 +122,13 @@ class Builder:
                 return
         raise UnknownFileType(f"No parser is available for file '{self.source_file}'.")
             
-class BuildFailure(Exception):
+class BuildFailure(CFiddleException):
     def __str__(self):
         return f"Build command failed:\n\n{self.args[0]}\n\n{self.args[1]}"
     
-class BadBuildParameter(Exception):
+class InvalidBuildParameter(CFiddleException):
     pass
 
-class UnknownFileType(Exception):
+class UnknownFileType(CFiddleException):
     pass
+

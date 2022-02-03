@@ -1,10 +1,9 @@
 from cfiddle import Toolchain
 from cfiddle import *
-from cfiddle.Toolchain import GCCToolchain, GoToolchain, UnknownToolchain
+from cfiddle.Toolchain import GCCToolchain, GoToolchain, ToolchainException
 from cfiddle.util import get_native_architecture
 import pytest
 
-from cfiddle.Toolchain import GCCToolchain
 
 @pytest.mark.parametrize("lang,parameters,tool,toolchain",
                          [("c++", dict(ARCH="x86_64"), "g++", GCCToolchain),
@@ -23,7 +22,7 @@ def test_resolve(lang, parameters, tool, toolchain):
                          [("C",dict(ARCH="aoeu")),
                           ("C", dict(ARCH="arm", CC="arm-linux-gnueabi-gcc"))])
 def test_unknown(lang, parameters):
-    with pytest.raises(UnknownToolchain):
+    with pytest.raises(ToolchainException):
         Toolchain.TheToolchainRegistry.get_toolchain(lang,parameters, "gcc")
         
 @pytest.mark.parametrize("parameters,basetool,tool,result",

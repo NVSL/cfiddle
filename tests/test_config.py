@@ -19,10 +19,10 @@ def test_configuration(setup):
 
 def test_push_pop():
 
-    with pytest.raises(ValueError):
+    with pytest.raises(IllegalConfiguration):
         pop_config()
 
-    with pytest.raises(ValueError):
+    with pytest.raises(IllegalConfiguration):
         push_config()
         pop_config()
         pop_config()
@@ -31,7 +31,7 @@ def test_push_pop():
         with cfiddle_config(Executable_type=MyExecutable, CFIDDLE_BUILD_ROOT=tdir):
             assert isinstance(build_one("test_src/test.cpp"), MyExecutable)
 
-        with pytest.raises(ValueError):
+        with pytest.raises(IllegalConfiguration):
             pop_config()
 
         assert not isinstance(build_one("test_src/test.cpp"), MyExecutable)

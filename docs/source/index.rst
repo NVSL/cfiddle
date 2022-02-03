@@ -40,6 +40,7 @@ Manual Contents
    coreapi
    perfcount
    multiarch
+   configuration
 	      
 Installation
 ------------
@@ -57,6 +58,7 @@ Here's an example to set the stage before we describe the key functions below.
 First, create a source file:
 
 .. doctest::
+
    
     >>> from cfiddle import  *
     >>> sample = code(r"""

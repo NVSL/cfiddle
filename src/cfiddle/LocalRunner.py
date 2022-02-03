@@ -1,4 +1,5 @@
-from .Runner import Runner, InvocationResult
+from .Runner import Runner, InvocationResult, RunnerException
+from .Exceptions import CFiddleException
 import ctypes
 import tempfile
 import os
@@ -33,13 +34,13 @@ class LocalRunner(Runner):
             c_lib = ctypes.CDLL(self.get_build_result().lib)
             return getattr(c_lib, self.get_invocation().function)
         except AttributeError:
-            raise UnknownSymbol(f"Couldn't find '{self.get_invocation().function}' in '{self.get_build_result().lib}'.  Do you need to recompile? or declare it `extern \"C\"`?.")
+            raise RunnerException(f"Couldn't find '{self.get_invocation().function}' in '{self.get_build_result().lib}'.  Do you need to recompile? or declare it `extern \"C\"`?.")
         
     def _get_function(self, f):
         try:
             return self.get_build_result().functions[f]
         except KeyError:
-            raise UnknownSymbol(f"Couldn't find Prototype for '{f}'.  Options are [{' '.join(self.get_build_result().functions.keys())}].  Did you declare it 'extern \"C\"'?.")
+            raise RunnerException(f"Couldn't find Prototype for '{f}'.  Options are [{' '.join(self.get_build_result().functions.keys())}].  Did you declare it 'extern \"C\"'?.")
         
     def _reset_data_collection(self):
         clear_perf_counters()
@@ -68,7 +69,5 @@ class LocalRunner(Runner):
         _, source_file_name = os.path.split(self.get_build_result().build_spec.source_file)
         result_file_name = f"{source_file_name}.{self.get_invocation().function}({arg_string}).csv"
         return os.path.join(self.get_build_result().build_dir, result_file_name)
-
-
-class UnknownSymbol(Exception):
-    pass
+    
+    

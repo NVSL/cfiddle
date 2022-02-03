@@ -51,7 +51,7 @@ class GCCToolchain(Toolchain):
         elif  self._language == "C++":
             self._compiler = self._build_parameters.get("CXX", "g++")
         else:
-            raise Exception(f"Unknown language for this toolchain: {language}")
+            raise ToolchainException(f"Unknown language for this toolchain: {language}")
             
         if "ARCH" in self._build_parameters:
 
@@ -63,7 +63,7 @@ class GCCToolchain(Toolchain):
                     
                 self._compiler = f"{prefix}{self._compiler}"
             except KeyError:
-                raise UnknownToolchain(f"No known toolchain for architecture '{arch}'.")
+                raise ToolchainException(f"No known toolchain for architecture '{arch}'.")
 
         self._tool_prefix, self._compiler_suffix = self._parse_executable_name(self._compiler)
 
@@ -76,7 +76,7 @@ class GCCToolchain(Toolchain):
         elif len(parts) in [4,5]:  # e.g. 'arm-linux-gnu-gcc' or 'arm-linux-gnu-gcc-9'
             return "-".join(parts[:3])+"-", "-".join(parts[3:])
         else:
-            raise UnknownToolchain(f"Couldn't deduce compiler architecture and version from compiler '{name}'")
+            raise ToolchainException(f"Couldn't deduce compiler architecture and version from compiler '{name}'")
 
     def _convert_tool_prefix_to_architecture(self, prefix ):
         

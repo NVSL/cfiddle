@@ -9,6 +9,7 @@ from .Builder import Executable
 from .util import invoke_process, infer_language
 from .CFG.cfg import CFG
 from .DebugInfo import DebugInfo
+from .Exceptions import CFiddleException
 
 class Source:
     
@@ -116,7 +117,7 @@ class Preprocessed:
         elif language == "c":
             return ".i"
         else:
-            raise ValueError(f"Can't compute preprocessor file extension for file  '{filename}' in '{language}'.")
+            raise InspectionError(f"Can't compute preprocessor file extension for file  '{filename}' in '{language}'.")
 
                 
 class FullyInstrumentedExecutable(Preprocessed, Source, Assembly, CFG, DebugInfo, Executable):
@@ -147,9 +148,9 @@ def extract_code(filename, executable, show=None, language=None, include_header=
         elif all([isinstance(x, int) for x in show]): 
             start_line, end_line = show
         else:
-            raise ValueError(f"{show} is not a valid specification of code to extract.")
+            raise InspectionError(f"{show} is not a valid specification of code to extract.")
     else:
-        raise ValueError(f"{show} is not a valid specification of code to extract.")
+        raise InspectionError(f"{show} is not a valid specification of code to extract.")
 
     src = "\n".join(lines[start_line:end_line])
 
@@ -168,7 +169,7 @@ def build_header(filename, language, show):
     try:
         c = comments_syntaxes[language]
     except KeyError:
-        raise ValueError(f"Unknown comment syntax for language '{language}'.")
+        raise InspectionError(f"Unknown comment syntax for language '{language}'.")
 
     return f"{c[0]}{filename}:{show[0]+1}-{show[1]} ({show[1] - show[0]} lines){c[1]}\n"
 
@@ -183,7 +184,7 @@ def construct_function_regex(executable, language, function):
     elif language == "go":
         return (fr"func\s+{re.escape(function)}", r"^\}")
     else:
-        raise Exception(f"Don't know how to find functions in {language}")
+        raise InspectionError(f"Don't know how to find functions in {language}")
 
 
 def find_region_by_regex(lines, show):
@@ -201,4 +202,7 @@ def find_region_by_regex(lines, show):
             if re.search(show[1], l):
                 end_line = n + 1
                 return start_line, end_line
-    raise ValueError(f"Couldn't find code for {show}")
+    raise InspectionError(f"Couldn't find code for {show}")
+
+class InspectionError(CFiddleException):
+    pass
