@@ -56,15 +56,15 @@ def test_naming(simple_code):
     assert b[1].get_toolchain()._architecture_name == "aarch64".upper()
 
 
-def test_toolchain_spec_1():
+def test_toolchain_spec_1(setup):
     sample = code(r"""extern "C" int answer() {return 42;}""")
     b = build(sample, arg_map(CXX=["g++", "arm-linux-gnueabi-g++"]))
     assert b[0].get_toolchain()._tool_prefix == ""
     assert b[1].get_toolchain()._tool_prefix == "arm-linux-gnueabi-"
 
-def test_toolchain_spec_2():
+def test_toolchain_spec_2(setup):
     sample = code(r"""extern "C" int answer() {return 42;}""")
-    b = build(sample, arg_map(ARCH="aarch64", CXX=["g++-9", "g++-8"]))
+    b = build(sample, arg_map(ARCH="aarch64", CXX=["g++-9", "g++-8"]), verbose=True)
     assert b[0].get_toolchain()._tool_prefix == "arm-linux-gnueabi-"
     assert b[0].get_toolchain()._compiler == "arm-linux-gnueabi-g++-9"
     assert b[1].get_toolchain()._tool_prefix == "arm-linux-gnueabi-"

@@ -14,6 +14,9 @@ class GoToolchain(Toolchain):
 
     def get_compiler(self):
         return "go"
+
+    def get_target(self):
+        return self._bintools_delegate.get_target()
     
     def describe(self):
         return f"Go toolchain compiling for NATIVE"

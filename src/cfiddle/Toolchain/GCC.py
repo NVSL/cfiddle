@@ -2,7 +2,7 @@ import re
 import collections
 import copy
 
-from ..util import get_native_architecture
+from ..util import get_native_architecture, invoke_process
 
 from .Toolchain import Toolchain
 from .Registry import TheToolchainRegistry
@@ -37,6 +37,12 @@ class GCCToolchain(Toolchain):
 
     def get_compiler(self):
         return self._compiler
+
+    def get_target(self):
+        success, value = invoke_process([self.get_compiler(), "-print-multiarch"])
+        if not success:
+            raise ToolError(f"Couldn't extract target name from {self.get_compiler()}")
+        return value.strip()
     
     def get_tool(self, tool):
         return f"{self._tool_prefix}{tool}"

@@ -1,6 +1,6 @@
 from cfiddle import Toolchain
 from cfiddle import *
-from cfiddle.Toolchain import GCCToolchain, GoToolchain, ToolchainException
+from cfiddle.Toolchain import GCCToolchain, GoToolchain, ToolchainException, UnknownToolchain
 from cfiddle.util import get_native_architecture
 import pytest
 
@@ -36,9 +36,14 @@ def test_gcc_toolchain():
         Toolchain.TheToolchainRegistry.get_toolchain("C", dict(ARCH=a), "gcc").describe()
         Toolchain.TheToolchainRegistry.get_toolchain("C", dict(ARCH=a), "gcc").get_asm_function_bookends("foo")
 
+def test_unknown_toolchain():
     
+    with pytest.raises(UnknownToolchain):
+        build(code(r"""extern "C" void foo(){}"""), arg_map(CXX="aoeu"))
+     
 @pytest.mark.parametrize("language,build_parameters,prefix,gcc_tool,gpp_tool",
                          [("C", dict(ARCH="ppc"), "powerpc-linux-gnu-", "gcc", None),
+                          ("C", dict(ARCH="ppc", CC="gcc"), "powerpc-linux-gnu-", "gcc", None),
                           ("C",  dict(CC="powerpc-linux-gnu-gcc"), "powerpc-linux-gnu-", "gcc", None),
                           ("C++", dict(CXX="powerpc-linux-gnu-g++"), "powerpc-linux-gnu-", None, "g++"),
                           ("C", dict(ARCH="ppc", CC="gcc-9"), "powerpc-linux-gnu-", "gcc-9", None),
@@ -63,5 +68,7 @@ def test_GCC(language, build_parameters, prefix, gcc_tool, gpp_tool):
     assert tool_chain._tool_prefix == prefix
     if gcc_tool:
         assert tool_chain._compiler_suffix == gcc_tool
+        assert tool_chain.get_compiler() == prefix + gcc_tool
     if gpp_tool:
         assert tool_chain._compiler_suffix == gpp_tool
+        assert tool_chain.get_compiler() == prefix + gpp_tool

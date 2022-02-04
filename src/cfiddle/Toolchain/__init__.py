@@ -2,6 +2,7 @@ from ..util import invoke_process
 
 from .GCC import GCCToolchain
 from .Go import GoToolchain
+from .Clang import ClangToolchain
 from .Registry import ToolchainRegistry, TheToolchainRegistry
 from .Exceptions import *
 

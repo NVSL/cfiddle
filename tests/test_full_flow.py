@@ -41,14 +41,16 @@ def test_everything_explicit(setup):
     print(InvocationResultsList(results).as_json())
 
 
-def test_maps_experiment(setup):
-
-    executables = [MakeBuilder(ExecutableDescription("test_src/std_maps.cpp", build_parameters=p), verbose=True, rebuild=True).build()
-                               for p in arg_map(OPTIMIZE=["-O0", "-O3"])]
-
-    invocations = [InvocationDescription(**i) for i in arg_map(executable=executables, function=["ordered", "unordered"], arguments=arg_map(count=map(lambda x: 2**x, range(0,10))))]
-
-    results = InvocationResultsList(LocalRunner(i).run() for i in invocations)
+def check_for_compiler(c):
+    success, _ = invoke_process([c, "-v"])
+    if not success:
+        pytest.skip(f"Compiler {c} is not available.")
+        
+@pytest.mark.parametrize("compiler", ["g++", "clang++"])
+def test_maps_experiment(setup, compiler):
+    check_for_compiler(compiler)
+    b = build("test_src/std_maps.cpp", arg_map(OPTIMIZE=["-O0", "-O3"], CXX=compiler), verbose=True)
+    results = run(b, ["ordered", "unordered"], arg_map(count=exp_range(1,1024,2)))
     
     print(results.as_df())
     return results.as_df()

@@ -18,15 +18,15 @@ CC?=$(GCC_ARCH_PREFIX)gcc
 GO?=go
 
 BUILD_ROOT?=build
-BUILD=$(BUILD_ROOT)/$(shell $(CXX) -print-multiarch)
+BUILD=$(BUILD_ROOT)/$(TARGET)
 
-WARNINGS=-Wall -Werror -Wno-psabi
+WARNINGS=-Wall -Werror #-Wno-psabi
 DEBUG_FLAGS?=-g3
 INCLUDES=-I. -I$(CFIDDLE_INCLUDE) -I/usr/local/include
 CFLAGS=$(WARNINGS) $(DEBUG_FLAGS) -fPIC $(OPTIMIZE) $(INCLUDES) $(MORE_INCLUDES) $(MORE_CFLAGS) -MMD -save-temps=obj
 CXXFLAGS=$(CFLAGS) $(CXX_STANDARD) $(MORE_CXXFLAGS)
 CXX_STANDARD=-std=gnu++11
-LIBS=-L$(CFIDDLE_INCLUDE)/../libcfiddle/build/$(shell $(CXX) -print-multiarch) -lcfiddle
+LIBS=-L$(CFIDDLE_INCLUDE)/../libcfiddle/build/$(TARGET) -lcfiddle
 
 LDFLAGS=$(LD_OPTS) $(MORE_LDFLAGS) $(LIBS) $(MORE_LIBS) #-pthread  #-std=gnu++11  
 

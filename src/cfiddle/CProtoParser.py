@@ -180,7 +180,7 @@ class CProtoParser(CLikeProtoParser):
 
         super().__init__()
 
-        self.known_file_extensions = [".C", ".CPP", ".H", ".HPP", ".CC", ".CXX"]
+        self.known_file_extensions = [".C", ".CPP", ".H", ".HPP", ".CC", ".CXX", ".C++"]
         self.regexes_to_strip_out = [r"//.*", r"/\*.*", r"extern\s*\"C\"\s*"]
         self.type_modifiers_to_remove = ["register", "const", "volatile", "inline", "return"]
         
