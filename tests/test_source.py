@@ -32,7 +32,6 @@ def  test_preprocessed(test_cpp):
     with pytest.raises(InspectionError):
         test_cpp.preprocessed(show="more")
 
-        
 def test_asm(test_cpp):
     asm = test_cpp.asm(show="nop")
     assert asm.split("\n")[0] == "nop:"

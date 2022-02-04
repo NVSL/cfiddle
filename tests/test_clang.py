@@ -22,6 +22,26 @@ def test_c(setup):
     assert b[0].build_spec.get_language() == "c"
     assert b[0].get_toolchain().get_compiler() == "clang"
 
+def test_versions(setup):
+    source = code(r"""void foo(){}""", language="c")
+    b = build(source, arg_map(CC=["clang", "clang-10"]), verbose=True)
+    run(b, "foo")
+    assert b[0].get_toolchain().get_compiler() == "clang"
+    assert b[1].get_toolchain().get_compiler() == "clang-10"
+
+def test_tools(setup):
+    source = code(r"""void foo(){}""", language="c")
+    built = build(source, arg_map(CC=["clang", "clang-10"]), verbose=True)
+    for b in built:
+        assert b.get_toolchain().get_tool("c++filt") == "llvm-cxxfilt-10"
+        assert b.get_toolchain().get_tool("objdump") == "llvm-objdump-10"
+        
+
+def test_describe(setup):
+    source = code(r"""void foo(){}""", language="c")
+    built = build(source, arg_map(CC=["clang"]), verbose=True)
+    built[0].get_toolchain().describe()
+    
 def test_maps_experiment(setup):
 
     executables = [MakeBuilder(ExecutableDescription("test_src/std_maps.cpp", build_parameters=p), verbose=True, rebuild=True).build()

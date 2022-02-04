@@ -45,10 +45,10 @@ ppc-cross:
 		echo "PowerPC cross compiler not available." ;\
 	fi
 
-#clang:
-#	@if clang++ -v 2>/dev/null; then \
-#		$(MAKE) COMPILER=clang++ TARGET=$(shell clang++ -print-target-triple) native;\
-#	else \
-#		echo "Clang not available." ;\
-#	fi
+clang:
+	@if clang++ -v 2>/dev/null; then \
+		$(MAKE) COMPILER=clang++ TARGET=$(shell clang++ -print-target-triple) native;\
+	else \
+		echo "Clang not available." ;\
+	fi
 

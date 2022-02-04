@@ -43,6 +43,7 @@ def test_unknown_toolchain():
      
 @pytest.mark.parametrize("language,build_parameters,prefix,gcc_tool,gpp_tool",
                          [("C", dict(ARCH="ppc"), "powerpc-linux-gnu-", "gcc", None),
+                          ("C", dict(ARCH="ppc", CC="gcc"), "powerpc-linux-gnu-", "gcc", None),
                           ("C",  dict(CC="powerpc-linux-gnu-gcc"), "powerpc-linux-gnu-", "gcc", None),
                           ("C++", dict(CXX="powerpc-linux-gnu-g++"), "powerpc-linux-gnu-", None, "g++"),
                           ("C", dict(ARCH="ppc", CC="gcc-9"), "powerpc-linux-gnu-", "gcc-9", None),
@@ -67,5 +68,7 @@ def test_GCC(language, build_parameters, prefix, gcc_tool, gpp_tool):
     assert tool_chain._tool_prefix == prefix
     if gcc_tool:
         assert tool_chain._compiler_suffix == gcc_tool
+        assert tool_chain.get_compiler() == prefix + gcc_tool
     if gpp_tool:
         assert tool_chain._compiler_suffix == gpp_tool
+        assert tool_chain.get_compiler() == prefix + gpp_tool

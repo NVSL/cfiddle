@@ -91,6 +91,7 @@ class MakeBuilder(Builder):
 
         
     def _resolve_toolchain(self):
+
         default_compiler, make_var = self._default_compiler_for_language(self.build_spec.get_language())
         raw_compiler = self.build_spec.get_build_parameters().get(make_var, default_compiler)
 
@@ -98,7 +99,7 @@ class MakeBuilder(Builder):
                                                        build_parameters=self.build_spec.get_build_parameters(),
                                                        tool=raw_compiler)
         
-        if make_var not in self.build_spec.get_build_parameters() and default_compiler != toolchain.get_compiler():
+        if default_compiler != toolchain.get_compiler():
             self.build_spec.set_build_parameter(make_var, toolchain.get_compiler())
 
         return toolchain

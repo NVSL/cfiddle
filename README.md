@@ -18,7 +18,7 @@ first-class support for accessing hardware performance counters.
 It's features include:
 
 1. Support for compiled languages like C, C++, and Go.
-2. Cross-compilation support -- x86, ARM, PowerPC, etc.
+2. Multiple architecture (x86, ARM, PowerPC, etc.) and compiler (`gcc` and `clang`) support.
 3. Easy access to OS and hardware performance counters.
 4. [Control Flow Graph (CFG)](https://en.wikipedia.org/wiki/Control-flow_graph) generation from compiled code.
 5. Easy support for varying build-time and run-time paremeters.

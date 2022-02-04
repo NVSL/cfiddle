@@ -1,7 +1,15 @@
 Cross-Compilation Support
 =========================
 
-CFiddle support cross-compilation so you can compare assembly across architectures.
+CFiddle support cross-compilation so you can compare assembly across architectures and compilers.
+
+Compiling with Other Compilers
+******************************
+
+CFiddle knows about :code:`clang` and :code:`clang++`, so you can pass them as a :code:`build_parameter` to :func:`cfiddle.build` as
+:code:`CC` or :code:`CXX`, and they should work.
+
+Clang cross-compilation is not yet supported.
 
 Compiling for Other Architectures
 *********************************
@@ -9,7 +17,7 @@ Compiling for Other Architectures
 To compile for multiple architecture you have two choices
 
 1.  Add :code:`ARCH` to your
-    :code:`build_parameters` argument to :func:`cfiddle.build()`
+    :code:`build_parameters` argument to :func:`cfiddle.build()`.
 2.  Specify the relevent compiler as :code:`CC` or :code:`CXX` in :code:`build_parameters`.
 
 For example, using :code:`ARCH`:
@@ -104,7 +112,7 @@ You can also set :code:`ARCH` and :code:`CXX` or :code:`CC` to specify, for exam
 Available Architectures
 ***********************
 
-:code:`ARCH` just provides a shorthand for setting a prefix on your compiler.
+:code:`ARCH` just provides a shorthand for setting a prefix on your compiler (for gcc-based cross-compilers).
 The valid values are:
 
 .. doctest::
@@ -157,4 +165,5 @@ Key Functions
 *************
 
 .. autofunction:: cfiddle.list_architectures
+		  
 
