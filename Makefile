@@ -16,6 +16,10 @@ do-dist:
 	pip install --upgrade pytest wheel build 
 	python3 -m build
 
+.PHONY:remote-test
+remote-test:
+	bin/remote-test.sh
+
 .PHONY:pypi
 pypi: dist
 	git update-index --refresh 
@@ -29,7 +33,7 @@ test-dist:
 	(. build_release/dist_test/bin/activate; $(MAKE) -C build_release package-test)
 
 .PHONY:test
-test:  package-test docker-test
+test:  package-test docker-test remote-test
 
 .PHONY: package-test
 package-test:

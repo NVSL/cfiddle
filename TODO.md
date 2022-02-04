@@ -27,6 +27,7 @@
 10.  cleanup cfg code.  it's a mess.
 11.  Integrate moneta
 12.  fancy code/assembly/cfg highlighting like it compiler explorer.  Can we do it just using CSS?
+13.  Move src/cfiddle/resources to the root src/ directory
 13.  Create language abstraction.
 	1.  get rid of util.infer_language
 9. Executable-based execution (rather than .so)
