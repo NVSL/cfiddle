@@ -11,7 +11,6 @@ __all__ = [
     "build",
     "run",
     "run_list",
-    "configure_for_jupyter",
     "sanity_test",
     "changes_in",
     "exp_range",
@@ -20,6 +19,7 @@ __all__ = [
     "CFiddleException",
     "enable_debug",
     "enable_interactive",
+    "cfiddle_config"
 ]
 
 from .Data import InvocationResultsList
@@ -27,10 +27,9 @@ from .Builder import ExecutableDescription, Executable
 from .MakeBuilder import MakeBuilder
 from .Runner import InvocationDescription, InvocationResult
 from .LocalRunner import LocalRunner
-from .util import arg_map, changes_in, exp_range
+from .util import arg_map, changes_in, exp_range, running_under_jupyter
 from .Code import code
-from .config import get_config, set_config, enable_debug, enable_interactive
-from .jupyter import configure_for_jupyter
+from .config import get_config, set_config, enable_debug, enable_interactive, cfiddle_config
 from .paths import setup_ld_path
 from .perfcount import are_perf_counters_available
 from .Toolchain import list_architectures
@@ -145,5 +144,10 @@ def sanity_test():
                function=["foo"])[0].return_value
 
 
+if running_under_jupyter():
+    # do this hear so we don't suck in jupyter unless we actually need it.
+    from .jupyter import configure_for_jupyter
+    configure_for_jupyter()
+    
 setup_ld_path()
 

@@ -9,8 +9,6 @@
    1.  Add change log to README.md
    2.  Add devel instructions to README.md
    3.  Update cross refs in docstrings.
-4. Write a function decorator to catch exception and print nice error messages in Jupyter
-   1. replace all raised Exceptions with CFiddleException
 6. Multiple workflow support (mostly runners)
    1. Install relevante inspectors on Executables
    1. Encapsulate a configuration in a Workflow object. (One for C, one for Rust,  remote execution, etc.)

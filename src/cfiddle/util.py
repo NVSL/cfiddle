@@ -1,5 +1,6 @@
 import pytest
 import copy
+import sys
 import os
 from contextlib import contextmanager
 from collections.abc import Iterable
@@ -196,3 +197,10 @@ def type_check_list(values, the_type):
     if not all(isinstance(v, the_type) for v in values):
         raise TypeError(f"Expected sequence of '{the_type.__name__}' not '{[type(v).__name__ for v in values]}' in {values}")
     
+
+def running_under_jupyter():
+    """
+    Returns ``True`` if the module is running in IPython kernel,
+    ``False`` if in IPython shell or other Python shell.
+    """
+    return 'ipykernel' in sys.modules

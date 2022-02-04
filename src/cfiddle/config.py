@@ -43,18 +43,48 @@ def get_config(k):
     global cfiddle_config_stack
     return cfiddle_config_stack[-1][k]
 
-def enable_debug(v=True):
-    set_config("DEBUG_MODE", v)
+def enable_debug(enable=True):
+    """Put CFiddle into debugging mode.
+
+    Args:
+      enable:  New value for the internal debug mode flag.  :code:`True` mean debug is enabled.  Defaults to :code:`True`.
+    """
+    set_config("DEBUG_MODE", enable)
 
 def in_debug():
     return get_config("DEBUG_MODE")
 
-def enable_interactive(v=True):
-    set_config("DONT_RAISE", v)
+def enable_interactive(enable=True):
+    """Put CFiddle into interactive mode, so it prints error messages instead of raising exceptions.
+
+    Args:
+      enable:  New value for interactive mode setting.  :code:`True` mean it is enabled.  Defaults to :code:`True`.
+    """
+    set_config("DONT_RAISE", enable)
     
 
 @contextmanager
 def cfiddle_config(**kwargs):
+    """Create a local configuration context.
+
+    Any configuration changes made inside this context will be undone after the context completes.
+
+    For example:
+    
+.. doctest ::
+
+    >>> from cfiddle import *
+    >>> get_config("DEBUG_MODE")
+    False
+    >>> with cfiddle_config():
+    ...    enable_debug()
+    ...    print(get_config("DEBUG_MODE")
+    True
+    >>> print(get_config("DEBUG_MODE")
+    False
+
+    """
+
     push_config()
     [set_config(k,v) for k,v in kwargs.items()]
     try:
