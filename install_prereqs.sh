@@ -15,7 +15,7 @@ apt-get install -y gcc-8 g++-8 || true # this fails on circleci for some reason
 #    git clone https://github.com/radareorg/radare2
 #    radare2/sys/install.sh
 #else
-(cd /tmp; echo yes | git clone -b 5.5.4 http://github.com/radareorg/radare2;
+(cd /tmp; rm -rf radare2; echo yes | git clone -b 5.5.4 http://github.com/radareorg/radare2;
  cd radare2;
  chmod a+rwX -R . # Redare's install script gives up root.  This ensures we can still build.
  ./sys/install.sh --install;
@@ -25,11 +25,6 @@ apt-get install -y gcc-8 g++-8 || true # this fails on circleci for some reason
 #    apt install /tmp/radare2_5.3.1_amd64.deb  /tmp/radare2-dev_5.3.1_amd64.deb
 #fi
 
-
-##### Go (for go support)
-apt-get install -y golang-go
-#curl -OL https://golang.org/dl/go1.16.7.linux-amd64.tar.gz
-#tar -C /usr/local -xvf go1.16.7.linux-amd64.tar.gz
 
 
 
@@ -41,9 +36,7 @@ apt-get install -y golang-go
 (cd /tmp; rm -rf libpfm4; echo yes | git clone http://github.com/wcohen/libpfm4.git && cd libpfm4 && make && make install && cp examples/showevtinfo /usr/local/bin)
 
 if [ x"$CFIDDLE_INSTALL_CROSS_COMPILERS" = x"yes" ]; then
-    for i in bin/install_*.sh; do
-	$i
-    done
+    bin/install_compilers.sh
 fi
 	    
 

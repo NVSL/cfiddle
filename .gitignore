@@ -23,3 +23,6 @@ dist
 build
 .clean_checkout
 build_release
+
+Untitled*.ipynb
+.remote_test

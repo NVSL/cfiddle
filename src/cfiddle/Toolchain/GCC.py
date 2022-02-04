@@ -17,7 +17,18 @@ class GCCToolchain(Toolchain):
         for a in architectures:
             cls._gcc_architectures[a.upper()] = toolchain_prefix
 
-    
+    @classmethod
+    def is_toolchain_available(cls, architecture):
+        if architecture.upper() in cls._gcc_architectures:
+            return cls._is_toolchain_present(cls._gcc_architectures[architecture.upper()])
+        else:
+            return cls._is_toolchain_present(architecture)
+            
+    @classmethod
+    def _is_toolchain_present(cls, suffix):
+        success, _ = invoke_process([f"{suffix}-gcc","-v"])
+        return success
+            
     def __init__(self, language, build_parameters):
         
         self._language = language.upper()
@@ -25,7 +36,6 @@ class GCCToolchain(Toolchain):
         
         self._set_compiler_and_architecture()
         
-        self._set_architecture_specific_parameters()
 
         
     def update_suffix_for_native(self):
@@ -33,7 +43,7 @@ class GCCToolchain(Toolchain):
             self._tool_prefix = ""
 
     def get_asm_function_bookends(self, function):
-        return self._asm_function_bookends(function)
+        return (fr"^{re.escape(function)}:\s*", ".fnend|.cfi_endproc")
 
     def get_compiler(self):
         return self._compiler
@@ -98,11 +108,6 @@ class GCCToolchain(Toolchain):
         # make a guess...
         return prefix.split("-")[0]
 
-    def _set_architecture_specific_parameters(self):
-        if self._architecture_name.upper() == "AARCH64" or "ARM" in self._architecture_name.upper():
-            self._asm_function_bookends = lambda function: (fr"^{re.escape(function)}:\s*", ".fnend")
-        else:
-            self._asm_function_bookends = lambda function: (fr"^{re.escape(function)}:\s*", ".cfi_endproc")
             
 # The "official" architecture name form os.uname().machine should go first in the list of names
 GCCToolchain.register_gcc_architecture(["aarch64", "arm"], "arm-linux-gnueabi")

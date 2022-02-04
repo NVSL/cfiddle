@@ -27,7 +27,7 @@ For example, using :code:`ARCH`:
    >>> from cfiddle import  *
    >>> sample = code(r"""extern "C" int answer() {return 42;}""")
    >>> b = build(sample, arg_map(ARCH=["native", "aarch64"]))
-   >>> print(b[0].get_toolchain().describe())
+   >>> print(b[0].get_toolchain().describe()) # doctest: +SKIP
    g++ compiling for X86_64
    >>> print(b[1].get_toolchain().describe())
    arm-linux-gnueabi-g++ compiling for AARCH64
@@ -89,7 +89,7 @@ will figure out the tool chain:
    >>> from cfiddle import  *
    >>> sample = code(r"""extern "C" int answer() {return 42;}""")
    >>> b = build(sample, arg_map(CXX=["g++", "arm-linux-gnueabi-g++"]))
-   >>> print(b[0].get_toolchain().describe())
+   >>> print(b[0].get_toolchain().describe()) # doctest: +SKIP
    g++ compiling for X86_64
    >>> print(b[1].get_toolchain().describe())
    arm-linux-gnueabi-g++ compiling for AARCH64

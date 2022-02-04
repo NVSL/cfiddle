@@ -75,11 +75,11 @@ namespace Tests {
 		ASSERT_EQ(counter.get_counters().size(), 0);
 	}
 
-	TEST_F(PerfCountTests, test_CacheHits) {
+	TEST_F(PerfCountTests, test_CacheAccesses) {
 		PerfCounter counter;
 		SKIP_FOR_NO_PERFCOUNT_PERMS;
 		auto buffer = new int[1024];
-		counter.add_counter("PERF_COUNT_HW_CACHE_L1D:READ:MISS");
+		counter.add_counter("PERF_COUNT_HW_CACHE_L1D:READ:ACCESS");
 		
 		ASSERT_EQ(counter.check_valid(), true);
 		counter.start();
