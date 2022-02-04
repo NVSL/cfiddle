@@ -29,7 +29,7 @@ test-dist:
 	(. build_release/dist_test/bin/activate; $(MAKE) -C build_release package-test)
 
 .PHONY:test
-test:  package-test docker-test
+test:  package-test docker-test remote-test
 
 .PHONY: package-test
 package-test:

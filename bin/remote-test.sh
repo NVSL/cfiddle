@@ -2,12 +2,5 @@
 
 set -ex
 
-python3 -m venv venv
-. venv/bin/activate
-pip install .
-cd tests
-make test
-
-
-
-
+branch=$(git rev-parse --abbrev-ref HEAD)
+ssh try-cfiddle.nvsl.io  "set -ex; rm -rf .remote_test; git clone -b $branch http://github.com/NVSL/fiddle.git .remote_test; cd .remote_test; bin/install-and-test.sh"
