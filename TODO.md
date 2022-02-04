@@ -21,6 +21,8 @@
 	  1. e.g. to use gdb to interact with debug information while enhancing DebugINfo
    1. Auto-generate code from python.
 10. MacOS support
+	11. Clang support (done)
+	12. dylib suppport
 11. Windows support
 12. Generalized measurement mechanism of which perf counters would be a special case.
 	1.  Measure IO

@@ -5,3 +5,6 @@ class ToolchainException(CFiddleException):
 
 class ToolError(CFiddleException):
     pass
+
+class UnknownToolchain(ToolchainException):
+    pass

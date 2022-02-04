@@ -3,6 +3,7 @@ import os
 from .util import read_file
 from .config import get_config
 from .paths import cfiddle_lib_path, cfiddle_include_path
+from .Exceptions import CFiddleException
 
 def code(source, language=None, raw=False):
     """Generate an anonymous source file and return the path to it.
@@ -22,7 +23,11 @@ def code(source, language=None, raw=False):
         language = "cpp"
 
     if not raw:
+        if language not in language_decorators:
+            raise UnknownLanguageSuffix(f"Unknown suffix '{language}'.  Options are: {list(language_decorators.keys())}")
         source = language_decorators[language](source)
+
+    
     
     file_name = _compute_anon_code_filename(source, language)
     _update_source(file_name, source)
@@ -60,6 +65,11 @@ def _update_source(source_file, source):
             r.write(source)
 
             
-language_decorators =dict(go=_decorate_go_code,
-                          c=_decorate_c_code,
-                          cpp=_decorate_cpp_code)
+language_decorators ={"go": _decorate_go_code,
+                      "c": _decorate_c_code,
+                      "cpp":_decorate_cpp_code,
+                      "cxx":_decorate_cpp_code,
+                      "c++":_decorate_cpp_code}
+
+class UnknownLanguageSuffix(CFiddleException):
+    pass

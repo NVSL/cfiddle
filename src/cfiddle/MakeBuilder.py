@@ -35,6 +35,8 @@ class MakeBuilder(Builder):
         parameter_strings += [f"BUILD={self.build_directory}"]
         parameter_strings += [f"CFIDDLE_INCLUDE={os.path.join(DATA_PATH, 'include')}"]
         parameter_strings += [f"CFIDDLE_VPATH={vpath}"]
+        #parameter_strings += [f"COMPILER={self.toolchain.get_compiler()}"]
+        parameter_strings += [f"TARGET={self.toolchain.get_target()}"]
         
         base_cmd = ["make",
                     "-R", # turn off automatic variables
