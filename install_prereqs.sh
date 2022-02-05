@@ -26,11 +26,6 @@ apt-get install -y gcc-8 g++-8 || true # this fails on circleci for some reason
 #fi
 
 
-##### Go (for go support)
-apt-get install -y golang-go
-#curl -OL https://golang.org/dl/go1.16.7.linux-amd64.tar.gz
-#tar -C /usr/local -xvf go1.16.7.linux-amd64.tar.gz
-
 
 
 ##### Google test
@@ -41,8 +36,7 @@ apt-get install -y golang-go
 (cd /tmp; rm -rf libpfm4; echo yes | git clone http://github.com/wcohen/libpfm4.git && cd libpfm4 && make && make install && cp examples/showevtinfo /usr/local/bin)
 
 if [ x"$CFIDDLE_INSTALL_CROSS_COMPILERS" = x"yes" ]; then
-    bin/install_gcc_cross_compilers.sh
-    bin/install_clang.sh
+    bin/install_compilers.sh
 fi
 	    
 
