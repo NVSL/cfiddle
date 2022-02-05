@@ -41,9 +41,8 @@ apt-get install -y golang-go
 (cd /tmp; rm -rf libpfm4; echo yes | git clone http://github.com/wcohen/libpfm4.git && cd libpfm4 && make && make install && cp examples/showevtinfo /usr/local/bin)
 
 if [ x"$CFIDDLE_INSTALL_CROSS_COMPILERS" = x"yes" ]; then
-    for i in bin/install_*.sh; do
-	$i
-    done
+    bin/install_gcc_cross_compilers.sh
+    bin/install_clang.sh
 fi
 	    
 
