@@ -18,12 +18,14 @@ def handle_cfiddle_exceptions(f):
             else:
                 if get_config("DONT_RAISE"):
                     secho(f"CFiddle encountered an error (call `enable_debug()` for full details):\n{str(e)}", fg="red")
+                    return None
                 else:
                     raise e from None
                 
         except Exception as e:
             if get_config("DONT_RAISE"):
                 secho(f"CFiddle experienced an internal error (call `enable_debug()` for full details):\n{str(e)}", fg="red")
+                return None
             else:
                 raise e
             

@@ -17,7 +17,18 @@ class GCCToolchain(Toolchain):
         for a in architectures:
             cls._gcc_architectures[a.upper()] = toolchain_prefix
 
-    
+    @classmethod
+    def is_toolchain_available(cls, architecture):
+        if architecture.upper() in cls._gcc_architectures:
+            return cls._is_toolchain_present(cls._gcc_architectures[architecture.upper()])
+        else:
+            return cls._is_toolchain_present(architecture)
+            
+    @classmethod
+    def _is_toolchain_present(cls, suffix):
+        success, _ = invoke_process([f"{suffix}-gcc","-v"])
+        return success
+            
     def __init__(self, language, build_parameters):
         
         self._language = language.upper()
