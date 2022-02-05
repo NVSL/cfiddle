@@ -27,12 +27,11 @@ def test_push_pop():
         pop_config()
         pop_config()
 
+def test_push_pop2():
+
     with tempfile.TemporaryDirectory() as tdir:
         with cfiddle_config(Executable_type=MyExecutable, CFIDDLE_BUILD_ROOT=tdir):
             assert isinstance(build_one("test_src/test.cpp"), MyExecutable)
-
-        with pytest.raises(IllegalConfiguration):
-            pop_config()
 
         assert not isinstance(build_one("test_src/test.cpp"), MyExecutable)
         

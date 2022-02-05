@@ -35,8 +35,8 @@ def test_multiarch(setup, simple_code):
 
     gcc_tool_chains = dict(aarch64 = "arm-linux-gnueabi", 
                            arm = "arm-linux-gnueabi", # include aliases
-                           x86_64="x86_64-linux-gnu-gcc",
-                           x86="x86_64-linux-gnu-gcc",
+                           x86_64="x86_64-linux-gnu",
+                           x86="x86_64-linux-gnu",
                            ppc64="powerpc-linux-gnu",
                            ppc="powerpc-linux-gnu",
                            native=get_native_toolchain())
@@ -46,8 +46,9 @@ def test_multiarch(setup, simple_code):
     builds = build(simple_code, arg_map(ARCH=architectures, DEBUG_FLAGS=""), verbose=True)
     for b in builds:
         print(b.get_toolchain())
-        print(b.asm("foo"))
         print(b.get_toolchain().describe())
+        print(b.asm())
+        print(b.asm("foo"))
 
 
 def test_naming(simple_code):
