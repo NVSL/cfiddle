@@ -19,7 +19,9 @@ do-dist:
 .PHONY:remote-test
 remote-test:
 	bin/remote-test.sh try-cfiddle.nvsl.io
+	@echo Finished try-cfiddle.nvsl.io
 	bin/remote-test.sh arm.try-cfiddle.nvsl.io
+	@echo Finished arm.try-cfiddle.nvsl.io
 
 .PHONY:pypi
 pypi: dist

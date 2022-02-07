@@ -32,3 +32,6 @@ EOF
 apt-get install -y golang-go
 ##### Clang
 apt-get install -y clang
+
+exit 0
+
