@@ -42,8 +42,9 @@ docker run -it --privileged --publish published=8889,target=8888 stevenjswanson/
 
 and then visit http://localhost:8889/lab/tree/README.ipynb  -- the token is "sesame".
 
+## Documentation
 
-You can also read [the documentation](https://cfiddle.readthedocs.io).
+Here's [the documentation](https://cfiddle.readthedocs.io).
 
 ## Examples
 
