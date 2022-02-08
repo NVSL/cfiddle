@@ -40,8 +40,8 @@ docker run -it --privileged --publish published=8889,target=8888 stevenjswanson/
 ```
 
 and then visit http://localhost:8889/lab/tree/README.ipynb  -- the token is "sesame".
-3. You visit https://try-cfiddle.nvsl.io (to try CFiddle on x86) or https://arm.try-cfiddle.nvsl.io (to try CFiddle on ARM).
 
+3. You visit https://try-cfiddle.nvsl.io (to try CFiddle on x86) or https://arm.try-cfiddle.nvsl.io (to try CFiddle on ARM).
 
 You can also read [the documentation](https://cfiddle.readthedocs.io).
 
