@@ -24,11 +24,7 @@ remote-test:
 	@echo Finished arm.try-cfiddle.nvsl.io
 
 .PHONY:pypi
-pypi: dist
-	git update-index --refresh 
-	[ "$(BRANCH)" = "main" ]  # make sure we are on main
-	git diff-index --quiet HEAD -- # require that there be no local changes
-	[ x"$$(git rev-parse main)" = x"$$(git rev-parse origin/main)" ] # make sure we are synced
+pypi: release-check dist
 	twine upload --verbose  build_release/dist/*
 
 .PHONY:
@@ -74,6 +70,13 @@ docker-pull:
 
 .PHONY: release
 release: pypi docker-release
+
+.PHONY: release-check
+release-check:
+	git update-index --refresh 
+	[ "$(BRANCH)" = "main" ]  # make sure we are on main
+	git diff-index --quiet HEAD -- # require that there be no local changes
+	[ x"$$(git rev-parse main)" = x"$$(git rev-parse origin/main)" ] # make sure we are synced
 
 .PHONY: wc
 wc:

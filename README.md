@@ -25,16 +25,23 @@ It's features include:
 6. Easy, unified parameter and data gathering across building and running code.
 7. Works great with [Pandas](https://pandas.pydata.org/) and  [Jupyter Notebook/Lab](https://jupyter.org/).
 
-The best way to learn about CFiddle is to try it.  You can [run the
-examples](https://mybinder.org/v2/gh/NVSL/cfiddle/main?labpath=README.ipynb) (this can take a while to load).
 
-Or run it locally with Docker (`--privileged` is required if you want to access performance counters):
+
+## Trying CFiddle
+
+The best way to learn about CFiddle is to try it.  There are several ways to do this:
+
+1.  [Run the
+examples on Binder.org](https://mybinder.org/v2/gh/NVSL/cfiddle/main?labpath=README.ipynb) (this can take a while to load, and performance counters don't work.).
+2.  Run it locally with Docker (`--privileged` is required if you want to access performance counters):
 
 ```
 docker run -it --privileged --publish published=8889,target=8888 stevenjswanson/cfiddle:latest jupyter lab --LabApp.token='sesame'
 ```
 
 and then visit http://localhost:8889/lab/tree/README.ipynb  -- the token is "sesame".
+3. You visit https://try-cfiddle.nvsl.io (to try CFiddle on x86) or https://arm.try-cfiddle.nvsl.io (to try CFiddle on ARM).
+
 
 You can also read [the documentation](https://cfiddle.readthedocs.io).
 
