@@ -1,6 +1,10 @@
 # TODOs
 
 1. Support for (de)serialization of resuls, spec,s etc. to json.  Running of same.
+2. Clang cross-compiler support
+   1. See clang-cross-compile branch for progress.
+   2. Seems to probably work but can't compiler libcfiddle because of header issue.
+   3. cfiddle.make could be made less gcc-centric.  The variables are a mess.
 2. Support for remote exection (based on 5)
 3. Error reporting on perf counters
 	1.  Not available

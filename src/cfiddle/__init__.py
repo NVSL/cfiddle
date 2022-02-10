@@ -18,7 +18,6 @@ __all__ = [
     "list_architectures",
     "CFiddleException",
     "enable_debug",
-    "enable_interactive",
     "cfiddle_config"
 ]
 
@@ -29,7 +28,7 @@ from .Runner import InvocationDescription, InvocationResult
 from .LocalRunner import LocalRunner
 from .util import arg_map, changes_in, exp_range, running_under_jupyter
 from .Code import code
-from .config import get_config, set_config, enable_debug, enable_interactive, cfiddle_config
+from .config import get_config, set_config, enable_debug, cfiddle_config
 from .paths import setup_ld_path
 from .perfcount import are_perf_counters_available
 from .Toolchain import list_architectures
@@ -42,7 +41,7 @@ def build_and_run(source_file, build_parameters, function, arguments):
 
 @handle_cfiddle_exceptions
 def build(source, build_parameters=None, **kwargs):
-    """Compile one or more source files using one or more different ways.
+    """Compile one or more source files in one or more different ways.
 
     ``source`` can be a single filename or a list of file names.  ``build``
     compiles each file into an :obj:`Executable`.  A call to :func:`code()` is

@@ -1,11 +1,10 @@
 from functools import wraps
-from click import secho
 
 class CFiddleException(Exception):
     pass
 
 def handle_cfiddle_exceptions(f):
-    from .config import in_debug, get_config
+    from .config import in_debug
 
     @wraps(f)
     def wrapped(*argc, **kwargs):
@@ -16,18 +15,10 @@ def handle_cfiddle_exceptions(f):
             if in_debug():
                 raise
             else:
-                if get_config("DONT_RAISE"):
-                    secho(f"CFiddle encountered an error (call `enable_debug()` for full details):\n{str(e)}", fg="red")
-                    return None
-                else:
-                    raise e from None
+                raise type(e)(f"CFiddle encountered an error (call `enable_debug()` for full details):\n{str(e)}")
                 
         except Exception as e:
-            if get_config("DONT_RAISE"):
-                secho(f"CFiddle experienced an internal error (call `enable_debug()` for full details):\n{str(e)}", fg="red")
-                return None
-            else:
-                raise e
+            raise type(e)(f"CFiddle encountered an internal error.  Call `enable_debug()` for full details and consider submitting a bug report:\n{str(e)}")
             
     return wrapped
 

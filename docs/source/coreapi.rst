@@ -16,9 +16,8 @@ code.
 Compiling Code
 ..............
 
-:func:`cfiddle.build()` returns :obj:`cfiddle.source.FullyInstrumentedExecutable` objects that represent
-      compiled code and allows you to inspect it.
-
+:func:`cfiddle.build()` returns :obj:`cfiddle.source.FullyInstrumentedExecutable` objects that represent compiled code and allows you to inspect it.
+      
 .. autofunction:: cfiddle.build
 
 Inspecting Compiled Code

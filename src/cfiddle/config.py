@@ -25,8 +25,7 @@ default_config = dict(Executable_type=FullyInstrumentedExecutable,
                       ProtoParser_types=[CProtoParser, GoProtoParser],
                       CFIDDLE_BUILD_ROOT=".cfiddle/builds",
                       ProgressBar=noop_progress_bar,
-                      DEBUG_MODE=False,
-                      DONT_RAISE=False)
+                      DEBUG_MODE=False)
 
 
 cfiddle_config_stack = []
@@ -54,14 +53,6 @@ def enable_debug(enable=True):
 def in_debug():
     return get_config("DEBUG_MODE")
 
-def enable_interactive(enable=True):
-    """Put CFiddle into interactive mode, so it prints error messages instead of raising exceptions.
-
-    Args:
-      enable:  New value for interactive mode setting.  :code:`True` mean it is enabled.  Defaults to :code:`True`.
-    """
-    set_config("DONT_RAISE", enable)
-    
 
 @contextmanager
 def cfiddle_config(**kwargs):

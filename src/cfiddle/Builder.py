@@ -36,6 +36,7 @@ class ExecutableDescription:
     def set_build_parameter(self, name, value):
         self.build_parameters[name] = value
 
+        
 class Executable:
     """A compiled source file.
 

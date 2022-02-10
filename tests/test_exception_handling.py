@@ -7,7 +7,7 @@ def test_debug():
 
     with pytest.raises(CFiddleException):
         b = build(code(""), arg_map(a=[[1,1],1]))
-        
+
     with cfiddle_config():
         enable_debug()
         try:
@@ -18,8 +18,11 @@ def test_debug():
     assert not in_debug()
 
     with cfiddle_config():
-        enable_interactive()
-        b = build(code(""), arg_map(a=[[1,1],1])) # shouldn't raise
+        try:
+            b = build(code(""), arg_map(a=[[1,1],1])) # shouldn't raise
+        except Exception as e:
+            t = e
+        assert t.__context__ != None
 
 
 
