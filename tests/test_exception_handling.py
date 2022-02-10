@@ -15,6 +15,7 @@ def test_debug():
         except Exception as e:
             t = e
         assert t.__context__ == None
+
     assert not in_debug()
 
     with cfiddle_config():

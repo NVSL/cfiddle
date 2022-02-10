@@ -32,10 +32,11 @@ class MakeBuilder(Builder):
         vpath = ":".join([os.path.dirname(self.source_file), self.build_directory])
 
         parameter_strings  = [f"{name}={value}" for name, value in self.build_parameters.items()]
+        parameter_strings += [f"TOOLCHAIN_COMPILER_FLAGS={self.toolchain.get_compiler_flags()}"]
+        parameter_strings += [f"LD={self.toolchain.get_linker()}"]
         parameter_strings += [f"BUILD={self.build_directory}"]
         parameter_strings += [f"CFIDDLE_INCLUDE={os.path.join(DATA_PATH, 'include')}"]
         parameter_strings += [f"CFIDDLE_VPATH={vpath}"]
-        #parameter_strings += [f"COMPILER={self.toolchain.get_compiler()}"]
         parameter_strings += [f"TARGET={self.toolchain.get_target()}"]
         
         base_cmd = ["make",

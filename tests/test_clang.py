@@ -36,7 +36,6 @@ def test_tools(setup):
         assert b.get_toolchain().get_tool("c++filt") == "llvm-cxxfilt-10"
         assert b.get_toolchain().get_tool("objdump") == "llvm-objdump-10"
         
-
 def test_describe(setup):
     source = code(r"""void foo(){}""", language="c")
     built = build(source, arg_map(CC=["clang"]), verbose=True)
@@ -54,3 +53,12 @@ def test_maps_experiment(setup):
     print(results.as_df())
     return results.as_df()
 
+@pytest.mark.parametrize("target",["x86_64-pc-linux-gnu",
+                                   "armv7m-pc-linux-eabi",
+])
+def test_cross_compile(setup, target):
+    built = build(code(r"""void foo(){}""", language="c"), arg_map(CC="clang-11", CLANG_TARGET=target), verbose=True)
+    print(built[0].asm("foo"))
+
+
+    

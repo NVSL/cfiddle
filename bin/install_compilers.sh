@@ -31,7 +31,7 @@ EOF
 ##### Go 
 apt-get install -y golang-go
 ##### Clang
-apt-get install -y clang
+apt-get install -y clang clang-11 lld # need these for modern clang cross-compiler support.
 
 exit 0
 

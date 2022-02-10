@@ -31,6 +31,13 @@ $(BUILD)/libcfiddle.so: $(OBJS)
 
 native: $(BUILD)/libcfiddle.so
 
+clang-armv7m-pc-linux-eabi:
+	@if clang -Werror -fuse-ld=lld  --target=armv7m-pc-linux-eabi tiny.c 2>/dev/null; then \
+		$(MAKE) COMPILER='clang  -Wno-unused-command-line-argument -fuse-ld=lld --target=armv7m-pc-linux-eabi' TARGET==armv7m-pc-linux-eabi native;\
+	else \
+		echo "Clang ARM cross compiler not available." ;\
+	fi
+
 arm-cross:
 	@if arm-linux-gnueabi-g++ -v 2>/dev/null; then \
 		$(MAKE) COMPILER=arm-linux-gnueabi-g++ TARGET=$(shell arm-linux-gnueabi-g++ -print-multiarch) native;\

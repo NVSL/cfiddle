@@ -23,10 +23,12 @@ BUILD=$(BUILD_ROOT)/$(TARGET)
 WARNINGS=-Wall -Werror #-Wno-psabi
 DEBUG_FLAGS?=-g3
 INCLUDES=-I. -I$(CFIDDLE_INCLUDE) -I/usr/local/include
-CFLAGS=$(WARNINGS) $(DEBUG_FLAGS) -fPIC $(OPTIMIZE) $(INCLUDES) $(MORE_INCLUDES) $(MORE_CFLAGS) -MMD -save-temps=obj
+CFLAGS=$(WARNINGS) $(DEBUG_FLAGS) $(TOOLCHAIN_COMPILER_FLAGS) -fPIC $(OPTIMIZE) $(INCLUDES) $(MORE_INCLUDES) $(MORE_CFLAGS) -MMD -save-temps=obj
 CXXFLAGS=$(CFLAGS) $(CXX_STANDARD) $(MORE_CXXFLAGS)
 CXX_STANDARD=-std=gnu++11
 LIBS=-L$(CFIDDLE_INCLUDE)/../libcfiddle/build/$(TARGET) -lcfiddle
+
+LD?=$(CXX)
 
 LDFLAGS=$(LD_OPTS) $(MORE_LDFLAGS) $(LIBS) $(MORE_LIBS) #-pthread  #-std=gnu++11  
 
@@ -76,7 +78,7 @@ $(BUILD)/%.o : %.c
 
 $(BUILD)/%.so: $(BUILD)/%.o $(MORE_OBJS)
 	@mkdir -p $(BUILD)
-	$(CXX) $^ $(LDFLAGS) -shared -o $@
+	$(LD) $^ $(LDFLAGS) -shared -o $@
 
 $(BUILD)/%.so: %.go
 	$(GO) build $(OPTIMIZE) $(GO_FLAGS) -o $@ -buildmode=c-shared $< 

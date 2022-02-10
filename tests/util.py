@@ -1,6 +1,7 @@
 from cfiddle import *
 from cfiddle.util import invoke_process
 
+
 def build_and_run(source_file, build_parameters, function, arguments):
     executable = build_one(source_file, build_parameters)
 

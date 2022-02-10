@@ -10,8 +10,6 @@ from .Exceptions import *
 
 class LinuxToolchain(Toolchain):
 
-    def get_asm_function_bookends(self, function):
-        return self._asm_function_bookends(function)
 
     def get_compiler(self):
         return self._compiler
@@ -25,7 +23,7 @@ class ClangToolchain(LinuxToolchain):
     def __init__(self, language, build_parameters):
         super().__init__(language, build_parameters)
         self._compiler = build_parameters.get("CC", build_parameters.get("CXX", "clang"))
-        self._asm_function_bookends = lambda function: (fr"^{re.escape(function)}:\s*", ".cfi_endproc")
+        self._target = build_parameters.get("CLANG_TARGET")
         self._version, self._architecture_name = self._extract_version() # this will be wrong with we coss compile
         
     def get_target(self):
@@ -40,6 +38,21 @@ class ClangToolchain(LinuxToolchain):
         else:
             return f"llvm-{tool}-{self._version}"
 
+    def get_asm_function_bookends(self, function):
+        return (fr"^{re.escape(function)}:\s*", ".cfi_endproc")
+
+    def get_compiler_flags(self):
+        if self._target is None:
+            return ""
+        else:
+            return f"--target={self._target}"
+
+    def get_linker_flags(self):
+        return ""
+    
+    def get_linker(self):
+        return f"clang {self.get_compiler_flags()} -fuse-ld=lld"
+        
     def _extract_version(self):
         success, output = invoke_process([self._compiler, "-v"])
         if not success:
@@ -56,7 +69,7 @@ class ClangToolchain(LinuxToolchain):
             raise ToolError(f"Couldn't extract target from {self._compiler}.")
         target = m.group(1)
         return version, target
-        
-            
+
+    
 TheToolchainRegistry.register_toolchain(tool_regex=r"clang(\+\+)?(-\d+)?", languages=["C++", "C"], tc_type=ClangToolchain)
 
