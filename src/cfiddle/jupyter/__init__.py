@@ -1,5 +1,5 @@
 from tqdm.notebook import tqdm
-from ..config import set_config, enable_interactive
+from ..config import set_config
 from .source import FullyInstrumentedExecutable
 from .util import compare
 from .util import html_parameters
@@ -14,5 +14,5 @@ def configure_for_jupyter():
     """
     set_config("Executable_type", FullyInstrumentedExecutable) 
     set_config("ProgressBar", tqdm)
-    enable_interactive()
+
 
