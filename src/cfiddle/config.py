@@ -3,8 +3,8 @@ import copy
 from .Data import InvocationResultsList
 from .Builder import Executable, ExecutableDescription
 from .MakeBuilder import MakeBuilder
-from .Runner import InvocationResult, InvocationDescription
-from .LocalRunner import LocalRunner
+from .Runner import InvocationResult, InvocationDescription, Runner
+from .LocalSingleRunner import LocalSingleRunner
 from .CProtoParser import CProtoParser
 from .GoProtoParser import GoProtoParser
 from .Exceptions import CFiddleException
@@ -18,7 +18,8 @@ def noop_progress_bar(data, *argc, **kwargs):
 default_config = dict(Executable_type=FullyInstrumentedExecutable,
                       InvocationResult_type=InvocationResult,
                       Builder_type=MakeBuilder,
-                      Runner_type=LocalRunner,
+                      Runner_type=Runner,
+                      SingleRunner_type=LocalSingleRunner,
                       InvocationResultsList_type=InvocationResultsList,
                       ExecutableDescription_type=ExecutableDescription,
                       InvocationDescription_type=InvocationDescription,

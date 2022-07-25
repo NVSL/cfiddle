@@ -39,7 +39,7 @@ def test_csv(setup):
         
         ids = [InvocationDescription(b, "go", dict(k=i)) for i,b in enumerate(executables)]
 
-        results = [LocalRunner(id).run() for id in ids]
+        results = Runner(ids).run()
 
         InvocationResultsList(results).as_csv(combined.name)
         

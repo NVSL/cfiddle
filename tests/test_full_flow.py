@@ -19,7 +19,7 @@ def test_one(setup):
 
     invocation = InvocationDescription(executable, function="ordered", arguments=dict(count=1))
 
-    result = LocalRunner(invocation).run()
+    result = LocalSingleRunner(invocation).run()
 
     print(result.results)
 
@@ -36,7 +36,7 @@ def test_everything_explicit(setup):
                         InvocationDescription(executables[0], function="ordered", arguments=dict(count=1)),
                         InvocationDescription(executables[1], function="ordered", arguments=dict(count=2))]
     
-    results = [LocalRunner(i).run() for i in invocation_specs]
+    results = Runner(invocation_specs).run()
 
     print(InvocationResultsList(results).as_json())
 

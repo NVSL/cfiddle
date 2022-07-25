@@ -166,8 +166,8 @@ $(set-cfiddle-ld-path)
 
 ## Saving Your Work
 
-If you want to save changes you make to any of the examples, you'll need to run docker something like this:
+If you want to save changes you make to any of the examples, you'll need to run docker something like this (this assumes you're in the root of your `cfiddle` directory):
 
 ```
-docker run -it --publish published=8888,target=8888 --mount type=bind,source=$HOME,dst=/home/jovyan -w /home/jovyan/cfiddle_work/cfiddle  stevenjswanson/cfiddle:latest  jupyter lab --LabApp.token=''
+docker run -it -d --publish published=8888,target=8888 --mount type=bind,source=$PWD,dst=/home/jovyan/cfiddle -w /home/jovyan/  stevenjswanson/cfiddle:devel  jupyter lab --LabApp.token=''
 ```

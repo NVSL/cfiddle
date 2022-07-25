@@ -27,29 +27,32 @@ class InvocationDescription:
             
 class Runner:
 
-    def __init__(self, invocation, result_factory=None):
+    def __init__(self, invocations,
+                 single_runner=None,
+                 result_factory=None,
+                 result_list_factory=None,
+                 progress_bar=None):
         from .config import get_config
-        self._invocation = invocation
+        self._invocations = invocations
+        self._single_runner = single_runner or get_config("SingleRunner_type")
         self._result_factory = result_factory or get_config("InvocationResult_type")
+        self._result_list_factory = result_list_factory or get_config("InvocationResultsList_type")
+        self._progress_bar = progress_bar or get_config("ProgressBar")
 
-    
-    def get_build_result(self):
-        return self._invocation.executable
-
-    
-    def get_invocation(self):
-        return self._invocation
-
-    
+        
     def run(self):
-        raise NotImplemented
-    
+        l = self._result_list_factory()
+        for i in self._progress_bar(self._invocations, miniters=1):
+            l.append(self._single_runner(i, self._result_factory).run())
+        return l
 
-    def bind_arguments(self, arguments, signature):
+    
+    @classmethod
+    def bind_arguments(cls, arguments, signature):
         """
         Take mapping from parameter names to values a function signature and:
         1.  Check that the values of the arguments are compatible with the signature
-        2.  Return an parameter list in the right order to call the function.
+        2.  Return a parameter list in the right order to call the function.
         """
         r = []
         for a in signature.parameters:

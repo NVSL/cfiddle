@@ -49,7 +49,7 @@ def test_maps_experiment(setup):
 
     invocations = [InvocationDescription(**i) for i in arg_map(executable=executables, function=["ordered", "unordered"], arguments=arg_map(count=map(lambda x: 2**x, range(0,10))))]
 
-    results = InvocationResultsList(LocalRunner(i).run() for i in invocations)
+    results = Runner(invocations).run()
     
     print(results.as_df())
     return results.as_df()

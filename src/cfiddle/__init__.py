@@ -4,7 +4,8 @@ __all__ = [
     "Executable",
     "MakeBuilder",
     "InvocationDescription",
-    "LocalRunner",
+    "LocalSingleRunner",
+    "Runner",
     "arg_map",
     "code",
     "build_and_run",
@@ -24,8 +25,8 @@ __all__ = [
 from .Data import InvocationResultsList
 from .Builder import ExecutableDescription, Executable
 from .MakeBuilder import MakeBuilder
-from .Runner import InvocationDescription, InvocationResult
-from .LocalRunner import LocalRunner
+from .Runner import InvocationDescription, InvocationResult, Runner
+from .LocalSingleRunner import LocalSingleRunner
 from .util import arg_map, changes_in, exp_range, running_under_jupyter
 from .Code import code
 from .config import get_config, set_config, enable_debug, cfiddle_config
@@ -34,6 +35,8 @@ from .perfcount import are_perf_counters_available
 from .Toolchain import list_architectures
 from .Exceptions import CFiddleException, handle_cfiddle_exceptions
 
+
+
 def build_and_run(source_file, build_parameters, function, arguments):
     executable = build_one(source_file, build_parameters)
 
@@ -41,7 +44,7 @@ def build_and_run(source_file, build_parameters, function, arguments):
 
 @handle_cfiddle_exceptions
 def build(source, build_parameters=None, **kwargs):
-    """Compile one or more source files in one or more different ways.
+    """Compile one or more source files in one or more ways.
 
     ``source`` can be a single filename or a list of file names.  ``build``
     compiles each file into an :obj:`Executable`.  A call to :func:`code()` is
@@ -89,14 +92,19 @@ def run_list(invocations, perf_counters=None, **kwargs):
         perf_counters = []
 
     IRList = get_config("InvocationResultsList_type")
+    IRType = get_config("InvocationResult_type")
     Runner = get_config("Runner_type")
+    LocalSingleRunner = get_config("SingleRunner_type")
     InvDesc = get_config("InvocationDescription_type")
     progress_bar = get_config("ProgressBar")
-    
-    l = IRList()
-    for i in progress_bar(invocations, miniters=1):
-        l.append(Runner(InvDesc(**i, perf_counters=perf_counters), **kwargs).run())
-    return l
+
+    return Runner([InvDesc(**i, perf_counters=perf_counters) for i in invocations],
+                  single_runner=LocalSingleRunner,
+                  result_list_factory=IRList,
+                  result_factory=IRType,
+                  progress_bar=progress_bar,
+                  **kwargs).run()
+
 
 @handle_cfiddle_exceptions
 def run(executable, function, arguments=None, perf_counters=None, **kwargs):

@@ -18,6 +18,8 @@ def handle_cfiddle_exceptions(f):
                 raise type(e)(f"CFiddle encountered an error (call `enable_debug()` for full details):\n{str(e)}")
                 
         except Exception as e:
+            if in_debug():
+                raise
             raise type(e)(f"CFiddle encountered an internal error.  Call `enable_debug()` for full details and consider submitting a bug report:\n{str(e)}")
             
     return wrapped
