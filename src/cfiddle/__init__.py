@@ -6,6 +6,7 @@ __all__ = [
     "InvocationDescription",
     "LocalSingleRunner",
     "Runner",
+    "ExternalRunner",
     "arg_map",
     "code",
     "build_and_run",
@@ -26,6 +27,7 @@ from .Data import InvocationResultsList
 from .Builder import ExecutableDescription, Executable
 from .MakeBuilder import MakeBuilder
 from .Runner import InvocationDescription, InvocationResult, Runner
+from .ExternalRunner import ExternalRunner
 from .LocalSingleRunner import LocalSingleRunner
 from .util import arg_map, changes_in, exp_range, running_under_jupyter
 from .Code import code

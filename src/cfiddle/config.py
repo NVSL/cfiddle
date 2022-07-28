@@ -9,6 +9,8 @@ from .CProtoParser import CProtoParser
 from .GoProtoParser import GoProtoParser
 from .Exceptions import CFiddleException
 from .source import FullyInstrumentedExecutable
+from .ExternalRunner import SubprocessExternalRunnerDelegate
+
 from tqdm import tqdm
 from contextlib import contextmanager
 
@@ -26,6 +28,7 @@ default_config = dict(Executable_type=FullyInstrumentedExecutable,
                       ProtoParser_types=[CProtoParser, GoProtoParser],
                       CFIDDLE_BUILD_ROOT=".cfiddle/builds",
                       ProgressBar=noop_progress_bar,
+                      ExternalCommandRunner_type=SubprocessExternalRunnerDelegate,
                       DEBUG_MODE=False)
 
 

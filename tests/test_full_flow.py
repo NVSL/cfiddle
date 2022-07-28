@@ -91,6 +91,7 @@ def test_build_parameter(setup):
     assert t[1].build_spec.build_parameters == dict(OPTIMIZE="-O3")
     assert len(t) == 2
 
+
 def test_build_multi_build(setup):
     t = build(source=["test_src/std_maps.cpp","test_src/test.cpp"],
               build_parameters=arg_map(OPTIMIZE=["-O0", "-O1"]))
@@ -115,8 +116,8 @@ def test_run_list(test_cpp):
     assert t[0].return_value == 3
     
     t = run_list(invocations=arg_map(executable=[test_cpp],
-                                         function=["sum", "product"],
-                                         arguments=arg_map(a=[1,2], b=[3,4])))
+                                     function=["sum", "product"],
+                                     arguments=arg_map(a=[1,2], b=[3,4])))
     assert len(t) == 8
     assert t[1].return_value == 5
 
@@ -126,7 +127,8 @@ def test_run_simple(test_cpp):
     t = run(executable=test_cpp, function="sum", arguments=dict(a=1, b=2))
     assert len(t) == 1
     assert t[0].return_value == 3
-    
+
+
 def test_run_combo(test_cpp):
     t = run(executable=test_cpp,
              function=["sum", "product"],
