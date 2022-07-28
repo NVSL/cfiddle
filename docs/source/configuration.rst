@@ -33,9 +33,9 @@ Controlling how CFiddle Runs Code
 *********************************
 
 Usually runs your code as part of the invoking Python process using
-:class:`Runner.  You can modify this behavior by creating an
+:class:`Runner`.  You can modify this behavior by creating an
 alternative implementation of :class:`Runner` and setting the
-`Runner_type` configuration option accordingly.
+:code:`Runner_type` configuration option accordingly.
 
 CFiddle includes :class:`ExternalRunner` which will run your code in a
 separate process.  You can use it like so:
