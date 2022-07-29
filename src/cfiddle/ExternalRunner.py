@@ -19,7 +19,7 @@ class SubprocessExternalRunnerDelegate:
         try:
             subprocess.run(command, check=True, capture_output=True)
         except subprocess.CalledProcessError as e:
-            raise ExternalRunnerError("ExternalRunner failed (error code {e.returncode}): {e.stdout} {e.stderr}")
+            raise ExternalRunnerException("ExternalRunner failed (error code {e.returncode}): {e.stdout} {e.stderr}")
 
   
 class ExternalRunner(Runner):
@@ -70,9 +70,9 @@ class ExternalRunner(Runner):
 @click.option('--runner', "runner", required=True, type=click.File("rb"), help="File with a pickled Runner in it.")
 @click.option('--results', "results", required=True, type=click.File("wb"), help="File to deposit the results in.")
 def remote_runner(runner, results):
-    _remote_runner(runner, results)
+    do_remote_runner(runner, results)
     
-def _remote_runner(runner, results):
+def do_remote_runner(runner, results):
     t = pickle.load(runner)
     try:
         pickle.dump(super(ExternalRunner, t).run(), results)

@@ -1,18 +1,22 @@
 from .Builder import Executable
 from .Exceptions import CFiddleException
-import collections
+import copy
 import os
 from .util import type_check, type_check_list
 
 
 class InvocationDescription:
-    def __init__(self, executable, function, arguments, perf_counters=None):
+    def __init__(self, executable, function, arguments, perf_counters=None, run_options=None):
         if perf_counters is None:
             perf_counters = []
+        if run_options is None:
+            run_options = dict()
+
         self.executable = executable
         self.function = function
         self.arguments = arguments
         self.perf_counters = perf_counters
+        self.run_options = run_options
         self._raise_on_invalid_types()
 
     def _raise_on_invalid_types(self):
@@ -24,7 +28,30 @@ class InvocationDescription:
             type_check_list(self.arguments.keys(), str)
         except (ValueError, TypeError) as e:
             raise InvalidInvocation(e)
-            
+
+        
+class RunOptionManager(object):
+
+    def __init__(self, options):
+        self._options = options
+
+    def apply_options(self):
+        self._old_env = copy.deepcopy(os.environ)
+        os.environ.update(self._stringize(self._options))
+        
+    def revert_options(self):
+        os.environ.clear()
+        os.environ.update(self._old_env)
+        
+    def __enter__(self):
+        self.apply_options()
+
+    def __exit__(self, type, value, traceback):
+        self.revert_options()
+
+    def _stringize(self, m):
+            return {str(k):str(v) for k,v in m.items()}
+        
 class Runner:
     """Runs a set of invocations.
 

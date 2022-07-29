@@ -1,10 +1,11 @@
 from cfiddle import *
 from util import *
-from cfiddle.Runner import Runner, InvocationDescription, IncorrectArgumentType, InvalidInvocation
+from cfiddle.Runner import Runner, InvocationDescription, IncorrectArgumentType, InvalidInvocation, RunOptionManager
 from fixtures import *
 import ctypes
 import pytest
 import inspect
+import os
 
 from cfiddle.ProtoParser import Parameter, Prototype
 
@@ -50,3 +51,40 @@ def test_Invocation_types(test_cpp):
 
     with pytest.raises(InvalidInvocation):
         InvocationDescription(test_cpp,"",{1:1})
+
+
+def test_run_options(setup):
+    enable_debug()
+    
+    b = build(code(r"""
+#include<stdlib.h>
+extern "C" long int env() {
+    return strtol(getenv("NUMBER"), NULL, 10);
+}"""))
+
+    os.environ["NUMBER"] = "6"
+    run(b, function="env")[0].return_value == 6
+    run(b, function="env",
+        run_options=dict(NUMBER=4))[0].return_value == 4
+    run(b, function="env")[0].return_value == 6
+    
+    t = run(b, function="env",
+            run_options=arg_map(NUMBER=[1,2,4]))
+
+
+    assert (t[0].return_value, t[1].return_value, t[2].return_value) == (1,2,4)
+
+    
+def test_run_option_manager(setup):
+    
+    class MyException(Exception):
+        pass
+
+    class ROM(RunOptionManager):
+        def apply_options(self):
+            raise MyException()
+        
+    with cfiddle_config(RunOptionManager_type=ROM):
+        with pytest.raises(MyException):
+            sanity_test()
+    

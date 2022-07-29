@@ -3,7 +3,7 @@ import copy
 from .Data import InvocationResultsList
 from .Builder import Executable, ExecutableDescription
 from .MakeBuilder import MakeBuilder
-from .Runner import InvocationResult, InvocationDescription, Runner
+from .Runner import InvocationResult, InvocationDescription, Runner, RunOptionManager
 from .LocalSingleRunner import LocalSingleRunner
 from .CProtoParser import CProtoParser
 from .GoProtoParser import GoProtoParser
@@ -29,6 +29,7 @@ default_config = dict(Executable_type=FullyInstrumentedExecutable,
                       CFIDDLE_BUILD_ROOT=".cfiddle/builds",
                       ProgressBar=noop_progress_bar,
                       ExternalCommandRunner_type=SubprocessExternalRunnerDelegate,
+                      RunOptionManager_type=RunOptionManager,
                       DEBUG_MODE=False)
 
 

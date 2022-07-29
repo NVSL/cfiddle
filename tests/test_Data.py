@@ -31,44 +31,51 @@ def test_lots_of_no_data(test_cpp):
 
 def test_csv(setup):
     import csv
+
     
     exec_specs = [ExecutableDescription(*es) for es in product(["test_src/write_dataset.cpp"], arg_map(TEST=["A", "B"]))]
     executables = [MakeBuilder(es, rebuild=True, verbose=True).build() for es in exec_specs]
     
     with tempfile.NamedTemporaryFile() as combined:
-        
-        ids = [InvocationDescription(b, "go", dict(k=i)) for i,b in enumerate(executables)]
 
-        results = Runner(ids).run()
-
-        InvocationResultsList(results).as_csv(combined.name)
-        
+        r = run(build("test_src/write_dataset.cpp", arg_map(TEST=["A", "B"])),
+            function="go",
+            arguments=arg_map(k=[1]),
+            run_options=arg_map(OPTION=["10", "20"]))
+                                                                                                            
+        r.as_csv(combined.name)
         combined.flush()
         with open(combined.name, "r") as read_back:
             rows = csv.DictReader(read_back)
-            assert rows.fieldnames == ["TEST", "function", "k", "y", "z"]
+            assert rows.fieldnames == ["TEST", "function", "k", "OPTION", "y", "z"]
             rows =  list(rows)
 
-            assert len(rows) == 4
+            assert len(rows) == 8
             assert rows[0]['TEST'] == "A"
-            assert rows[0]['k'] == "0"
-            assert rows[0]['y'] == "0"
+            assert rows[0]['k'] == "1"
+            assert rows[0]['y'] == "1"
             assert rows[0]['z'] == ""
+            assert rows[0]['OPTION'] == "10"
             
             assert rows[1]['TEST'] == "A"
-            assert rows[1]['k'] == "0"
+            assert rows[1]['k'] == "1"
             assert rows[1]['y'] == ""
-            assert rows[1]['z'] == "1"
+            assert rows[1]['z'] == "2"
+            assert rows[1]['OPTION'] == "10"
 
-            assert rows[2]['TEST'] == "B"
+            assert rows[2]['TEST'] == "A"
             assert rows[2]['k'] == "1"
             assert rows[2]['y'] == "1"
             assert rows[2]['z'] == ""
+            assert rows[2]['OPTION'] == "20"
 
-            assert rows[3]['TEST'] == "B"
+            assert rows[3]['TEST'] == "A"
             assert rows[3]['k'] == "1"
             assert rows[3]['y'] == ""
             assert rows[3]['z'] == "2"
+            assert rows[3]['OPTION'] == "20"
+
+            assert rows[4]['TEST'] == "B"
 
 def test_json(test_cpp):
     exe = run(test_cpp, ["sum", "product"], arguments=arg_map(a=[1,2], b=[2,3]))

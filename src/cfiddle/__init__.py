@@ -109,7 +109,7 @@ def run_list(invocations, perf_counters=None, **kwargs):
 
 
 @handle_cfiddle_exceptions
-def run(executable, function, arguments=None, perf_counters=None, **kwargs):
+def run(executable, function, arguments=None, perf_counters=None, run_options=None, **kwargs):
     """Run one or more functions with one or more sets of arguments.
 
     Run each ``function`` in each :obj:`Executable` using each set of arguments,
@@ -120,7 +120,7 @@ def run(executable, function, arguments=None, perf_counters=None, **kwargs):
     signature (i.e., the key-value pairs in ``arguments`` must align with names
     and types of the function's arguments).
 
-    The value of ``arguments`` is typically provided by a call to
+    The values of ``arguments`` and ``run_options`` are typically provided by a call to
     :func:`cfiddle.util.arg_map()`.
 
     Returns an :obj:`InvocationResultsList` which is a subclass of :obj:`list`
@@ -135,6 +135,7 @@ def run(executable, function, arguments=None, perf_counters=None, **kwargs):
        function: A ``str`` or list of ``str`` naming functions to call.
        arguments: A :obj:`dict` of arguments for the function.  Or a list of such :obj:`dict`.  Defaults to ``{}``
        perf_counters: A list of performance counters to collect. Default to None.
+       run_options: Parameters controlling how the function is run.  Default to None.
 
     Returns:
        :obj:`InvocationResultsList`:  A list of :obj:`InvocationResult` objects.
@@ -144,7 +145,7 @@ def run(executable, function, arguments=None, perf_counters=None, **kwargs):
     if arguments is None:
         arguments = [{}]
 
-    invocations = arg_map(executable=executable, function=function, arguments=arguments)
+    invocations = arg_map(executable=executable, function=function, arguments=arguments, run_options=run_options)
     return run_list(invocations, perf_counters=perf_counters, **kwargs)
         
 

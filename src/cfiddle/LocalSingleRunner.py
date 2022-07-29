@@ -4,10 +4,11 @@ import os
 import csv
 import faulthandler
 
-from .Runner import Runner, InvocationResult, RunnerException
+from .Runner import Runner, InvocationResult, RunnerException, RunOptionManager
 from .Exceptions import CFiddleException
 from .util import environment
 from .perfcount import install_perf_counters, clear_perf_counters
+
 
 faulthandler.enable()
 
@@ -18,9 +19,11 @@ class LocalSingleRunner:
         self._libcfiddle = ctypes.CDLL("libcfiddle.so")
         self._invocation = invocation
         self._result_factory = result_factory or get_config("InvocationResult_type")
-
+        self._run_option_manager = get_config("RunOptionManager_type")
+        
     def run(self):
         self._prepare_data_collection()
+
         return_value = self._invoke_function()
         results = self._collect_data()
         return self._result_factory(invocation=self._invocation, results=results, return_value=return_value)
@@ -31,7 +34,9 @@ class LocalSingleRunner:
     def _invoke_function(self):
         self.bound_arguments = Runner.bind_arguments(self._invocation.arguments, self._get_function(self._invocation.function))
         f = self._load_symbol()
-        return f(*self.bound_arguments)
+        
+        with self._run_option_manager(self._invocation.run_options):
+            return f(*self.bound_arguments)
     
     def _load_symbol(self):
         try:

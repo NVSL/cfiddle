@@ -16,7 +16,8 @@ class InvocationResultsList(list):
     1.  Build parameters.
     2.  The function name.
     3.  The function arguments.
-    4.  Measurements and outputs of the functions
+    4.  The run options.
+    5.  Measurements and outputs of the functions
 
     You can export these data in multiple formats using the methods below.
     """
@@ -83,6 +84,9 @@ class InvocationResultsList(list):
             ordered_keys.merge_in_keys(r.invocation.arguments)
 
         for r in invocation_results:
+            ordered_keys.merge_in_keys(r.invocation.run_options)
+
+        for r in invocation_results:
             ordered_keys.merge_in_keys(r.get_results_field_names())
 
         all_rows = []
@@ -95,7 +99,8 @@ class InvocationResultsList(list):
 
     def __build_merged_rows(self,ordered_keys, run_result):
         merged_build_parameters_and_arguments = {**run_result.invocation.executable.build_spec.build_parameters,
-                                                 **run_result.invocation.arguments}
+                                                 **run_result.invocation.arguments,
+                                                 **run_result.invocation.run_options}
 
         data_from_execution = run_result.get_results()
 
