@@ -162,7 +162,7 @@ class CProtoParser(CLikeProtoParser):
             (ctypes.c_short , ["short"]),
             (ctypes.c_ushort , ["unsigned short"]),
             (ctypes.c_int , ["int"]),
-            (ctypes.c_uint , ["unsigned int"]),
+            (ctypes.c_uint , ["unsigned int", 'uint']),
             (ctypes.c_long , ["long", "long int"]),
             (ctypes.c_ulong , ["unsigned long", "unsigned long int"]),
             (ctypes.c_longlong , ["long long"]),

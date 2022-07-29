@@ -26,6 +26,7 @@ def test_unhandled_get_ctype(CParser,t,ct):
     ("int bar", Parameter(ctypes.c_int, "bar")),
     (" int  bar", Parameter(ctypes.c_int, "bar")),
     (" int  bar", Parameter(ctypes.c_int, "bar")),
+    (" uint  bar", Parameter(ctypes.c_uint, "bar")),
     (" long int  bar", Parameter(ctypes.c_long, "bar")),
     (" unsigned long int  bar", Parameter(ctypes.c_ulong, "bar")),
     ("register unsigned long int  bar", Parameter(ctypes.c_ulong, "bar")),
