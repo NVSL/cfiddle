@@ -41,11 +41,27 @@ cfiddle_config_stack.append(default_config)
 
     
 def set_config(k,v):
+    """Set a configuration values.
+
+    Args:
+      k:  The name of the configuration variable.
+      v:  The value.
+    """
+
     global cfiddle_config_stack
     cfiddle_config_stack[-1][k] = v
 
     
 def get_config(k):
+    """Query a configuration values.
+
+    Args:
+      k:  The name of the configuration variable.
+
+    Returns:
+      The value in the current configuration.
+    """
+
     # TODO several places check the environment first and then look here. We sohuld factor that out.
     global cfiddle_config_stack
     return cfiddle_config_stack[-1][k]

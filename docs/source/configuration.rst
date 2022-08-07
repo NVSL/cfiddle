@@ -23,17 +23,29 @@ errors and hides the internal stack trace.  You can expose with :func:`enable_de
 Limiting Configuration Scope
 ****************************
 
-CFiddle maintains a stack of configuration environments.  This lets you limit
-the impact of a configuration change using :code:`with` statement.
+CFiddle maintains a stack of configuration environments.
+
+You can limit the impact of a configuration change by using a
+:code:`with` statement an :func:`cfiddle_config`.  It pushes a copy of
+the current configuration onto the stack and pops it off at the end of
+the :code:`with`.
 
 .. autofunction:: cfiddle.cfiddle_config
+
+You can also set parmeters in the current configuration with
+:func:`set_config` and query the current configuration with
+:func:`get_config`.
+
+.. autofunction:: cfiddle.config.set_config
+
+.. autofunction:: cfiddle.config.get_config
 
 		  
 Controlling the Code's Execution Environment
 ********************************************
 
 You can control the execution environment for the code using the
-``run_options`` paremeter to :function:`run`.  It takes a dictionary
+``run_options`` paremeter to :func:`run`.  It takes a dictionary
 that's passed to an implementation of :class:`RunOptionManager`
 specified by the ``RunOptionManager_type`` configuration option.
 
@@ -45,6 +57,23 @@ The default just adds ``run_options`` as environment variables.
 
 .. autoclass:: cfiddle.Runner.RunOptionManager
 
+Setting Defaults for Building and Running
+*****************************************
+
+You set defaults for ``build_parameters``, ``run_options``, and
+``perf_counters`` to avoid setting them repeatedly.
+
+The corresponding configuration options are ``perf_counters_default``,
+``build_parameters_default``, and ``run_options_default``.  You can
+set them using :func:`cfiddle.cfiddle_config`:
+
+.. doctest::
+   
+    >>> from cfiddle import  *
+    >>> sample = code(r"""void nothing(){}""")
+    >>> with cfiddle_config(build_parameters_default=dict(OPTIMIZE="-O3")):
+    ...    b = build(code(r"""void nothing() {}"""))
+	       
 		  
 Controlling How CFiddle Runs Code
 *********************************
