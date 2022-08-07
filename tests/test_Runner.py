@@ -52,27 +52,35 @@ def test_Invocation_types(test_cpp):
     with pytest.raises(InvalidInvocation):
         InvocationDescription(test_cpp,"",{1:1})
 
-
-def test_run_options(setup):
-    enable_debug()
-    
-    b = build(code(r"""
+@pytest.fixture
+def env_echo(setup):
+    return build(code(r"""
 #include<stdlib.h>
 extern "C" long int env() {
     return strtol(getenv("NUMBER"), NULL, 10);
-}"""))
+}"""))[0]
+   
 
+def test_run_options(env_echo):
+    enable_debug()
+ 
     os.environ["NUMBER"] = "6"
-    run(b, function="env")[0].return_value == 6
-    run(b, function="env",
+    run(env_echo, function="env")[0].return_value == 6
+    run(env_echo, function="env",
         run_options=dict(NUMBER=4))[0].return_value == 4
-    run(b, function="env")[0].return_value == 6
+    run(env_echo, function="env")[0].return_value == 6
     
-    t = run(b, function="env",
+    t = run(env_echo, function="env",
             run_options=arg_map(NUMBER=[1,2,4]))
 
 
     assert (t[0].return_value, t[1].return_value, t[2].return_value) == (1,2,4)
+
+def test_default_run_options(env_echo):
+    with cfiddle_config(run_options_default=arg_map(NUMBER=[1,2])):
+        t = run(env_echo, function="env")
+        assert t[0].return_value == 1
+        assert t[1].return_value == 2
 
     
 def test_run_option_manager(setup):

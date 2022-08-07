@@ -28,6 +28,12 @@ def test_cpp_nop_builder(setup):
                                                          build_parameters=dict(OPTIMIZE="-O1")))
 
 
+def test_default_parameters(setup):
+    with cfiddle_config(build_parameters_default=arg_map(OPTIMIZE="-O1")):
+        b = build("test_src/test.cpp")
+        assert b[0].build_spec.build_parameters == dict(OPTIMIZE="-O1")
+        
+    
 def test_builder_construction(test_cpp_nop_builder, setup):
 
     assert test_cpp_nop_builder.source_file == "test_src/test.cpp"

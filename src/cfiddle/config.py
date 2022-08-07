@@ -30,6 +30,9 @@ default_config = dict(Executable_type=FullyInstrumentedExecutable,
                       ProgressBar=noop_progress_bar,
                       ExternalCommandRunner_type=SubprocessExternalRunnerDelegate,
                       RunOptionManager_type=RunOptionManager,
+                      perf_counters_default=None,
+                      build_parameters_default=None,
+                      run_options_default=None,
                       DEBUG_MODE=False)
 
 

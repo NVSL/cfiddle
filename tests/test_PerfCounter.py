@@ -86,11 +86,16 @@ def test_perf_count_type(cycle_counter):
         with pytest.raises(UnknownPerformanceCounter):
             run(cycle_counter, "go", {}, perf_counters=[4])
 
-
+def test_default_perf_count(mem_loop):
+    with cfiddle_config(perf_counters_default=["CYCLES", "INSTRUCTIONS"]):
+        results = run(mem_loop, "go", arg_map(count=[10000]))
+        assert "CYCLES" in results.as_dicts()[0]
+        assert "INSTRUCTIONS" in results.as_dicts()[0]
+    results = run(mem_loop, "go", arg_map(count=[10000]))
+    assert "CYCLES" not in results.as_dicts()[0]
+    assert "INSTRUCTIONS" not in results.as_dicts()[0]
+        
+    
 def skip_if_no_perf_counters():
     if not are_perf_counters_available():
         pytest.skip("unsupported configuration")
-
-
-
-        

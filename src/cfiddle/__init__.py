@@ -73,10 +73,13 @@ def build(source, build_parameters=None, **kwargs):
         list of :obj:`Executable`: One executable for each combination of ``source`` and ``build_parameters``.
 
     """
+       
+    if build_parameters is None:
+        build_parameters = get_config("build_parameters_default")
 
     if build_parameters is None:
-       build_parameters = [{}]
-
+        build_parameters = [{}]
+        
     builds = arg_map(source=source, build_parameters=build_parameters)
     
     Builder = get_config("Builder_type")
@@ -144,7 +147,11 @@ def run(executable, function, arguments=None, perf_counters=None, run_options=No
     
     if arguments is None:
         arguments = [{}]
-
+    if perf_counters is None:
+        perf_counters = get_config("perf_counters_default")
+    if run_options is None:
+        run_options = get_config("run_options_default")
+        
     invocations = arg_map(executable=executable, function=function, arguments=arguments, run_options=run_options)
     return run_list(invocations, perf_counters=perf_counters, **kwargs)
         
