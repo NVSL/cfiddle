@@ -107,7 +107,7 @@ class Builder:
         raise NotImplemented
 
     def _compute_build_directory(self):
-        return os.path.join(self.build_root, "__".join([f"{p}_{v.replace(' ', '')}" for p,v in self.build_parameters.items()]) + "_" + self.source_name_base)
+        return os.path.join(self.build_root, "__".join([f"{p}_{v.replace(' ', '').replace('=','_').replace('/','_')}" for p,v in self.build_parameters.items()]) + "_" + self.source_name_base)
 
     
     def _compute_source_name_base(self):

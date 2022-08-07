@@ -51,6 +51,16 @@ def test_alt_build_directory(setup):
     assert t.build_root == "/tmp"
     
 
+def test_equal_in_build_parameters(setup):
+    t = build("test_src/test.cpp", build_parameters=arg_map(OPTIMIZE="-march=skylake"))
+    run(t,  function="four")
+
+    
+def test_slash_in_build_parameters(setup):
+    t = build("test_src/test.cpp", build_parameters=arg_map(FOO="a/b/bc/"))
+    run(t,  function="four")
+
+    
 def test_mixins(setup):
     class MyResult(Executable):
         def my_result(self):
