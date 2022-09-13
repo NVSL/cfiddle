@@ -9,13 +9,13 @@ class ExternalRunnerException(CFiddleException):
     pass
 
 class BashExternalRunnerDelegate:
-    def execute(self, command):
+    def execute(self, command, runner):
         c = " ".join(command)
         os.system(f"""bash -c '{c}'""")
 
         
 class SubprocessExternalRunnerDelegate:
-    def execute(self, command):
+    def execute(self, command, runner):
         try:
             subprocess.run(command, check=True, capture_output=True)
         except subprocess.CalledProcessError as e:
@@ -44,7 +44,7 @@ class ExternalRunner(Runner):
 
         self._pickle_self(runner_filename)
         
-        cmd_runner.execute(["cfiddle-run", "--runner", runner_filename, "--results", results_filename])
+        cmd_runner.execute(["cfiddle-run", "--runner", runner_filename, "--results", results_filename], runner=self)
 
         r = self._unpickle_results(results_filename)
         if isinstance(r, Exception):

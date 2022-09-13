@@ -86,6 +86,9 @@ class Runner:
         """
         
         return self._do_run(self._invocations)
+
+    def get_invocations(self):
+        return self._invocations
     
     def _do_run(self, invocations):
         l = self._result_list_factory()
