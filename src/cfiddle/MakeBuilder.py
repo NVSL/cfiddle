@@ -60,7 +60,11 @@ class MakeBuilder(Builder):
 
         functions = self.parser.parse_file(self.source_file)
 
+        extra_source = self._collect_extra_source()
 
+        for e in extra_source:
+            functions.update(self.parser.parse_file(e))
+            
         return self.result_factory(lib=so_unique_name,
                                    toolchain=self.toolchain,
                                    functions=functions,
@@ -81,6 +85,13 @@ class MakeBuilder(Builder):
     def verbose(self, verbose=True):
         self._verbose = verbose
 
+
+    def _collect_extra_source(self):
+        if "MORE_SRC" in self.build_parameters:
+            return self.build_parameters["MORE_SRC"].split()
+        else:
+            return []    
+        
         
     def _get_multiarch_string(self, tool):
         success, value = invoke_process([tool, "-print-multiarch"])

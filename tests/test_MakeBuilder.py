@@ -39,3 +39,11 @@ def test_complex_flags(setup):
     result = builder.build()
     assert os.path.exists(result.lib)
 
+def test_more_src(setup):
+    t = build("test_src/test.cpp", arg_map(MORE_SRC="test_src/extra.cpp"))
+    t2 = run(t, function="extra")
+    assert t2[0].return_value == 5
+    
+    
+                          
+    
