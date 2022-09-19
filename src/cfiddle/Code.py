@@ -5,7 +5,7 @@ from .config import get_config
 from .paths import cfiddle_lib_path, cfiddle_include_path
 from .Exceptions import CFiddleException
 
-def code(source, language=None, raw=False):
+def code(source, file_name=None, language=None, raw=False):
     """Generate an anonymous source file and return the path to it.
 
     Write ``source`` to anonymous file and return the file's name.  This function
@@ -13,6 +13,7 @@ def code(source, language=None, raw=False):
 
     Args:
       source:    The source code.  Raw strings work best (e.g., `r\"\"\" // my code \"\"\"`).
+      file_name: Where to put the source code.  This file will be overwritten.
       language:  Suffix to use for the filename.  Default to `cpp`.
       raw:       Don't add language-specific boilerplate. (Default: :code:`False`)
     Returns:
@@ -27,14 +28,16 @@ def code(source, language=None, raw=False):
             raise UnknownLanguageSuffix(f"Unknown suffix '{language}'.  Options are: {list(language_decorators.keys())}")
         source = language_decorators[language](source)
 
-    
-    
-    file_name = _compute_anon_code_filename(source, language)
+    if file_name is None:
+        file_name = _compute_anon_code_filename(source, language)
+
     _update_source(file_name, source)
     return file_name
 
 def _decorate_go_code(source):
     return f""" 
+// This file was written by cfiddle.  It's likely that it'll get overwritten in the future, so any edits you make are likely to be lost.
+
 package main
 
 // #cgo LDFLAGS: -L{cfiddle_lib_path()}  -lcfiddle
@@ -48,10 +51,16 @@ func main() {{}}
 """
 
 def _decorate_c_code(source):
-    return source
+    return f""" 
+/* This file was written by cfiddle.  It's likely that it'll get overwritten in the future, so any edits you make are likely to be lost.*/
+{source}
+"""
 
 def _decorate_cpp_code(source):
-    return source
+    return f""" 
+// This file was written by cfiddle.  It's likely that it'll get overwritten in the future, so any edits you make are likely to be lost.
+{source}
+"""
 
 def _compute_anon_code_filename(source, language):
     anon_source_directory = os.path.join(os.environ.get("CFIDDLE_BUILD_ROOT", get_config("CFIDDLE_BUILD_ROOT")), "anonymous_code")
@@ -60,7 +69,11 @@ def _compute_anon_code_filename(source, language):
     
 def _update_source(source_file, source):
     if not os.path.exists(source_file) or read_file(source_file) != source:
-        os.makedirs(os.path.dirname(source_file), exist_ok=True)
+        directory = os.path.dirname(source_file)
+        if directory == "":
+            directory = "."
+        else:
+            os.makedirs(directory, exist_ok=True)
         with open(source_file, "w") as r:
             r.write(source)
 

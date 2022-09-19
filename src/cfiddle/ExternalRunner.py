@@ -43,7 +43,8 @@ class ExternalRunner(Runner):
         runner_filename, results_filename = self._temp_files()
 
         self._pickle_self(runner_filename)
-        
+
+
         cmd_runner.execute(["cfiddle-run", "--runner", runner_filename, "--results", results_filename], runner=self)
 
         r = self._unpickle_results(results_filename)

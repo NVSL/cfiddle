@@ -3,6 +3,7 @@ import os
 from cfiddle import *
 from util import *
 from cfiddle.config import get_config
+from cfiddle.util import read_file, working_directory
 
 from fixtures import *
 
@@ -30,3 +31,18 @@ def test_code_c(setup):
         return 4;
     }
     """, language="c"), {}, "four", {})
+
+def test_code_file(setup):
+    with tempfile.TemporaryDirectory() as d:
+        with working_directory(d):
+            for file_name in ["foo.cpp", os.path.join(d, "bar.cpp")]:
+                source = r"""
+                int four() {
+                return 4;
+                }
+                """
+                actual_name = code(source, file_name=file_name, language="cpp", raw=True)
+                assert os.path.exists(actual_name)
+                assert actual_name == file_name
+                assert read_file(actual_name) == source
+
