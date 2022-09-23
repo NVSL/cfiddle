@@ -6,6 +6,7 @@ import types
 import os
 import pytest
 
+
 class ExecutableDescription:
     def __init__(self, source=None, build_parameters=None):
         self.source_file = source

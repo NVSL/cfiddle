@@ -61,6 +61,7 @@ def test_perf_count_easy(mem_loop):
     assert "CYCLES" in results.as_dicts()[0]
     print(results.as_df())
 
+
 def test_perf_count_reset(mem_loop):
     skip_if_no_perf_counters()
     results = run(mem_loop, "go", arg_map(count=[10000,10000]), perf_counters=["CYCLES"])
