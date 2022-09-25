@@ -13,6 +13,9 @@ void go(T v) {
 	std::cout << v << "aoeu\n";
 }
 
+void demangle_me() {
+}
+
 extern "C"
 void simple_print(int a, int b, int c) {
 	std::cout << "a=" << a << "; b = " << b << "; c = " << c << "\n";

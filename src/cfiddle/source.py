@@ -59,21 +59,22 @@ class Assembly:
         source_base_name = self.extract_build_name(self.build_spec.source_file)
         asm_file = self.compute_built_filename(f"{source_base_name}.s")
 
-        with open(asm_file) as f:
-            assembly = f.read()
+        assembly = contents_of(asm_file)
 
-        assembly = self.demangle_assembly(assembly) if demangle else assembly
+        if demangle:
+            assembly = self.demangle_assembly(assembly)
 
-        return extract_code(asm_file, self, show=show, language="gas", **kwargs)
+        return extract_code(asm_file, self, source=assembly, show=show, language="gas", **kwargs)
 
     
     def demangle_assembly(self, assembly):
         with tempfile.NamedTemporaryFile() as asm_file:
             asm_file.write(assembly.encode())
             asm_file.flush()
-            with open(asm_file.name, "r"):
+
+            with open(asm_file.name, "r") as f:
                 success, demangled = invoke_process([self.get_toolchain().get_tool('c++filt')],
-                                                    stdin=asm_file)
+                                                    stdin=f)
             if not success:
                 raise Exception("Demangling failed.")
         return demangled
@@ -127,10 +128,12 @@ class FullyInstrumentedExecutable(Preprocessed, Source, Assembly, CFG, DebugInfo
 
 
 
-def extract_code(filename, executable, show=None, language=None, include_header=False):
+def extract_code(filename, executable, source=None, show=None, language=None, include_header=False):
 
-    with open(filename) as f:
-        lines = f.read().split("\n")
+    if source is None:
+        source = contents_of(filename)
+
+    lines = source.split("\n")
 
     if show is None:
         show = 0, len(lines)
@@ -204,5 +207,10 @@ def find_region_by_regex(lines, show):
                 return start_line, end_line
     raise InspectionError(f"Couldn't find code for {show}")
 
+def contents_of(f, flags="r"):
+    with open(f, flags) as f:
+        return f.read()
+    
 class InspectionError(CFiddleException):
     pass
+

@@ -37,6 +37,17 @@ def test_asm(test_cpp):
     assert asm.split("\n")[0] == "nop:"
     assert ".cfi_endproc" in asm.split("\n")[-1]
 
+def test_demangle(test_cpp):
+    not_demangled = test_cpp.asm(demangle=False)
+    assert "_Z11demangle_mev" in not_demangled
+    assert "demangle_me():" not in not_demangled
+    
+    demangled = test_cpp.asm()
+    assert "_Z11demangle_mev" not in demangled
+    with open("t", "w") as t:
+        t.write(demangled)
+    assert "demangle_me():" in demangled
+
 def test_CPP_flags(setup):
 
     build = MakeBuilder(build_spec=ExecutableDescription("test_src/test.cpp", build_parameters=dict(MORE_CXXFLAGS="-DINCLUDE_MORE")),
