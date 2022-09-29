@@ -1,5 +1,7 @@
 import hashlib
 import os
+import re
+
 from .util import read_file
 from .config import get_config
 from .paths import cfiddle_lib_path, cfiddle_include_path
@@ -24,20 +26,62 @@ def code(source, file_name=None, language=None, raw=False):
         language = "cpp"
 
     if not raw:
-        if language not in language_decorators:
-            raise UnknownLanguageSuffix(f"Unknown suffix '{language}'.  Options are: {list(language_decorators.keys())}")
-        source = language_decorators[language](source)
+        source = _decorate_source(source, language)
 
     if file_name is None:
         file_name = _compute_anon_code_filename(source, language)
 
+    if _changed_detected(file_name):
+        raise SourceCodeModified(f"The contents of {file_name} have changed since cfiddle wrote them last.  Aborting to prevent loss of work.")
+
+    if not raw:
+        source = _add_checksum(source, language)
+    
     _update_source(file_name, source)
     return file_name
 
+
+def _changed_detected(file_name):
+    if not os.path.exists(file_name): # doesn't exist
+        return False 
+    source = read_file(file_name)
+    if not "Cfiddle-signature" in source: # we didn't write this file
+        return False
+
+    lines = source.split()
+    if "Cfiddle-signature" not in lines[-1]: # something was appended.
+        return True
+
+    m = re.search("Cfiddle-signature=([0-9a-f]+)", lines[-1])
+    if not m:  # the line is mangled, so it must have been edited
+        return True
+    else:
+        old_sig = m.group(1)
+        new_sig = _hash("\n".join(lines[0:-1]))
+        if old_sig != new_sig: # something has changed.
+            return True
+
+    return False
+
+def _hash(source):
+    m = hashlib.md5()
+    m.update(source.encode())
+    return m.hexdigest()
+
+def _add_checksum(source, language):
+    if language not in append_comment:
+        raise UnknownLanguageSuffix(f"Unknown suffix '{language}'.  Options are: {list(language_decorators.keys())}")
+    signature = _hash(source)
+    return append_comment[language](source, f"Cfiddle-signature={signature}")
+
+
+def _decorate_source(source, language):
+    if language not in language_decorators:
+        raise UnknownLanguageSuffix(f"Unknown suffix '{language}'.  Options are: {list(language_decorators.keys())}")
+    return language_decorators[language](source)
+
 def _decorate_go_code(source):
     return f""" 
-// This file was written by cfiddle.  It's likely that it'll get overwritten in the future, so any edits you make are likely to be lost.
-
 package main
 
 // #cgo LDFLAGS: -L{cfiddle_lib_path()}  -lcfiddle
@@ -51,16 +95,16 @@ func main() {{}}
 """
 
 def _decorate_c_code(source):
-    return f""" 
-/* This file was written by cfiddle.  It's likely that it'll get overwritten in the future, so any edits you make are likely to be lost.*/
-{source}
-"""
+    return source
 
 def _decorate_cpp_code(source):
-    return f""" 
-// This file was written by cfiddle.  It's likely that it'll get overwritten in the future, so any edits you make are likely to be lost.
-{source}
-"""
+    return source
+
+def _append_c_comment(source, comment):
+    return source + f"\n/* {comment} */"
+
+def _append_cpp_comment(source, comment):
+        return source + f"\n// {comment}"
 
 def _compute_anon_code_filename(source, language):
     anon_source_directory = os.path.join(os.environ.get("CFIDDLE_BUILD_ROOT", get_config("CFIDDLE_BUILD_ROOT")), "anonymous_code")
@@ -84,5 +128,13 @@ language_decorators ={"go": _decorate_go_code,
                       "cxx":_decorate_cpp_code,
                       "c++":_decorate_cpp_code}
 
+append_comment  ={"go": _append_cpp_comment,
+                  "c": _append_c_comment,
+                  "cpp":_append_cpp_comment,
+                  "cxx":_append_cpp_comment,
+                  "c++":_append_cpp_comment}
+
 class UnknownLanguageSuffix(CFiddleException):
+    pass
+class SourceCodeModified(CFiddleException):
     pass

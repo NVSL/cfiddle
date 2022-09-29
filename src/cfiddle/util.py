@@ -172,6 +172,9 @@ def read_file(f, *argc, **kwargs):
     with open(f, *argc, **kwargs) as f:
         return f.read()
 
+def write_file(f, contents, mode="w", *argc, **kwargs):
+    with open(f, mode, *argc, **kwargs) as f:
+        return f.write(contents)
 
 class CompiledFunctionDelegator:
     def __init__(self, build_result, function_name):
