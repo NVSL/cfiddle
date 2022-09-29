@@ -197,6 +197,7 @@ def do_number_nodes(pydot_cfg):
         l = n.get_label()
         if l is None:
             l = ""
+        l = l.replace(r"\"@\"","")
         lines = l.split(r"\l")
         lines = [f"; n{i}"] + lines;
         n.set_label(r"\l".join(lines))
@@ -306,6 +307,7 @@ def do_cfg(file,  symbol, output=None,
 
 
     with tempfile.TemporaryDirectory() as temp_dir:
+
         r2.cmd('e asm.syntax=att')
         finished = False
         r2.cmd(f's {fcn_name}; agfd > {temp_dir}/tmp.dot')
@@ -352,7 +354,6 @@ def do_cfg(file,  symbol, output=None,
         ext = os.path.splitext(output)[1]
 
         pydot_cfg.write_raw(f'{temp_dir}/pretty_tmp.dot')
-
         if ext == ".png":
             pydot_cfg.write_png(f'{output}')
         elif ext == ".svg":

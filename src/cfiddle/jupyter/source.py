@@ -44,7 +44,10 @@ class DebugInfo(cfiddle.DebugInfo.DebugInfo):
 class CFG(CFG):
     def cfg(self, function, *argc, **kwargs):
         filename = os.path.join(self.build_dir, function) + ".svg"
-        return SVG(super().cfg(function, output=filename, *argc, **kwargs, jupyter=True))
+        
+        t = super().cfg(function, output=filename, *argc, **kwargs, jupyter=True)
+
+        return SVG(t)
     
     
 class FullyInstrumentedExecutable(Preprocessed, Source, Assembly, CFG, DebugInfo, Executable):
