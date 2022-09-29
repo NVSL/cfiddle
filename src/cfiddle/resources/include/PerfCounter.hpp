@@ -189,7 +189,7 @@ private:
 			return;
 		}
 		for(unsigned int i = 0; i < counter_values.size(); i++) {
-			counter_values[i].value += buffer[i + 1];
+			counter_values[i].value = buffer[i + 1];
 		}
 	}
 	

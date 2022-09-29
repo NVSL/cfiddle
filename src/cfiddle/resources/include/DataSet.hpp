@@ -98,9 +98,14 @@ public:
 		return *rows.back();
 	}
 
+	const std::vector<DataRow*> & get_rows() const {
+		return rows;
+	}
+	
 	size_t size() {
 		return rows.size(); 
 	}
+	
 	template<typename T>
 	DataSet & set(const std::string & name, T t) { // It should be const T & t, but this makes string literals work.
 		current_row().set(name, t);
