@@ -35,7 +35,7 @@ class Preprocessed(cfiddle.source.Preprocessed):
         return Code_hacked(preprocessed_source, language=language)
 
     def raw_preprocessed(self, *argc, **kwargs):
-        return super().preprocessed_source(*argc, **kwargs)
+        return super().preprocessed(*argc, **kwargs)
 
 class DebugInfo(cfiddle.DebugInfo.DebugInfo):
     def debug_info(self, *argc, **kwargs):

@@ -36,16 +36,24 @@ def test_code_c(setup):
 
     
 def test_modification(setup):
-    f = code(r"""aoeu""")
+    s = r"""aoeu"""
+    f = code(s)
+    f = code(s + "hello", f) # write different code
+    f = code(s, f) # write the original code
     written = read_file(f).split("\n")
 
-    write_file(f, "\n".join(["t"] + written))
+    write_file(f, "\n".join(["t"] + written)) # append
     with pytest.raises(SourceCodeModified):
-        code(r"""aoeu""", file_name=f)
+        code(s, file_name=f)
 
-    write_file(f, "\n".join(written[:-1]))
-    code(r"""aoeu""", file_name=f)
-        
+    write_file(f, "\n".join(["t"] + written[1:])) # remove first line
+    with pytest.raises(SourceCodeModified):
+        code(s, file_name=f)
+
+    write_file(f, "\n".join(written[:-1])) # remove signature line
+    with pytest.raises(SourceCodeModified):
+        code(s, file_name=f)
+    
 
 def test_code_file(setup):
     with tempfile.TemporaryDirectory() as d:

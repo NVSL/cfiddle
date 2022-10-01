@@ -31,7 +31,7 @@ def code(source, file_name=None, language=None, raw=False):
     if file_name is None:
         file_name = _compute_anon_code_filename(source, language)
 
-    if _changed_detected(file_name):
+    if _change_detected(file_name):
         raise SourceCodeModified(f"The contents of {file_name} have changed since cfiddle wrote them last.  Aborting to prevent loss of work.")
 
     if not raw:
@@ -41,14 +41,14 @@ def code(source, file_name=None, language=None, raw=False):
     return file_name
 
 
-def _changed_detected(file_name):
+def _change_detected(file_name):
     if not os.path.exists(file_name): # doesn't exist
         return False 
     source = read_file(file_name)
     if not "Cfiddle-signature" in source: # we didn't write this file
-        return False
+        return True
 
-    lines = source.split()
+    lines = source.split("\n")
     if "Cfiddle-signature" not in lines[-1]: # something was appended.
         return True
 
@@ -57,7 +57,7 @@ def _changed_detected(file_name):
         return True
     else:
         old_sig = m.group(1)
-        new_sig = _hash("\n".join(lines[0:-1]))
+        new_sig = _hash("\n".join(lines[:-1]))
         if old_sig != new_sig: # something has changed.
             return True
 
