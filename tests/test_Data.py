@@ -81,6 +81,17 @@ def test_json(test_cpp):
     exe = run(test_cpp, ["sum", "product"], arguments=arg_map(a=[1,2], b=[2,3]))
     exe.as_json()
 
+def test_concat(test_cpp):
+    exe = run(test_cpp, ["sum", "product"], arguments=arg_map(a=[1,2], b=[2,3]))
+    t = exe + exe
+    assert(len(t) == 2*len(exe))
+    
+def test_slice(test_cpp):
+    exe = run(test_cpp, ["sum", "product"], arguments=arg_map(a=[1,2], b=[2,3]))
+    t = exe + exe
+    t2 = t[1:]
+    assert(len(t2) == 2*len(exe) - 1)
+    
 def test_dicts(test_cpp):
     exe = run(test_cpp, ["sum", "product"], arguments=arg_map(a=[1,2], b=[2,3]))
     exe.as_dicts()

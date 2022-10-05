@@ -21,7 +21,19 @@ class InvocationResultsList(list):
 
     You can export these data in multiple formats using the methods below.
     """
-    
+
+    def __add__(self, rhs):
+        #https://stackoverflow.com/a/8180577/3949036
+        return InvocationResultsList(list.__add__(self,rhs))
+
+    def __getitem__(self, item):
+        #https://stackoverflow.com/a/8180577/3949036
+        result = list.__getitem__(self, item)
+        try:
+            return InvocationResultsList(result)
+        except TypeError:
+            return result
+
     def as_csv(self, csv_file):
         """Write results to a CSV file.
         
