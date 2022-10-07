@@ -43,6 +43,7 @@ def infer_language(filename):
                             ".cp" : "c++",
                             ".c++" : "c++",
                             ".cxx" : "c++",
+                            ".hpp" : "c++",
                             ".C" : "c++",
                             ".ii" : "c++",
                             ".c" : "c",

@@ -47,6 +47,10 @@ $(BUILD)/%.o : %.cpp
 	@mkdir -p $(BUILD)
 	$(CXX) -c $(CXXFLAGS) $< -o $@
 
+$(BUILD)/%.o : %.hpp # this is a hack we can display header file source code.  We have to be able to generate an cfiddle.Executable to call .source()
+	@mkdir -p $(BUILD)
+	$(CXX) -c -x c++ $(CXXFLAGS)  $< -o $@
+
 $(BUILD)/%.o : %.cc
 	@mkdir -p $(BUILD)
 	$(CXX) -c $(CXXFLAGS) $< -o $@
