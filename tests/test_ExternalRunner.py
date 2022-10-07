@@ -18,11 +18,12 @@ def test_missing_function(test_cpp):
             run(executable=test_cpp, function="missing", arguments=dict(a=1, b=2, c=3))
             
         
-@pytest.mark.parametrize("ExternalCommandRunner", [BashExternalRunnerDelegate, SubprocessExternalRunnerDelegate])
+@pytest.mark.parametrize("ExternalCommandRunner", [BashExternalRunnerDelegate,
+                                                   SubprocessExternalRunnerDelegate])
 def test_run_combo(test_cpp, ExternalCommandRunner):
     from test_full_flow import test_run_combo
     enable_debug()
     with cfiddle_config(Runner_type=ExternalRunner,
                         ExternalCommandRunner_type=ExternalCommandRunner):
         test_run_combo(test_cpp)
-        
+

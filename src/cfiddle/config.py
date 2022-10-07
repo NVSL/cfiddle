@@ -116,8 +116,14 @@ def push_config():
 def pop_config():
     global cfiddle_config_stack
     if len(cfiddle_config_stack) == 1:
-        raise IllegalConfiguration("Poping the cfiddle configuration stack would leave it empty.")
+        raise IllegalConfiguration("Popping the cfiddle configuration stack would leave it empty.")
     cfiddle_config_stack = cfiddle_config_stack[:-1]
+
+def peek_config():
+    global cfiddle_config_stack
+    return copy.deepcopy(cfiddle_config_stack[-1])
 
 class IllegalConfiguration(CFiddleException):
     pass
+
+

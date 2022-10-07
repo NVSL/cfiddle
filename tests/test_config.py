@@ -36,6 +36,13 @@ def test_push_pop2():
         assert not isinstance(build_one("test_src/test.cpp"), MyExecutable)
         
 
+def test_peek():
+    with tempfile.TemporaryDirectory() as tdir:
+        with cfiddle_config(Executable_type=MyExecutable, CFIDDLE_BUILD_ROOT=tdir):
+            peek_config() # shouldn't change anything.
+            assert isinstance(build_one("test_src/test.cpp"), MyExecutable)
+        
+
 class MyExecutable(Executable):
         pass
 

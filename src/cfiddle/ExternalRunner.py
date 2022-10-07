@@ -42,7 +42,7 @@ class ExternalRunner(Runner):
 
         runner_filename, results_filename = self._temp_files()
 
-        self._pickle_self(runner_filename)
+        self._pickle_run(runner_filename)
 
 
         cmd_runner.execute(["cfiddle-run", "--runner", runner_filename, "--results", results_filename], runner=self)
@@ -54,9 +54,10 @@ class ExternalRunner(Runner):
             return r
         
 
-    def _pickle_self(self, f):
+    def _pickle_run(self, f):
+        from .config import peek_config
         with open(f, "wb") as r:
-            pickle.dump(self, r)
+            pickle.dump(dict(config=peek_config(), runner=self), r)
 
     def _unpickle_results(self, f):
         with open(f, "rb") as r:
@@ -74,8 +75,13 @@ def remote_runner(runner, results):
     do_remote_runner(runner, results)
     
 def do_remote_runner(runner, results):
-    t = pickle.load(runner)
-    try:
-        pickle.dump(super(ExternalRunner, t).run(), results)
-    except CFiddleException as e:
-        pickle.dump(e, results)
+    from .config import cfiddle_config
+    contents = pickle.load(runner)
+
+    with cfiddle_config(**contents["config"]):
+        try:
+            return_value = super(ExternalRunner, contents["runner"]).run()
+            pickle.dump(return_value, results)
+        except CFiddleException as e:
+            pickle.dump(e, results)
+
