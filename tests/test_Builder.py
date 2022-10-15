@@ -41,8 +41,7 @@ def test_builder_construction(test_cpp_nop_builder, setup):
     assert test_cpp_nop_builder.build_parameters == dict(OPTIMIZE="-O1")
     assert test_cpp_nop_builder.build_root == os.path.join(get_config("CFIDDLE_BUILD_ROOT"),"build")
     assert test_cpp_nop_builder.build_directory.startswith(test_cpp_nop_builder.build_root)
-    assert "OPTIMIZE" in test_cpp_nop_builder.build_directory 
-    assert "O1" in test_cpp_nop_builder.build_directory
+
 
 
 def test_nop_build(test_cpp_nop_builder, setup):
@@ -59,6 +58,10 @@ def test_alt_build_directory(setup):
 
 def test_equal_in_build_parameters(setup):
     t = build("test_src/test.cpp", build_parameters=arg_map(OPTIMIZE="-march=skylake"))
+    run(t,  function="four")
+
+def test_long_build_parameters(setup):
+    t = build("test_src/test.cpp", build_parameters=arg_map(OPTIMIZE="-O3 -fno-semantic-interposition -funroll-all-loops -finline -march=native -finline-limit=2000 -funsafe-loop-optimizations -fgcse-after-reload -fgcse-las -fgcse-sm -fpeel-loops  -fgcse-after-reload -fgcse-las -fgcse-sm -fpeel-loops"))
     run(t,  function="four")
 
     

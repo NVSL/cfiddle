@@ -1,3 +1,4 @@
+import hashlib
 import collections
 from .CProtoParser import CProtoParser
 from .util import arg_map, read_file, ListDelegator, type_check, type_check_list, infer_language
@@ -108,8 +109,10 @@ class Builder:
         raise NotImplemented
 
     def _compute_build_directory(self):
-        return os.path.join(self.build_root, "__".join([f"{p}_{v.replace(' ', '').replace('=','_').replace('/','_')}" for p,v in self.build_parameters.items()]) + "_" + self.source_name_base)
-
+        m = hashlib.md5()
+        build_options = "__".join([f"{p}_{v.replace(' ', '').replace('=','_').replace('/','_')}" for p,v in self.build_parameters.items()])
+        m.update(build_options.encode())
+        return os.path.join(self.build_root, f"{m.hexdigest()}_{self.source_name_base}")
     
     def _compute_source_name_base(self):
         _, source_name = os.path.split(self.source_file)
