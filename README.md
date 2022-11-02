@@ -33,7 +33,7 @@ The best way to learn about CFiddle is to try it.  There are several ways to do 
 
 1.  [Run the
 examples on Binder.org](https://mybinder.org/v2/gh/NVSL/cfiddle/main?labpath=README.ipynb) (this can take a while to load, and performance counters don't work.).
-2. You visit https://try-cfiddle.nvsl.io (to try CFiddle on x86) or https://arm.try-cfiddle.nvsl.io (to try CFiddle on ARM).  Performance counters are fully functionaly.
+2. You visit https://try-cfiddle.nvsl.io (to try CFiddle on x86).  Performance counters are fully functionaly.
 3.  Run it locally with Docker (`--privileged` is required to access the performance counters):
 
 ```

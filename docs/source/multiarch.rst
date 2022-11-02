@@ -100,8 +100,10 @@ You can also set :code:`ARCH` and :code:`CXX` or :code:`CC` to specify, for exam
 .. doctest::
    
    >>> from cfiddle import  *
+   >>> from cfiddle.util import invoke_process
    >>> sample = code(r"""extern "C" int answer() {return 42;}""")
-   >>> b = build(sample, arg_map(ARCH="aarch64", CXX=["g++-9", "g++-8"]))
+   >>> arm_versions = [x for x in ["g++-8", "g++-9", "g++-11"] if invoke_process([f"arm-linux-gnueabi-{x}", "-v"])[0]]
+   >>> b = build(sample, arg_map(ARCH="aarch64", CXX=arm_versions))
    >>> print(b[0].get_toolchain().describe()) # doctest: +SKIP
    arm-linux-gnueabi-g++-9 compiling for AARCH64
    >>> print(b[1].get_toolchain().describe()) # doctest: +SKIP
