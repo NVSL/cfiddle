@@ -1,5 +1,8 @@
 from cfiddle import *
 from fixtures import *
+from cfiddle.util import invoke_process
+
+clang_versions = [x for x in ["clang", "clang-10", "clang-14"] if invoke_process([x, "-v"])[0]]
 
 def test_compile(setup):
     b = build(code(r"""extern "C" void foo(){}"""), arg_map(CXX="clang++"))
@@ -22,20 +25,23 @@ def test_c(setup):
     assert b[0].build_spec.get_language() == "c"
     assert b[0].get_toolchain().get_compiler() == "clang"
 
+def test_available_versions():
+    assert len(clang_versions) > 1, "can't test versioned clang executable"
+    
 def test_versions(setup):
     source = code(r"""void foo(){}""", language="c")
-    b = build(source, arg_map(CC=["clang", "clang-10"]), verbose=True)
+    
+    b = build(source, arg_map(CC=clang_versions), verbose=True)
     run(b, "foo")
-    assert b[0].get_toolchain().get_compiler() == "clang"
-    assert b[1].get_toolchain().get_compiler() == "clang-10"
+    for i, v in enumerate(clang_versions):
+        assert b[i].get_toolchain().get_compiler() == v
 
 def test_tools(setup):
     source = code(r"""void foo(){}""", language="c")
-    built = build(source, arg_map(CC=["clang", "clang-10"]), verbose=True)
+    built = build(source, arg_map(CC=clang_versions), verbose=True)
     for b in built:
-        assert b.get_toolchain().get_tool("c++filt") == "llvm-cxxfilt-10"
-        assert b.get_toolchain().get_tool("objdump") == "llvm-objdump-10"
-        
+        assert "llvm-cxxfilt" in b.get_toolchain().get_tool("c++filt")
+        assert "llvm-objdump" in b.get_toolchain().get_tool("objdump")
 
 def test_describe(setup):
     source = code(r"""void foo(){}""", language="c")

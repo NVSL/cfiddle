@@ -63,10 +63,14 @@ def test_toolchain_spec_1(setup):
     assert b[0].get_toolchain()._tool_prefix == ""
     assert b[1].get_toolchain()._tool_prefix == "arm-linux-gnueabi-"
 
+arm_toolchains = [x for x in ["g++-8", "g++-9", "g++-11"] if invoke_process([f"arm-linux-gnueabi-{x}", "-v"])[0]]
+
+def test_arm_toolchains():
+    assert len(arm_toolchains) > 0, "We need at least one working gcc arm cross compiler"
+    
 def test_toolchain_spec_2(setup):
     sample = code(r"""extern "C" int answer() {return 42;}""")
-    b = build(sample, arg_map(ARCH="aarch64", CXX=["g++-9", "g++-8"]), verbose=True)
-    assert b[0].get_toolchain()._tool_prefix == "arm-linux-gnueabi-"
-    assert b[0].get_toolchain()._compiler == "arm-linux-gnueabi-g++-9"
-    assert b[1].get_toolchain()._tool_prefix == "arm-linux-gnueabi-"
-    assert b[1].get_toolchain()._compiler == "arm-linux-gnueabi-g++-8"
+    built = build(sample, arg_map(ARCH="aarch64", CXX=arm_toolchains), verbose=True)
+    for i, b in enumerate(built):
+        assert b.get_toolchain()._tool_prefix == "arm-linux-gnueabi-"
+        assert b.get_toolchain()._compiler == f"arm-linux-gnueabi-{arm_toolchains[i]}"

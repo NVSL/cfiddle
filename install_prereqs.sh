@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-
 set -ex
 
 #### development tools
