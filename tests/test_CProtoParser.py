@@ -19,8 +19,10 @@ def test_get_ctype(CParser, t,ct):
     ("long int *", UnhandledIndirectParameterType)
 ])
 def test_unhandled_get_ctype(CParser,t,ct):
-    assert isinstance(CParser.get_ctype(t), ct)
-
+    parsed_type = CParser.get_ctype(t)
+    assert isinstance(parsed_type, ct)
+    with pytest.raises(UnknownType):
+        parsed_type()
 
 @pytest.mark.parametrize("parameter,parsed", [
     ("int bar", Parameter(ctypes.c_int, "bar")),
@@ -65,6 +67,7 @@ def test_parse_parameter(CParser,parameter, parsed):
 def test_parse_prototype(CParser,prototype, parsed):
     assert CParser.parse_prototype(prototype) == parsed
 
+    
 @pytest.mark.parametrize("prototype,parsed", [
     ("void* foo2(uint64_t x, float y);", Prototype(None, "foo2", [Parameter(ctypes.c_uint64,"x"),
                                                                   Parameter(ctypes.c_float ,"y")]))])

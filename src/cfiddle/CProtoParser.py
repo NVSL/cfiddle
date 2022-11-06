@@ -202,7 +202,7 @@ class UnhandledIndirectParameterType:
         self.name = name
         
     def __call__(self, *argc, **kwargs):
-        raise UnknownType(f"Can't pass arguments of type '{name}'")
+        raise UnknownType(f"Can't pass arguments of type '{self.name}'")
 
     
 void="void"
