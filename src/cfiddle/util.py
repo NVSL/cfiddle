@@ -31,6 +31,9 @@ def arg_map(**parameters):
       :obj:`list` of :obj:`dict`:  See example above.
 
     """
+    if len(parameters) == 0:
+        return[{}]
+    
     def listify(t):
         return t if isinstance(t, Iterable) and not isinstance(t, str) and not isinstance(t, dict) else [t]
     t = [(k, listify(v)) for k,v in parameters.items()]
