@@ -5,6 +5,7 @@ import csv
 import faulthandler
 
 from .Runner import Runner, InvocationResult, RunnerException, RunOptionManager
+from .CProtoParser import funcptr_t
 from .Exceptions import CFiddleException
 from .util import environment
 from .perfcount import install_perf_counters, clear_perf_counters
@@ -30,20 +31,34 @@ class LocalSingleRunner:
 
     def _get_build_result(self):
         return self._invocation.executable
-    
+
+    def _resolve_function_pointer_arguments(self):
+        def resolve(b):
+            if isinstance(b, funcptr_t):
+                r = self._load_symbol(b.function_name)
+                r.value = b.function_name # this is ugly.
+                return r
+            else:
+                return b
+        
+        self.bound_arguments = [resolve(b) for b in self.bound_arguments]
+        
     def _invoke_function(self):
         self.bound_arguments = Runner.bind_arguments(self._invocation.arguments, self._get_function(self._invocation.function))
-        f = self._load_symbol()
+        self._resolve_function_pointer_arguments()
+        
+        f = self._load_symbol(self._invocation.function)
         
         with self._run_option_manager(self._invocation.run_options):
             return f(*self.bound_arguments)
     
-    def _load_symbol(self):
+    def _load_symbol(self, symbol):
         try:
             c_lib = ctypes.CDLL(self._get_build_result().lib)
-            return getattr(c_lib, self._invocation.function)
+            #t = getattr(c_lib, self._invocation.function)
+            return getattr(c_lib, symbol)
         except AttributeError:
-            raise RunnerException(f"Couldn't find '{self._invocation.function}' in '{self._get_build_result().lib}'.  Do you need to recompile? or declare it `extern \"C\"`?.")
+            raise RunnerException(f"Couldn't find '{symbol}' in '{self._get_build_result().lib}'.  Do you need to recompile? or declare it `extern \"C\"`?.")
         
     def _get_function(self, f):
         try:

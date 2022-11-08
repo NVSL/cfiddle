@@ -15,3 +15,36 @@ def test_missing_function(test_cpp):
     with pytest.raises(RunnerException):
         runner = LocalSingleRunner(invocation).run()
     
+
+def test_function_pointer(setup):
+    import ctypes
+    b = build(code(r"""
+typedef void * funcptr_t;
+#include<iostream>
+extern "C" void foo(int a) { std::cerr << "from foo: " << a << "\n";}
+extern "C" void bar(int a) { std::cerr << "from bar: " << a << "\n";}
+
+
+extern "C" int four(int a, funcptr_t f) { 
+    std::cerr << "\n";
+    std::cerr << (unsigned long long)f << "\n";
+    std::cerr << (unsigned long long)foo << "\n";
+    auto callee = (void(*)(int))(f);
+    callee(a);
+    return (unsigned long long)f == (unsigned long long)foo;
+}
+
+"""))
+
+    c_lib = ctypes.CDLL(b[0].lib)
+    t = getattr(c_lib, "foo")
+    enable_debug()
+
+    f = ctypes.pointer(t)
+
+    proto = ctypes.CFUNCTYPE(ctypes.c_int)
+    ff = proto(42)
+    assert run(b, "four", arg_map(a=[4,8],
+                                  f=["foo", "bar"]
+                                  ))[0] != 0
+    

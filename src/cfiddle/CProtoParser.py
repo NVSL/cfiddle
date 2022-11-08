@@ -142,7 +142,11 @@ class CLikeProtoParser(ProtoParser):
         return m.group(1),  m.group(2)
 
 
-
+class funcptr_t(object):
+    def __init__(self, function_name):
+        self.function_name = function_name
+        self.value = function_name
+    
 class CProtoParser(CLikeProtoParser):
 
     def __init__(self):
@@ -175,6 +179,7 @@ class CProtoParser(CLikeProtoParser):
             (ctypes.c_char_p , ["char*"]),
             (ctypes.c_wchar_p , ["wchar_t*"]),
             (ctypes.c_void_p , ["void*"]),
+            (funcptr_t, ["funcptr_t"]),
             (void, ["void"])
         ]
 

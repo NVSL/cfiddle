@@ -41,9 +41,10 @@ class ExternalRunner(Runner):
         cmd_runner = get_config("ExternalCommandRunner_type")()
 
         runner_filename, results_filename = self._temp_files()
+        if os.path.exists(results_filename):
+            os.remove(results_filename)
 
         self._pickle_run(runner_filename)
-
 
         cmd_runner.execute(["cfiddle-run", "--runner", runner_filename, "--results", results_filename], runner=self)
 
