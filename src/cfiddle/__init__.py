@@ -94,7 +94,7 @@ def build(source, build_parameters=None, **kwargs):
 
 def run_list(invocations, perf_counters=None, **kwargs):
     if perf_counters is None:
-        perf_counters = []
+        perf_counters = get_config("perf_counters_default")
 
     IRList = get_config("InvocationResultsList_type")
     IRType = get_config("InvocationResult_type")
