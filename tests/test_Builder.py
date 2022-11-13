@@ -54,11 +54,11 @@ def test_nop_build(test_cpp_nop_builder, setup):
 def test_alt_build_directory(setup):
     t = NopBuilder(build_spec = ExecutableDescription(source=code(""), build_parameters={}), build_root="/tmp")
     assert t.build_root == "/tmp"
-    
+
 
 def test_equal_in_build_parameters(setup):
-    t = build("test_src/test.cpp", build_parameters=arg_map(OPTIMIZE="-march=skylake"))
-    run(t,  function="four")
+    t = build("test_src/test.cpp", build_parameters=arg_map(OPTIMIZE="-march=skylake"), verbose=True, rebuild=True)
+    run(t, function="four")
 
 def test_long_build_parameters(setup):
     t = build("test_src/test.cpp", build_parameters=arg_map(OPTIMIZE="-O3 -fno-semantic-interposition -funroll-all-loops -finline -march=native -finline-limit=2000 -funsafe-loop-optimizations -fgcse-after-reload -fgcse-las -fgcse-sm -fpeel-loops  -fgcse-after-reload -fgcse-las -fgcse-sm -fpeel-loops"))

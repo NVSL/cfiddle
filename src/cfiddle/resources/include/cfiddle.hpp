@@ -8,6 +8,8 @@
 class DataSet;
 class PerfCounter;
 
+typedef void * funcptr_t;
+
 extern double start_time;
 extern DataSet * get_dataset();
 extern PerfCounter *get_perf_counter();
