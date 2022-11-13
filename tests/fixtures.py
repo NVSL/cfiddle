@@ -6,7 +6,9 @@ import tempfile
 
 @pytest.fixture
 def setup():
-    yield from _pristine_dir()
+    with cfiddle_config():
+        enable_debug()
+        yield from _pristine_dir()
 
 def _pristine_dir():
     with tempfile.TemporaryDirectory() as cfiddle_dir:
