@@ -110,7 +110,7 @@ class Builder:
 
     def _compute_build_directory(self):
         m = hashlib.md5()
-        build_options = "__".join([f"{p}_{v.replace(' ', '').replace('=','_').replace('/','_')}" for p,v in self.build_parameters.items()])
+        build_options = "__".join([f"{p}_{str(v).replace(' ', '').replace('=','_').replace('/','_')}" for p,v in self.build_parameters.items()])
         m.update(build_options.encode())
         return os.path.join(self.build_root, f"{m.hexdigest()}_{self.source_name_base}")
     

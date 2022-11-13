@@ -80,6 +80,8 @@ def test_mixins(setup):
     assert isinstance(result, MyResult)
     assert result.my_result() == "my_result"
 
+def _test_numeric_parameters(setup):
+    build(1, dict(OPTIMIZE=1))
     
 def test_invalid_parameters(setup):
     with cfiddle_config():
