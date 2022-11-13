@@ -288,7 +288,7 @@ def do_cfg(file,  symbol, output=None,
            trim_addresses=True, number_nodes=False, jupyter=False,
            inst_counts=False, pretty_loops=True, filt=None,
            just_list=None):
-    r2 = r2pipe.open(f'{file}')
+    r2 = r2pipe.open(f'{file}', flags="-e bin.cache=true".split())
     listing = r2.cmd('aab; fs symbols; f')
     if not symbol or just_list:
         symbols = [l.split(r" ")[2] for l in listing.split(r"\n") if len(l) > 0]
