@@ -11,9 +11,10 @@ from .CFG.cfg import CFG
 from .DebugInfo import DebugInfo
 from .Exceptions import CFiddleException
 
+
 class Source:
     
-    def source(self, show=None, language=None, **kwargs):
+    def source(self, show=None, language=None, filter=None, **kwargs):
         """Return the source code for a function.
         
         This function uses regular expression-based heuristics to find the
@@ -33,12 +34,14 @@ class Source:
 
         if language is None:
             language = infer_language(self.build_spec.source_file)
-        return extract_code(self.build_spec.source_file, self, show=show, language=language, **kwargs)
+        return filter_code(extract_code(self.build_spec.source_file, self, show=show, language=language, **kwargs), filter)
 
 
 class Assembly:
 
-    def asm(self, show=None, demangle=True, **kwargs):
+    FUNCTION_LABEL = "^[^\.\s]\w.*:"
+
+    def asm(self, show=None, demangle=True,  filter=None,**kwargs):
         """Return the compiled assembly for a function.
 
         The output is from the assembly output of the compiler (e.g., the
@@ -64,7 +67,7 @@ class Assembly:
         if demangle:
             assembly = self.demangle_assembly(assembly)
 
-        return extract_code(asm_file, self, source=assembly, show=show, language="gas", **kwargs)
+        return filter_code(extract_code(asm_file, self, source=assembly, show=show, language="gas", **kwargs), filter)
 
     
     def demangle_assembly(self, assembly):
@@ -82,7 +85,7 @@ class Assembly:
 
 class Preprocessed:
 
-    def preprocessed(self, show=None, language=None,  **kwargs):
+    def preprocessed(self, show=None, language=None,  filter=None, **kwargs):
         """Return the preprocessed source code for a function.
 
         This function uses regular expression-based heuristics to find the
@@ -107,7 +110,7 @@ class Preprocessed:
         preprocessed_suffix = self.compute_preprocessed_suffix(self.build_spec.source_file, language=language)
         source_file_to_search = self.compute_built_filename(f"{compiled_source_base_name}{preprocessed_suffix}")
 
-        return extract_code(source_file_to_search, self, show=show, language=language, **kwargs)
+        return filter_code(extract_code(source_file_to_search, self, show=show, language=language, **kwargs), filter)
 
     def compute_preprocessed_suffix(self, filename, language):
         if language is None:
@@ -162,6 +165,17 @@ def extract_code(filename, executable, source=None, show=None, language=None, in
 
     return src
 
+def filter_code(contents, filt):
+
+    if filt is None:
+        return contents
+
+    if not callable(filt):
+        predicate = lambda x: re.search(filt, x) is not None
+    else:
+        predicate = filt
+        
+    return "\n".join(filter(predicate, contents.split("\n")))
 
 def build_header(filename, language, show):
     comments_syntaxes = {"c++": ("// ", ""),
