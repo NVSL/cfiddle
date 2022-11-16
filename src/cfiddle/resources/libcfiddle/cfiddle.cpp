@@ -46,7 +46,7 @@ void start_measurement(const char *tag)
 	get_dataset()->start_new_row();
 	
 	if (tag) {
-		get_dataset()->set("tag", tag);
+		get_dataset()->set("tag", strdup(tag));
 	}
 
 	start_time = wall_time();
