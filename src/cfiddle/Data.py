@@ -26,6 +26,13 @@ class InvocationResultsList(list):
         #https://stackoverflow.com/a/8180577/3949036
         return InvocationResultsList(list.__add__(self,rhs))
 
+    def __radd__(self, lhs):
+        #https://stackoverflow.com/a/8180577/3949036
+        if not isinstance(lhs, list):
+            raise TypeError("Can only add to lists")
+        
+        return InvocationResultsList(list.__add__(lhs, self))
+
     def __getitem__(self, item):
         #https://stackoverflow.com/a/8180577/3949036
         result = list.__getitem__(self, item)
