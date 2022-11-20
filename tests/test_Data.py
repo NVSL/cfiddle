@@ -86,6 +86,12 @@ def test_concat(test_cpp):
     t = exe + exe
     assert(len(t) == 2*len(exe))
     
+def test_list_concat(test_cpp):
+    exe = run(test_cpp, ["sum", "product"], arguments=arg_map(a=[1,2], b=[2,3]))
+    t = [] + exe
+    assert(isinstance(t, InvocationResultsList))
+    assert(len(t) == len(exe))
+    
 def test_slice(test_cpp):
     exe = run(test_cpp, ["sum", "product"], arguments=arg_map(a=[1,2], b=[2,3]))
     t = exe + exe
