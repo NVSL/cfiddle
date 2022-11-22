@@ -20,6 +20,7 @@ def test_function_pointer(setup):
     import ctypes
     b = build(code(r"""
 #include<iostream>
+#include"cfiddle.hpp"
 extern "C" void foo(int a) { std::cerr << "from foo: " << a << "\n";}
 extern "C" void bar(int a) { std::cerr << "from bar: " << a << "\n";}
 

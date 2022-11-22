@@ -12,7 +12,7 @@ def test_cpp_builder():
 
 
 @pytest.mark.parametrize("source,function_count,return_value",[
-    ("test_src/test.cpp", 7, 4),
+    ("test_src/test.cpp", 8, 4),
     ("test_src/test_cxx.cxx", 1,5),
     ("test_src/test_c.c", 1,6)])
 def test_build(source, function_count, return_value,setup):
