@@ -107,7 +107,7 @@ class Runner:
         r = []
         for a in signature.parameters:
             if a.name not in arguments:
-                raise MissingArgument(a.name)
+                raise MissingArgument(f"Argument '{a.name}' is missing for invocation of function '{signature.name}'.")
 
             argument_value = arguments[a.name]
 
@@ -120,7 +120,7 @@ class Runner:
 
         for p in arguments:
             if not any(map(lambda x: x.name == p, signature.parameters)):
-                raise UnusedArgument(p)
+                raise UnusedArgument(f"Argument '{p}' was provided but is not the signature of function '{signature.name}'.")
         return r
 
 class InvocationResult:
