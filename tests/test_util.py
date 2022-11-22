@@ -2,7 +2,7 @@ from cfiddle.util import *
 import tempfile
 
 @pytest.mark.parametrize("inp,output", [
-    (dict(), []),
+    (dict(), [{}]),
     (dict(a=1), [{"a": 1}]),
     (dict(a="bc"), [{"a": "bc"}]),
     (dict(a=[1,2]), [{"a": 1},

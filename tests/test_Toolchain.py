@@ -1,9 +1,11 @@
+import pytest
+
 from cfiddle import Toolchain
 from cfiddle import *
 from cfiddle.Toolchain import GCCToolchain, GoToolchain, ToolchainException, UnknownToolchain
 from cfiddle.util import get_native_architecture
-import pytest
 
+from fixtures import setup
 
 @pytest.mark.parametrize("lang,parameters,tool,toolchain",
                          [("c++", dict(ARCH="x86_64"), "g++", GCCToolchain),
@@ -36,7 +38,7 @@ def test_gcc_toolchain():
         Toolchain.TheToolchainRegistry.get_toolchain("C", dict(ARCH=a), "gcc").describe()
         Toolchain.TheToolchainRegistry.get_toolchain("C", dict(ARCH=a), "gcc").get_asm_function_bookends("foo")
 
-def test_unknown_toolchain():
+def test_unknown_toolchain(setup):
     
     with pytest.raises(UnknownToolchain):
         build(code(r"""extern "C" void foo(){}"""), arg_map(CXX="aoeu"))

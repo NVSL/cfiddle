@@ -10,6 +10,7 @@ CPP_TESTS=test_DataSet.exe test_libcfiddle.exe test_PerfCounter.exe
 
 
 test: $(CPP_TESTS)
+	rm -rf .cfiddle
 	rm -rf ../examples/.cfiddle # give these a clean directory.
 	pytest $(PYTEST_OPTS) -n auto .  $(DOCS) $(JUPYTER)
 .PHONY: test
