@@ -26,7 +26,7 @@ DEBUG_FLAGS?=-g3
 INCLUDES=-I. -I$(CFIDDLE_INCLUDE) -I/usr/local/include 
 CFLAGS=$(WARNINGS) $(DEBUG_FLAGS) -fPIC $(OPTIMIZE) $(INCLUDES) $(MORE_INCLUDES) $(MORE_CFLAGS) -MMD -save-temps=obj
 CXXFLAGS=$(CFLAGS) $(CXX_STANDARD) $(MORE_CXXFLAGS)
-CXX_STANDARD?=-std=gnu++17
+CXX_STANDARD?=-std=gnu++11
 LIBS=-L$(CFIDDLE_INCLUDE)/../libcfiddle/build/$(TARGET) -lcfiddle 
 
 LDFLAGS=$(LD_OPTS) $(MORE_LDFLAGS) $(LIBS) $(MORE_LIBS) #-pthread  #-std=gnu++11  
