@@ -27,7 +27,6 @@ class InvocationResultsList(list):
         return InvocationResultsList(list.__add__(self,rhs))
 
     def __radd__(self, lhs):
-        #https://stackoverflow.com/a/8180577/3949036
         if not isinstance(lhs, list):
             raise TypeError("Can only add to lists")
         
