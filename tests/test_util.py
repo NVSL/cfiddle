@@ -80,7 +80,8 @@ def test_working_directory():
 @pytest.mark.parametrize("parameters,result", [
     ((1,8), [1,2,4,8]),
     ((1,32,4), [1,4,16,64]),
-    ((1,8,1.5), [1,2,3,5,7,11])
+    ((1,32,2**0.5), [1, 2, 3, 4, 6, 8, 11, 16, 23, 32]),
+    ((64, 128, 2**0.25), [64, 76, 91, 108, 128, 152])
 ])
 def test_exp_range(parameters, result):
     assert list(exp_range(*parameters)) == result
