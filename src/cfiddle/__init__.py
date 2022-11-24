@@ -44,6 +44,15 @@ def build_and_run(source_file, build_parameters, function, arguments):
 
     return run_one(executable, function, arguments)
 
+def build_list(build_specs, **kwargs):
+    Builder = get_config("Builder_type")
+    progress_bar = get_config("ProgressBar")
+
+    l = ExecutableList()
+    for p in progress_bar(build_specs, miniters=1):
+        l.append(Builder(p, **kwargs).build())
+    return l
+
 @handle_cfiddle_exceptions
 def build(source, build_parameters=None, **kwargs):
     """Compile one or more source files in one or more ways.
@@ -82,14 +91,9 @@ def build(source, build_parameters=None, **kwargs):
         
     builds = arg_map(source=source, build_parameters=build_parameters)
     
-    Builder = get_config("Builder_type")
     ExeDesc = get_config("ExecutableDescription_type")
-    progress_bar = get_config("ProgressBar")
 
-    l = ExecutableList()
-    for p in progress_bar(builds, miniters=1):
-        l.append(Builder(ExeDesc(**p), **kwargs).build())
-    return l
+    return build_list([ExeDesc(**p) for p in builds], **kwargs)
 
 
 def run_list(invocations, perf_counters=None, **kwargs):
