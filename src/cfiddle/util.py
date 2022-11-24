@@ -64,11 +64,12 @@ def infer_language(filename):
 def exp_range(low, high, multiplier=2):
     last = None
     while low < high:
-        if last != int(low):
-            last = int(low)
-            yield int(low)
+        n = int(round(low))
+        if last != n:
+            last = n
+            yield n
         low = low * multiplier
-    yield int(low)    
+    yield int(round(low))
 
     
 def changes_in(filename):
