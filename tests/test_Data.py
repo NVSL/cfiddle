@@ -136,6 +136,6 @@ uint64_t time() {
 }
 """))
     first = run(b, "time")
-    time.sleep(0.1)
+    time.sleep(1)
     second = first.rerun()
     assert second[0].return_value > first[0].return_value
