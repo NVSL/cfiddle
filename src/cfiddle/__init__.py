@@ -46,11 +46,12 @@ def build_and_run(source_file, build_parameters, function, arguments):
 
 def build_list(build_specs, **kwargs):
     Builder = get_config("Builder_type")
+    ExeDesc = get_config("ExecutableDescription_type")
     progress_bar = get_config("ProgressBar")
 
     l = ExecutableList()
     for p in progress_bar(build_specs, miniters=1):
-        l.append(Builder(p, **kwargs).build())
+        l.append(Builder(ExeDesc(**p), **kwargs).build())
     return l
 
 @handle_cfiddle_exceptions
@@ -90,10 +91,7 @@ def build(source, build_parameters=None, **kwargs):
         build_parameters = arg_map()
         
     builds = arg_map(source=source, build_parameters=build_parameters)
-    
-    ExeDesc = get_config("ExecutableDescription_type")
-
-    return build_list([ExeDesc(**p) for p in builds], **kwargs)
+    return build_list(builds, **kwargs)
 
 
 def run_list(invocations, perf_counters=None, **kwargs):

@@ -126,3 +126,16 @@ void foo() {
     # if the comma creates an extra column in the output, it shows here.
     assert len(df.columns) == 3
     
+def test_rerun(setup):
+    import time
+    b = build(code(r"""
+#include"walltime.h"
+
+uint64_t time() {
+    return wall_time() * 1000000000.0;
+}
+"""))
+    first = run(b, "time")
+    time.sleep(0.1)
+    second = first.rerun()
+    assert second[0].return_value > first[0].return_value
