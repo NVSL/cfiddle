@@ -58,9 +58,10 @@ namespace Tests {
 		std::stringstream s;
 
 		ds.write_csv(s);
-
-		ASSERT_EQ(s.str(), "\"foo\",\"bar\"\n4,\"\"\n\"\",5\n");
+		std::cerr << s.str() << "\n";
+		ASSERT_EQ(s.str(), "\"foo\",\"bar\"\n\"4\",\"\"\n\"\",\"5\"\n");
 	}
+
 
 	TEST_F(DataSetTests, clear_test) {
 		DataSet ds;

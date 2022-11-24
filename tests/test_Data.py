@@ -103,3 +103,26 @@ def test_dicts(test_cpp):
     exe.as_dicts()
     
     
+@pytest.mark.parametrize("tag", [
+    ("foo,bar"),
+    (r"foo\"bar"),
+    ("foo,"),
+    (",foo,"),
+    (""),
+    (r"\""),
+])
+def test_csv_escaping(setup, tag):
+
+    b = build(code(r"""
+#include"cfiddle.hpp"
+extern "C"
+void foo() {
+    start_measurement("TAG");
+    end_measurement();
+}
+""".replace("TAG", tag)))
+    r = run(b, "foo")
+    df = r.as_df()
+    # if the comma creates an extra column in the output, it shows here.
+    assert len(df.columns) == 3
+    
