@@ -161,6 +161,11 @@ class ExecutableList(list):
         except TypeError:
             return result
 
+    def rebuild(self):
+        from cfiddle import build_list
+        build_specs = [b.build_spec for b in self]
+        return build_list(build_specs)
+        
     
 class BuildFailure(CFiddleException):
     def __str__(self):

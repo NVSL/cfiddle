@@ -104,3 +104,22 @@ def test_invalid_parameters(setup):
         with pytest.raises(InvalidBuildParameter):
             build("test_src/test.cpp", {4:""})
 
+
+def test_rebuild(setup):
+    n = code(r"""
+extern "C"
+int number() {
+    return 4;
+}
+""", file_name="number.cpp")
+
+    b = build("number.cpp")
+    assert run(b, "number")[0].return_value == 4
+    n = code(r"""
+extern "C"
+int number() {
+    return 5;
+}
+""", file_name="number.cpp")
+    assert run(b.rebuild(), "number")[0].return_value == 5
+    
