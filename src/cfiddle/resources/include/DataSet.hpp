@@ -107,8 +107,13 @@ public:
 	}
 	
 	template<typename T>
-	DataSet & set(const std::string & name, T t) { // It should be const T & t, but this makes string literals work.
+	DataSet & set(const std::string & name, const T & t) {
 		current_row().set(name, t);
+		return *this;
+	}
+
+	DataSet & set(const std::string & name, const char *t) {
+		current_row().set(name, std::string(t));
 		return *this;
 	}
 
