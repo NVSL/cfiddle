@@ -126,7 +126,42 @@ class Builder:
                 self.parser = p
                 return
         raise UnknownFileType(f"No parser is available for file '{self.source_file}'.")
-            
+
+
+class ExecutableList(list):
+    """Collect results of compilation.
+    
+    A collection of compiled code (e.g., returned by
+    :func:`build()`).
+
+    The columns of the table include:
+
+    1.  Build parameters.
+    2.  Source file.
+
+    You can also call :method:`rebuild()` to recompile with the latest
+    version of the undedrlying source code.
+    """
+
+    def __add__(self, rhs):
+        #https://stackoverflow.com/a/8180577/3949036
+        return ExecutableList(list.__add__(self,rhs))
+
+    def __radd__(self, lhs):
+        if not isinstance(lhs, list):
+            raise TypeError("Can only add to lists")
+        
+        return ExecutableList(list.__add__(lhs, self))
+
+    def __getitem__(self, item):
+        #https://stackoverflow.com/a/8180577/3949036
+        result = list.__getitem__(self, item)
+        try:
+            return ExecutableList(result)
+        except TypeError:
+            return result
+
+    
 class BuildFailure(CFiddleException):
     def __str__(self):
         return f"Build command failed:\n\n{self.args[0]}\n\n{self.args[1]}"
