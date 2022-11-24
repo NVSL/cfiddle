@@ -163,7 +163,7 @@ class ExecutableList(list):
 
     def rebuild(self):
         from cfiddle import build_list
-        build_specs = [b.build_spec for b in self]
+        build_specs = [dict(source=b.build_spec.source_file, build_parameters=b.build_spec.build_parameters) for b in self]
         return build_list(build_specs)
         
     

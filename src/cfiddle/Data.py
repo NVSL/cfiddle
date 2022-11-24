@@ -40,6 +40,14 @@ class InvocationResultsList(list):
         except TypeError:
             return result
 
+    def rerun(self):
+        from cfiddle import run_list
+        return run_list([dict(executable=r.invocation.executable,
+                              function=r.invocation.function,
+                              arguments=r.invocation.arguments,
+                            #  perf_counters=r.invocation.perf_counters,
+                              run_options=r.invocation.run_options) for r in self])
+
     def as_csv(self, csv_file):
         """Write results to a CSV file.
         
