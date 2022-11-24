@@ -104,5 +104,3 @@ def test_invalid_parameters(setup):
         with pytest.raises(InvalidBuildParameter):
             build("test_src/test.cpp", {4:""})
 
-
-    

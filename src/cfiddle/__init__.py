@@ -24,7 +24,7 @@ __all__ = [
 ]
 
 from .Data import InvocationResultsList
-from .Builder import ExecutableDescription, Executable
+from .Builder import ExecutableDescription, Executable, ExecutableList
 from .MakeBuilder import MakeBuilder
 from .Runner import InvocationDescription, InvocationResult, Runner
 from .ExternalRunner import ExternalRunner
@@ -78,7 +78,7 @@ def build(source, build_parameters=None, **kwargs):
         build_parameters = get_config("build_parameters_default")
 
     if build_parameters is None:
-        build_parameters = [{}]
+        build_parameters = arg_map()
         
     builds = arg_map(source=source, build_parameters=build_parameters)
     
@@ -86,7 +86,7 @@ def build(source, build_parameters=None, **kwargs):
     ExeDesc = get_config("ExecutableDescription_type")
     progress_bar = get_config("ProgressBar")
 
-    l = []
+    l = ExecutableList()
     for p in progress_bar(builds, miniters=1):
         l.append(Builder(ExeDesc(**p), **kwargs).build())
     return l

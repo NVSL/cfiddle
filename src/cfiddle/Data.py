@@ -8,10 +8,10 @@ import ctypes
 class InvocationResultsList(list):
     """Collect and summarize execution results.
     
-    A table of values describing multiple executions (e.g., returned by
+    A list of results from multiple executions (e.g., returned by
     :func:`run()`).
 
-    The columns of the table include:
+    It includes:
 
     1.  Build parameters.
     2.  The function name.
