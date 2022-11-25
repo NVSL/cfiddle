@@ -52,6 +52,15 @@ def test_Invocation_types(test_cpp):
     with pytest.raises(InvalidInvocation):
         InvocationDescription(test_cpp,"",{1:1})
 
+    with pytest.raises(InvalidInvocation):
+        InvocationDescription(test_cpp,"",dict(a=1),perf_counters="a")
+
+    with pytest.raises(InvalidInvocation):
+        InvocationDescription(test_cpp,"",dict(a=1),perf_counters=[["a"]])
+
+    with pytest.raises(InvalidInvocation):
+        InvocationDescription(test_cpp,"",dict(a=1),perf_counters=[["a"]])
+
 @pytest.fixture
 def env_echo(setup):
     return build(code(r"""

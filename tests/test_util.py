@@ -40,8 +40,15 @@ def test_type_check():
     type_check(1,int)
     with pytest.raises(TypeError):
         type_check_list([1, str], str)
-    type_check_list([1,1], int)
 
+    with pytest.raises(TypeError):
+        type_check_list([1,"a"], int)
+
+    with pytest.raises(TypeError):
+        type_check_list("a", str)
+        
+    type_check_list([1,1], int)
+    type_check_list(dict(a=1).keys(), str)
 
 def test_unset():
     with environment(foo="a"):
