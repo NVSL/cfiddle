@@ -113,6 +113,8 @@ public:
 	}
 
 	DataSet & set(const std::string & name, const char *t) {
+		// convert char* to strings so we don't have to worry
+		// about memory management of the char*.
 		current_row().set(name, std::string(t));
 		return *this;
 	}

@@ -94,9 +94,7 @@ def build(source, build_parameters=None, **kwargs):
     return build_list(builds, **kwargs)
 
 
-def run_list(invocations, perf_counters=None, **kwargs):
-    if perf_counters is None:
-        perf_counters = get_config("perf_counters_default")
+def run_list(invocations, **kwargs):
 
     IRList = get_config("InvocationResultsList_type")
     IRType = get_config("InvocationResult_type")
@@ -105,7 +103,7 @@ def run_list(invocations, perf_counters=None, **kwargs):
     InvDesc = get_config("InvocationDescription_type")
     progress_bar = get_config("ProgressBar")
 
-    return Runner([InvDesc(**i, perf_counters=perf_counters) for i in invocations],
+    return Runner([InvDesc(**i) for i in invocations],
                   single_runner=LocalSingleRunner,
                   result_list_factory=IRList,
                   result_factory=IRType,
@@ -153,11 +151,24 @@ def run(executable, function, arguments=None, perf_counters=None, run_options=No
         perf_counters = get_config("perf_counters_default")
     if run_options is None:
         run_options = get_config("run_options_default")
-        
-    invocations = arg_map(executable=executable, function=function, arguments=arguments, run_options=run_options)
-    return run_list(invocations, perf_counters=perf_counters, **kwargs)
-        
 
+    perf_counters = normalize_perf_counters(perf_counters)
+    
+    invocations = arg_map(executable=executable, function=function, arguments=arguments, run_options=run_options, perf_counters=perf_counters)
+    return run_list(invocations, **kwargs)
+
+
+def normalize_perf_counters(perf_counters):
+    # this allows for us to say run(foo, "bar", arg_map(), perf_counters=["cycles", "instructions"] and
+    # not have arg_map generate on invocation for "cycles" and one for 'instructions'
+    # the alternative seems to be to require [["cycles", "instructions"]], which is ugly.
+    if perf_counters is None:
+        return None
+    if not isinstance(perf_counters, str) and all(isinstance(pc, str) for pc in perf_counters):
+        return [perf_counters]
+    else:
+        return perf_counters
+    
 def sanity_test():
     return run(executable=build(code('extern "C" int foo() {return 4;}')),
                function=["foo"])[0].return_value

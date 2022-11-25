@@ -26,6 +26,7 @@ class InvocationDescription:
             type_check(self.function, str)
             type_check(self.arguments, dict)
             type_check_list(self.arguments.keys(), str)
+            type_check_list(self.perf_counters, str)
         except (ValueError, TypeError) as e:
             raise InvalidInvocation(e)
 

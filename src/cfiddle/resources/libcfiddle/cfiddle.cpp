@@ -35,6 +35,11 @@ void add_perf_counter(char * perf_counter_spec) {
 }
 
 extern "C"
+bool check_valid_perfcounters() {
+	return get_perf_counter()->check_valid();
+}
+
+extern "C"
 bool are_perf_counters_available() {
 	return get_perf_counter()->performance_counters_enabled();
 }

@@ -34,7 +34,7 @@ namespace Tests {
 	TEST_F(libcfiddleTests, tag_test) {
 		start_measurement("foo");
 		end_measurement();
-		ASSERT_EQ(strcmp(get_dataset()->current_row().get_datum("tag").as<char*>(), "foo"), 0);
+		ASSERT_EQ(get_dataset()->current_row().get_datum("tag").as<std::string>(), "foo");
 	}
 	
 	TEST_F(libcfiddleTests, start_restart_test) {
@@ -45,7 +45,7 @@ namespace Tests {
 		sleep(1);
 		end_measurement();
 		ASSERT_EQ(get_dataset()->size(), 2);
-		ASSERT_EQ(strcmp(get_dataset()->current_row().get_datum("tag").as<char*>(), "bar"), 0);
+		ASSERT_EQ(get_dataset()->current_row().get_datum("tag").as<std::string>(), "bar");
 		ASSERT_NEAR(get_dataset()->current_row().get_datum("ET").as<double>(), 1.0, 0.15);
 	}
 
