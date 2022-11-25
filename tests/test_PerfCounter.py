@@ -83,9 +83,8 @@ def test_perf_count_cache(mem_loop):
 
 def test_perf_count_type(cycle_counter):
     with cfiddle_config():
-        enable_debug()
         with pytest.raises(UnknownPerformanceCounter):
-            run(cycle_counter, "go", {}, perf_counters=[4])
+            run(cycle_counter, "go", arg_map(count=10), perf_counters=["hello"])
 
 def test_default_perf_count(mem_loop):
     with cfiddle_config(perf_counters_default=["CYCLES", "INSTRUCTIONS"]):
@@ -95,7 +94,13 @@ def test_default_perf_count(mem_loop):
     results = run(mem_loop, "go", arg_map(count=[10000]))
     assert "CYCLES" not in results.as_dicts()[0]
     assert "INSTRUCTIONS" not in results.as_dicts()[0]
-        
+
+def test_perf_counter_multiple_sets(mem_loop):
+    results = run(mem_loop, "go", arg_map(count=[10000]), perf_counters=[["CYCLES"],["INSTRUCTIONS"]])
+    assert len(results) == 2
+    assert "CYCLES" in results.as_dicts()[0]
+    assert "INSTRUCTIONS" in results.as_dicts()[1]
+
     
 def skip_if_no_perf_counters():
     if not are_perf_counters_available():

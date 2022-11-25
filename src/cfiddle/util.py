@@ -203,12 +203,13 @@ def type_check(value, the_type):
 
 def type_check_list(values, the_type):
     if isinstance(values, str):
-        raise TypeError(f"Expected iterable object (other than a string), not '{type(values).__name__}'")
+        raise TypeError(f"Expected iterable object (other than a str), not '{type(values).__name__}'")
     
     try:
         iter(values)
     except:
         raise TypeError(f"Expected iterable object (other than a string), not '{type(values).__name__}'")
+    
     if not all(isinstance(v, the_type) for v in values):
         raise TypeError(f"Expected sequence of '{the_type.__name__}' not '{[type(v).__name__ for v in values]}' in {values}")
     

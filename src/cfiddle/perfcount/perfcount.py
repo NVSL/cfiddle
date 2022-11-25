@@ -8,8 +8,11 @@ def install_perf_counters(perf_counters):
         if isinstance(pc, str):
             libcfiddle.add_perf_counter(ctypes.c_char_p(pc.encode()))
         else:
-            raise UnknownPerformanceCounter("Expected instance of 'str' not {type(pc).__name__}.")
+            raise UnknownPerformanceCounter(f"Expected instance of 'str' not {type(pc).__name__}.")
 
+        if not libcfiddle.check_valid_perfcounters():
+            raise UnknownPerformanceCounter(f"Failed to add performance counter '{pc}'.")
+        
 def are_perf_counters_available():
     return bool(_load_libcfiddle().are_perf_counters_available())
 
