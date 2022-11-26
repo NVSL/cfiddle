@@ -18,6 +18,7 @@
 #include <map>
 #include <fstream>
 #include <iostream>
+#include <sstream>
 
 #include "PerfCounterDefs.hpp"
 
@@ -44,26 +45,47 @@ public:
 		clear();
 	}
 
-	void add_counter(const std::string & event_spec) {
-		
+	bool initialize_perf_event_pfm4(struct perf_event_attr & perf_event, const std::string & event_spec, std::stringstream & errors ) {
  		pfm_perf_encode_arg_t arg;
 		int ret;
-		struct perf_event_attr perf_event;
-		
-		init_perf_event_attr(perf_event);
 		
 		memset(&arg, 0, sizeof(arg));
-
+		
 		arg.attr = & perf_event;
 		arg.fstr = NULL;
 		arg.size = sizeof(arg);
 		
 		ret = pfm_get_os_event_encoding(event_spec.c_str(), PFM_PLM3, PFM_OS_PERF_EVENT, &arg);
 		if (ret != PFM_SUCCESS){
-			std::cerr << "Cannot get encoding for "
-				  << event_spec
-				  << ": "
-				  << pfm_strerror(ret) << "\n";
+			errors << "We tried Libpfm4, but it said: cannot get encoding for "
+			       << event_spec
+			       << ": "
+			       << pfm_strerror(ret) << "\n";
+			return false;
+		} else {
+			return true;
+		}
+		
+	}
+
+	bool initialize_perf_software_event(struct perf_event_attr & perf_event, const std::string & event_spec, std::stringstream & errors ) {
+		errors << "We tried looking for a perf software event, but it said: Other Perf software events are not currently supported.\n";
+		return false;
+	}
+	
+	void add_counter(const std::string & event_spec) {
+		
+		struct perf_event_attr perf_event;
+		std::stringstream errors;
+		
+		init_perf_event_attr(perf_event);
+
+		if (initialize_perf_event_pfm4(perf_event, event_spec, errors)) {
+		} else if (initialize_perf_software_event(perf_event, event_spec, errors)) {
+		} else {
+			std::cerr << "Cannot measure event "
+				  << event_spec << "\n"
+				  << errors.str() << "\n";
 			flag_error();
 			return;
 		}

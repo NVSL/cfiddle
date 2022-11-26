@@ -101,6 +101,28 @@ def test_perf_counter_multiple_sets(mem_loop):
     assert "CYCLES" in results.as_dicts()[0]
     assert "INSTRUCTIONS" in results.as_dicts()[1]
 
+def test_perf_sw_events(mem_loop):
+    results = run(mem_loop, "go", arg_map(count=exp_range(10,1000000000, 10)), perf_counters=["PERF_COUNT_SW_CPU_CLOCK","Cycles"])
+    t = results.as_df()
+    t['calc_time'] = t['PERF_COUNT_SW_CPU_CLOCK'] /1e9
+    t['ratio'] = t['calc_time']/t['ET']
+
+
+def test_perf_event_names(mem_loop):
+    results = run(mem_loop, "go", arg_map(count=10), perf_counters=[["L1-dcache-load-misses"],
+                                                                    ["migrations"],
+                                                                    ["cpu-migrations"],
+                                                                    ["branches"],
+                                                                    ["branch-instructions"],
+                                                                    ])
+    print(results.as_df())
+
+def test_kernel_PMU_events(mem_loop):
+    pytest.skip("Kernel PMU events are not supported yet.")
+    results = run(mem_loop, "go", arg_map(count=10), perf_counters=[["cpu/branch-instructions/"],
+                                                                    ["power/energy-cores/"]
+                                                                    ])
+    print(results.as_df())
     
 def skip_if_no_perf_counters():
     if not are_perf_counters_available():
