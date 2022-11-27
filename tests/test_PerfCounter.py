@@ -87,6 +87,7 @@ def test_perf_count_type(cycle_counter):
             run(cycle_counter, "go", arg_map(count=10), perf_counters=["hello"])
 
 def test_default_perf_count(mem_loop):
+    skip_if_no_perf_counters()
     with cfiddle_config(perf_counters_default=["CYCLES", "INSTRUCTIONS"]):
         results = run(mem_loop, "go", arg_map(count=[10000]))
         assert "CYCLES" in results.as_dicts()[0]
@@ -96,12 +97,14 @@ def test_default_perf_count(mem_loop):
     assert "INSTRUCTIONS" not in results.as_dicts()[0]
 
 def test_perf_counter_multiple_sets(mem_loop):
+    skip_if_no_perf_counters()
     results = run(mem_loop, "go", arg_map(count=[10000]), perf_counters=[["CYCLES"],["INSTRUCTIONS"]])
     assert len(results) == 2
     assert "CYCLES" in results.as_dicts()[0]
     assert "INSTRUCTIONS" in results.as_dicts()[1]
 
 def test_perf_sw_events(mem_loop):
+    skip_if_no_perf_counters()
     results = run(mem_loop, "go", arg_map(count=exp_range(10,1000000000, 10)), perf_counters=["PERF_COUNT_SW_CPU_CLOCK","Cycles"])
     t = results.as_df()
     t['calc_time'] = t['PERF_COUNT_SW_CPU_CLOCK'] /1e9
@@ -109,6 +112,7 @@ def test_perf_sw_events(mem_loop):
 
 
 def test_perf_event_names(mem_loop):
+    skip_if_no_perf_counters()
     results = run(mem_loop, "go", arg_map(count=10), perf_counters=[["L1-dcache-load-misses"],
                                                                     ["migrations"],
                                                                     ["cpu-migrations"],
