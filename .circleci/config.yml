@@ -52,6 +52,10 @@ jobs:
       - run:
           name: Test cfiddle
           command: $(set-cfiddle-ld-path); cd tests; make test
+  python-311:
+    <<: *test-template
+    docker:
+      - image: cimg/python:3.11
   python-310:
     <<: *test-template
     docker:
