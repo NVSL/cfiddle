@@ -1,7 +1,9 @@
 from cfiddle import *
 from cfiddle.perfcount import *
+from cfiddle.util import environment
 from cfiddle.config import cfiddle_config
 import pytest
+import os
 from fixtures import *
 
 @pytest.fixture
@@ -52,7 +54,7 @@ def mem_loop(setup):
          }
          end_measurement();
          return s;
-    }"""))
+    }"""), verbose=True)
 
 
 def test_perf_count_easy(mem_loop):
@@ -82,11 +84,14 @@ def test_perf_count_cache(mem_loop):
     
 
 def test_perf_count_type(cycle_counter):
-    with cfiddle_config():
-        with pytest.raises(UnknownPerformanceCounter):
-            run(cycle_counter, "go", arg_map(count=10), perf_counters=["hello"])
+    if "CFIDDLE_FAKE_PERF_COUNTER_SUCCESS" in os.environ:
+        pytest.skip("Failure is disabled")
+        
+    with pytest.raises(UnknownPerformanceCounter):
+        run(cycle_counter, "go", arg_map(count=10), perf_counters=["hello"])
 
 def test_default_perf_count(mem_loop):
+    skip_if_no_perf_counters()
     with cfiddle_config(perf_counters_default=["CYCLES", "INSTRUCTIONS"]):
         results = run(mem_loop, "go", arg_map(count=[10000]))
         assert "CYCLES" in results.as_dicts()[0]
@@ -96,12 +101,14 @@ def test_default_perf_count(mem_loop):
     assert "INSTRUCTIONS" not in results.as_dicts()[0]
 
 def test_perf_counter_multiple_sets(mem_loop):
+    skip_if_no_perf_counters()
     results = run(mem_loop, "go", arg_map(count=[10000]), perf_counters=[["CYCLES"],["INSTRUCTIONS"]])
     assert len(results) == 2
     assert "CYCLES" in results.as_dicts()[0]
     assert "INSTRUCTIONS" in results.as_dicts()[1]
 
 def test_perf_sw_events(mem_loop):
+    skip_if_no_perf_counters()
     results = run(mem_loop, "go", arg_map(count=exp_range(10,1000000000, 10)), perf_counters=["PERF_COUNT_SW_CPU_CLOCK","Cycles"])
     t = results.as_df()
     t['calc_time'] = t['PERF_COUNT_SW_CPU_CLOCK'] /1e9
@@ -109,6 +116,7 @@ def test_perf_sw_events(mem_loop):
 
 
 def test_perf_event_names(mem_loop):
+    skip_if_no_perf_counters()
     results = run(mem_loop, "go", arg_map(count=10), perf_counters=[["L1-dcache-load-misses"],
                                                                     ["migrations"],
                                                                     ["cpu-migrations"],
@@ -123,6 +131,11 @@ def test_kernel_PMU_events(mem_loop):
                                                                     ["power/energy-cores/"]
                                                                     ])
     print(results.as_df())
+    
+def test_fake_success(mem_loop):
+    with environment(CFIDDLE_FAKE_PERF_COUNTER_SUCCESS=""):
+        results = run(mem_loop, "go", arg_map(count=10), perf_counters=[["this_should_fail"]])
+        print(results.as_df())
     
 def skip_if_no_perf_counters():
     if not are_perf_counters_available():

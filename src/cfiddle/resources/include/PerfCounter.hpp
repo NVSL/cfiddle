@@ -37,12 +37,17 @@ class PerfCounter {
 	std::vector<CounterValue> counter_values;
 	bool valid;
 	bool initialization_successful;
-
+	bool fake_success;
 	
 public:
 	PerfCounter() : valid(true), initialization_successful(true){
 		init_libpfm4();
 		clear();
+		if (getenv("CFIDDLE_FAKE_PERF_COUNTER_SUCCESS")) {
+			fake_success = true;
+		} else {
+			fake_success = false;
+		}
 	}
 
 	bool initialize_perf_event_pfm4(struct perf_event_attr & perf_event, const std::string & event_spec, std::stringstream & errors ) {
@@ -83,10 +88,12 @@ public:
 		if (initialize_perf_event_pfm4(perf_event, event_spec, errors)) {
 		} else if (initialize_perf_software_event(perf_event, event_spec, errors)) {
 		} else {
+
 			std::cerr << "Cannot measure event "
 				  << event_spec << "\n"
 				  << errors.str() << "\n";
 			flag_error();
+		       
 			return;
 		}
 
@@ -243,7 +250,12 @@ private:
 	}
 
 	void flag_error() {
-		valid = false;
+		if (!fake_success) {
+			valid = false;
+		} else {
+			std::cerr << "PerfCounter encountered an error, but we are ignoring it because you set CFIDDLE_FAKE_PERF_COUNTER_SUCCESS\n";
+							
+		}
 	}
 
 };
