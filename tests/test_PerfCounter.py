@@ -3,6 +3,7 @@ from cfiddle.perfcount import *
 from cfiddle.util import environment
 from cfiddle.config import cfiddle_config
 import pytest
+import os
 from fixtures import *
 
 @pytest.fixture
