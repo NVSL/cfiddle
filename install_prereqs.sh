@@ -26,9 +26,8 @@ apt-get install -y gcc-8 g++-8 || true # this fails on circleci for some reason
 ##### perf
 if ! perf --version; then
     apt-get update --fix-missing -y
-    apt-get -y install flex bison && apt-get clean -y
-    pip install python-config
-    
+    apt-get -y install flex bison python3-pip && apt-get clean -y
+    python3 -m pip install python-config
     
     pushd .
     if apt-get install linux-source; then
