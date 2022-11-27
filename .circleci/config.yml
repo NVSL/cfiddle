@@ -52,7 +52,7 @@ jobs:
           command: pip install /tmp/cfiddle/packages/*.tar.gz
       - run:
           name: Test cfiddle
-          command: $(set-cfiddle-ld-path); cd tests; make test
+          command: $(set-cfiddle-ld-path); cd tests; CFIDDLE_FAKE_PERF_COUNTER_SUCCESS=1 make test
   python-311:
     <<: *test-template
     docker:

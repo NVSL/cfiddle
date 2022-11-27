@@ -1,5 +1,6 @@
 from cfiddle import *
 from cfiddle.perfcount import *
+from cfiddle.util import environment
 from cfiddle.config import cfiddle_config
 import pytest
 from fixtures import *
@@ -52,7 +53,7 @@ def mem_loop(setup):
          }
          end_measurement();
          return s;
-    }"""))
+    }"""), verbose=True)
 
 
 def test_perf_count_easy(mem_loop):
@@ -127,6 +128,11 @@ def test_kernel_PMU_events(mem_loop):
                                                                     ["power/energy-cores/"]
                                                                     ])
     print(results.as_df())
+    
+def test_fake_success(mem_loop):
+    with environment(CFIDDLE_FAKE_PERF_COUNTER_SUCCESS=""):
+        results = run(mem_loop, "go", arg_map(count=10), perf_counters=[["this_should_fail"]])
+        print(results.as_df())
     
 def skip_if_no_perf_counters():
     if not are_perf_counters_available():
