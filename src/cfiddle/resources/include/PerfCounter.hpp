@@ -43,11 +43,6 @@ public:
 	PerfCounter() : valid(true), initialization_successful(true){
 		init_libpfm4();
 		clear();
-		if (getenv("CFIDDLE_FAKE_PERF_COUNTER_SUCCESS")) {
-			fake_success = true;
-		} else {
-			fake_success = false;
-		}
 	}
 
 	bool initialize_perf_event_pfm4(struct perf_event_attr & perf_event, const std::string & event_spec, std::stringstream & errors ) {
@@ -134,6 +129,13 @@ public:
 		}
 		counter_values.clear();
 		lead_fd = -1;
+
+		if (getenv("CFIDDLE_FAKE_PERF_COUNTER_SUCCESS")) {
+			fake_success = true;
+		} else {
+			fake_success = false;
+		}
+
 		valid = true;
 	}
 	const std::vector<CounterValue> & get_counters() {
