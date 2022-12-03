@@ -134,7 +134,7 @@ def test_kernel_PMU_events(mem_loop):
     
 def test_fake_success(mem_loop):
     with environment(CFIDDLE_FAKE_PERF_COUNTER_SUCCESS=""):
-        results = run(mem_loop, "go", arg_map(count=10), perf_counters=[["this_should_fail"]])
+        results = run(mem_loop, "go", arg_map(count=10), perf_counters=[["this_should_fail_but_it_wont"]])
         print(results.as_df())
     
 def skip_if_no_perf_counters():
