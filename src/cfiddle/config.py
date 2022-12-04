@@ -8,7 +8,7 @@ from .LocalSingleRunner import LocalSingleRunner
 from .CProtoParser import CProtoParser
 from .GoProtoParser import GoProtoParser
 from .Exceptions import CFiddleException
-from .source import FullyInstrumentedExecutable
+from .source import InstrumentedExecutable
 from .ExternalRunner import SubprocessExternalRunnerDelegate
 
 from tqdm import tqdm
@@ -17,7 +17,7 @@ from contextlib import contextmanager
 def noop_progress_bar(data, *argc, **kwargs):
     return data
 
-default_config = dict(Executable_type=FullyInstrumentedExecutable,
+default_config = dict(Executable_type=InstrumentedExecutable,
                       InvocationResult_type=InvocationResult,
                       Builder_type=MakeBuilder,
                       Runner_type=Runner,

@@ -13,7 +13,7 @@ def test_jupyter(setup):
     with cfiddle_config():
         configure_for_jupyter()
         test_cpp = build_one("test_src/test.cpp")
-        assert isinstance(test_cpp, cfiddle.jupyter.source.FullyInstrumentedExecutable)
+        assert isinstance(test_cpp, cfiddle.jupyter.source.InstrumentedExecutable)
         assert isinstance(test_cpp.asm(), Code)
         assert isinstance(test_cpp.source(), Code)
         assert isinstance(test_cpp.preprocessed(), Code)

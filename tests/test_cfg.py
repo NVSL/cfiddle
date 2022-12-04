@@ -1,7 +1,7 @@
 from cfiddle import *
 from util import *
 from fixtures import *
-from cfiddle.source import FullyInstrumentedExecutable
+from cfiddle.source import InstrumentedExecutable
 from cfiddle.util import working_directory
 import pytest
 import tempfile
@@ -10,7 +10,7 @@ import os
 
 def test_cfg(test_cpp):
     
-    assert isinstance(test_cpp, FullyInstrumentedExecutable)
+    assert isinstance(test_cpp, InstrumentedExecutable)
 
     with tempfile.TemporaryDirectory() as d:
         png = os.path.join(d, "test.png")

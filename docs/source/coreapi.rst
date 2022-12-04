@@ -16,16 +16,20 @@ code.
 Compiling Code
 ..............
 
-:func:`cfiddle.build()` returns :obj:`cfiddle.source.FullyInstrumentedExecutable` objects that represent compiled code and allows you to inspect it.
+CFiddle compiles code with :func:`cfiddle.build()`.  It takes source
+code, and a set of build parameters and generates an a list of
+:obj:`cfiddle.source.InstrumentedExecutable` objects that
+represent compiled code and allows you to inspect the code and the
+results of its compilation (e.g., the assembly).
       
 .. autofunction:: cfiddle.build
 
 Inspecting Compiled Code
 ........................
 
-:obj:`cfiddle.source.FullyInstrumentedExecutable` provides several ways to inspect your compiled code. 
+:obj:`cfiddle.source.InstrumentedExecutable` provides several ways to inspect your compiled code. 
      
-.. autoclass:: cfiddle.source.FullyInstrumentedExecutable
+.. autoclass:: cfiddle.source.InstrumentedExecutable
    :inherited-members:
 	       
    
