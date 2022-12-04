@@ -11,7 +11,7 @@ double start_time = 0.0;
 DataSet * get_dataset();
 
 extern "C"
-void write_stats(char *  filename) {
+void write_stats(const char *  filename) {
 	//std::cerr << "Writing to " << filename << "\n";
 	std::ofstream out(filename);
 	get_dataset()->write_csv(out);

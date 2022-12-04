@@ -144,7 +144,6 @@ def extract_code(filename, executable, source=None, show=None, language=None, in
     if language is None:
         language = infer_language(filename)
 
-
     if isinstance(show, str):
         show = construct_function_regex(executable, language, show)
 
