@@ -1,13 +1,13 @@
 from cfiddle import *
 from util import *
 from fixtures import *
-from cfiddle.source import FullyInstrumentedExecutable, InspectionError, Assembly
+from cfiddle.source import InstrumentedExecutable, InspectionError, Assembly
 import pytest
 import re
 
 def test_source(test_cpp):
     
-    assert isinstance(test_cpp, FullyInstrumentedExecutable)
+    assert isinstance(test_cpp, InstrumentedExecutable)
     
     with open("test_src/test.cpp") as f:
         f = f.read()

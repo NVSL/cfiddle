@@ -124,7 +124,7 @@ class Preprocessed:
             raise InspectionError(f"Can't compute preprocessor file extension for file  '{filename}' in '{language}'.")
 
                 
-class FullyInstrumentedExecutable(Preprocessed, Source, Assembly, CFG, DebugInfo, Executable):
+class InstrumentedExecutable(Preprocessed, Source, Assembly, CFG, DebugInfo, Executable):
 
     def __init__(self, *argc, **kwargs):
         super().__init__(*argc, **kwargs)

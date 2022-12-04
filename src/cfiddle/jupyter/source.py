@@ -50,7 +50,7 @@ class CFG(CFG):
         return SVG(t)
     
     
-class FullyInstrumentedExecutable(Preprocessed, Source, Assembly, CFG, DebugInfo, Executable):
+class InstrumentedExecutable(Preprocessed, Source, Assembly, CFG, DebugInfo, Executable):
     def __init__(self, *argc, **kwargs):
         super().__init__(*argc, **kwargs)
 
