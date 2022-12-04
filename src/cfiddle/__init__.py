@@ -8,6 +8,7 @@ __all__ = [
     "Runner",
     "ExternalRunner",
     "arg_map",
+    "arg_product",
     "code",
     "build_and_run",
     "build",
@@ -29,7 +30,7 @@ from .MakeBuilder import MakeBuilder
 from .Runner import InvocationDescription, InvocationResult, Runner
 from .ExternalRunner import ExternalRunner
 from .LocalSingleRunner import LocalSingleRunner
-from .util import arg_map, changes_in, exp_range, running_under_jupyter
+from .util import arg_map, arg_product, changes_in, exp_range, running_under_jupyter
 from .Code import code
 from .config import get_config, set_config, enable_debug, cfiddle_config
 from .paths import setup_ld_path
