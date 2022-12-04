@@ -3,6 +3,8 @@ import copy
 import sys
 import os
 from contextlib import contextmanager
+from functools import reduce
+from itertools import product
 from collections.abc import Iterable
 import subprocess
 import time
@@ -15,7 +17,6 @@ def arg_map(**parameters):
 
 
     .. doctest::
-
       >>> from cfiddle import *
       >>> from pprint import pprint
       >>> pprint(arg_map(foo=[1,2], bar=[3,4], baz=5))
@@ -23,7 +24,17 @@ def arg_map(**parameters):
        {'bar': 4, 'baz': 5, 'foo': 1},
        {'bar': 3, 'baz': 5, 'foo': 2},
        {'bar': 4, 'baz': 5, 'foo': 2}]
-   
+
+    Adding the results of calls to ::func`arg_map`, can also be useful for instance:
+
+    .. doctest::
+      >>> from cfiddle import *
+      >>> from pprint import pprint
+      >>> pprint(arg_map(foo=1, bar=3, baz=5) +
+      ...        arg_map(foo=4, bar=5, baz=6))
+      [{'bar': 3, 'baz': 5, 'foo': 1}, {'bar': 5, 'baz': 6, 'foo': 4}]
+
+
     Args:
       **kwargs: key-value pairs.  Scalar values will are treated as lists of length 1.
 
@@ -31,13 +42,75 @@ def arg_map(**parameters):
       :obj:`list` of :obj:`dict`:  See example above.
 
     """
-    if len(parameters) == 0:
-        return[{}]
+def arg_map(**parameters):
     
-    def listify(t):
+    def listify_value(t):
         return t if isinstance(t, Iterable) and not isinstance(t, str) and not isinstance(t, dict) else [t]
-    t = [(k, listify(v)) for k,v in parameters.items()]
-    return _cross_product(t)
+    
+    def ensure_value_is_iterable(p):
+        return {k: listify_value(v) for k,v in p.items()}
+    def expand_parameter_values(arg,values):
+        return [{arg:v} for v in values]
+    
+    parameters = ensure_value_is_iterable(parameters)
+    expanded = [expand_parameter_values(k,v) for k,v in parameters.items()]
+    
+    return list(arg_product(*expanded))
+
+def arg_product(*args):
+    """Generate and merge the cross product of a set of dicts.
+
+    In most cases, the arguments are the result of calls to ::func`arg_map` or ::func`arg_product`.
+
+    For example:
+
+    .. doctest::
+      >>> from cfiddle import *
+      >>> from pprint import pprint
+      >>> pprint(arg_map(a=[1,2]))
+      [{'a': 1}, {'a': 2}]
+      >>> pprint(arg_map(b=[3,4]))
+      [{'b': 3}, {'b': 4}]
+      >>> pprint(arg_product(arg_map(a=[1,2]), arg_map(b=[3,4])))
+      [{'a': 1, 'b': 3}, {'a': 1, 'b': 4}, {'a': 2, 'b': 3}, {'a': 2, 'b': 4}]
+
+    You can use ::func`arg_product` and ::func`arg_map` to compose complex combinations of parameters.   
+    For instance, we combined specific pairs of values with all cominations of some others:
+
+    .. doctest::
+      >>> from cfiddle import *
+      >>> from pprint import pprint
+      >>> paired_values = arg_map(a=1, b=2) + arg_map(a=2, b=4)
+      >>> pprint(paired_values)
+      [{'a': 1, 'b': 2}, {'a': 2, 'b': 4}]
+      >>> pprint(arg_product(paired_values, arg_map(c=[1,2], d=[3,4])))
+      [{'a': 1, 'b': 2, 'c': 1, 'd': 3},
+       {'a': 1, 'b': 2, 'c': 1, 'd': 4},
+       {'a': 1, 'b': 2, 'c': 2, 'd': 3},
+       {'a': 1, 'b': 2, 'c': 2, 'd': 4},
+       {'a': 2, 'b': 4, 'c': 1, 'd': 3},
+       {'a': 2, 'b': 4, 'c': 1, 'd': 4},
+       {'a': 2, 'b': 4, 'c': 2, 'd': 3},
+       {'a': 2, 'b': 4, 'c': 2, 'd': 4}]
+
+    Args:
+      *args: A list of :obj:`dict`.
+
+    Returns:
+      :obj:`list` of :obj:`dict`
+
+    """
+    r = []
+    
+    if len(args) == 0:
+        return [{}]
+
+    def merge(a,b):
+        a.update(b)
+        return a
+    
+    return [reduce(merge, copy.deepcopy(arg)) for arg in product(*args)]
+
 
 def infer_language(filename):
     suffixes_to_language = {".CPP" : "c++",

@@ -31,8 +31,25 @@ import tempfile
         "c": 3}])
 ])
 def test_arg_map(inp, output):
+
     assert arg_map(**inp) == output
 
+@pytest.mark.parametrize("inp,output", [([],[{}]),
+                                        ([arg_map()], [{}]),
+                                        ([arg_map(a=1)], [{'a': 1}]),
+                                        ([arg_map(a=[1,2])],[{'a': 1}, {'a': 2}]),
+                                        ([arg_map(a=1, b=4)],[{'a': 1, 'b': 4}]),
+                                        ([arg_map(a=1), arg_map(b=4)],[{'a': 1, 'b': 4}]),
+                                        ([arg_map(a=[1,2]), arg_map(b=4)],[{'a': 1, 'b': 4},
+                                                                           {'a': 2, 'b': 4}]),
+                                        ([arg_map(a=[1,2]), arg_map(b=[4,5])],[{'a': 1, 'b': 4},
+                                                                               {'a': 1, 'b': 5},
+                                                                               {'a': 2, 'b': 4},
+                                                                               {'a': 2, 'b': 5}])])
+def test_arg_product(inp, output):
+    assert arg_product(*inp) == output
+
+    
 
 def test_type_check():
     with pytest.raises(TypeError):
