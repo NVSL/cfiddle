@@ -32,7 +32,14 @@ class InvocationDescription:
 
         
 class RunOptionManager(object):
+    """
 
+    Interpret the contents of the  :code:`run_options` argument to :func:`cfiddle.run`.
+
+    This is a context manager.  The base class implementation just copies the values into environment variables.  Subclasses or substitutions could implement other behavior.
+    
+    """
+    
     def __init__(self, options):
         self._options = options
 
@@ -60,7 +67,7 @@ class Runner:
     :class:`InvocationDescription` to :class:`InvocationResults`.
     This is default implementation uses :class:`LocalSingleRunner` to
     perform each execution.  An alterante class can bespecified via
-    the `SingleRunner_type` configuration option.
+    the :code:`SingleRunner_type` configuration option.
 
     Creating a subclass allows for other execution methods.  Notably,
     :class:`ExternalRunner` allows for execution via an external

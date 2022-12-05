@@ -9,14 +9,15 @@ from collections.abc import Iterable
 import subprocess
 import time
 
-
 def arg_map(**parameters):
-    """Generates the `named cross product` for a :obj:`dict` that maps names to lists of values.  
+    """Generates take a set of named lists of values and generate the
+    `named cross product` a set of :obj:`dict` s with all combinations of
+    the values.
 
     For example:
 
-
     .. doctest::
+
       >>> from cfiddle import *
       >>> from pprint import pprint
       >>> pprint(arg_map(foo=[1,2], bar=[3,4], baz=5))
@@ -25,9 +26,10 @@ def arg_map(**parameters):
        {'bar': 3, 'baz': 5, 'foo': 2},
        {'bar': 4, 'baz': 5, 'foo': 2}]
 
-    Adding the results of calls to ::func`arg_map`, can also be useful for instance:
+    You can also specify a list argument values by adding together the results of :func:`arg_map`:
 
     .. doctest::
+
       >>> from cfiddle import *
       >>> from pprint import pprint
       >>> pprint(arg_map(foo=1, bar=3, baz=5) +
@@ -42,7 +44,6 @@ def arg_map(**parameters):
       :obj:`list` of :obj:`dict`:  See example above.
 
     """
-def arg_map(**parameters):
     
     def listify_value(t):
         return t if isinstance(t, Iterable) and not isinstance(t, str) and not isinstance(t, dict) else [t]
@@ -60,11 +61,13 @@ def arg_map(**parameters):
 def arg_product(*args):
     """Generate and merge the cross product of a set of dicts.
 
-    In most cases, the arguments are the result of calls to ::func`arg_map` or ::func`arg_product`.
+    In the common use case, the arguments are the result of calls to
+    :func:`arg_map`.
 
     For example:
 
     .. doctest::
+
       >>> from cfiddle import *
       >>> from pprint import pprint
       >>> pprint(arg_map(a=[1,2]))
@@ -74,24 +77,53 @@ def arg_product(*args):
       >>> pprint(arg_product(arg_map(a=[1,2]), arg_map(b=[3,4])))
       [{'a': 1, 'b': 3}, {'a': 1, 'b': 4}, {'a': 2, 'b': 3}, {'a': 2, 'b': 4}]
 
-    You can use ::func`arg_product` and ::func`arg_map` to compose complex combinations of parameters.   
-    For instance, we combined specific pairs of values with all cominations of some others:
+    You can use :func:`arg_product` and :func:`arg_map` to compose
+    complex combinations of parameters.  
+
+    For instance, let's imagine that we a C++ function,
+    
+    .. code::
+      
+      matexp(int m, int tile_size, int thread_count)
+
+    that measures the performance of raising an
+    :code:`m` x :code:`m` matrix to the :code:`p` th power using a given
+    memory :code:`tile_size` and :code:`thread_count`.
+
+    We'd like to chose a few representative values of :code:`m` and
+    :code:`p` and run them for all combinations of
+    :code:`thread_count` and :code:`tile_size`.
+
+    We can the set of function arguments like so:
 
     .. doctest::
+
       >>> from cfiddle import *
       >>> from pprint import pprint
-      >>> paired_values = arg_map(a=1, b=2) + arg_map(a=2, b=4)
-      >>> pprint(paired_values)
-      [{'a': 1, 'b': 2}, {'a': 2, 'b': 4}]
-      >>> pprint(arg_product(paired_values, arg_map(c=[1,2], d=[3,4])))
-      [{'a': 1, 'b': 2, 'c': 1, 'd': 3},
-       {'a': 1, 'b': 2, 'c': 1, 'd': 4},
-       {'a': 1, 'b': 2, 'c': 2, 'd': 3},
-       {'a': 1, 'b': 2, 'c': 2, 'd': 4},
-       {'a': 2, 'b': 4, 'c': 1, 'd': 3},
-       {'a': 2, 'b': 4, 'c': 1, 'd': 4},
-       {'a': 2, 'b': 4, 'c': 2, 'd': 3},
-       {'a': 2, 'b': 4, 'c': 2, 'd': 4}]
+      >>> p = arg_product(arg_map(size=600, power=2) + 
+      ...                 arg_map(size=320, power=40) + 
+      ...                 arg_map(size=120, power=240), 
+      ...                 arg_map(thread_count=[1,2], 
+      ...                         tile_size=[4,8,16]))
+      >>> pprint(p)  # doctest: +SKIP
+      [{'power': 2, 'size': 600, 'thread_count': 1, 'tile_size': 4},
+       {'power': 2, 'size': 600, 'thread_count': 1, 'tile_size': 8},
+       {'power': 2, 'size': 600, 'thread_count': 1, 'tile_size': 16},
+       {'power': 2, 'size': 600, 'thread_count': 2, 'tile_size': 4},
+       {'power': 2, 'size': 600, 'thread_count': 2, 'tile_size': 8},
+       {'power': 2, 'size': 600, 'thread_count': 2, 'tile_size': 16},
+       {'power': 40, 'size': 320, 'thread_count': 1, 'tile_size': 4},
+       {'power': 40, 'size': 320, 'thread_count': 1, 'tile_size': 8},
+       {'power': 40, 'size': 320, 'thread_count': 1, 'tile_size': 16},
+       {'power': 40, 'size': 320, 'thread_count': 2, 'tile_size': 4},
+       {'power': 40, 'size': 320, 'thread_count': 2, 'tile_size': 8},
+       {'power': 40, 'size': 320, 'thread_count': 2, 'tile_size': 16},
+       {'power': 240, 'size': 120, 'thread_count': 1, 'tile_size': 4},
+       {'power': 240, 'size': 120, 'thread_count': 1, 'tile_size': 8},
+       {'power': 240, 'size': 120, 'thread_count': 1, 'tile_size': 16},
+       {'power': 240, 'size': 120, 'thread_count': 2, 'tile_size': 4},
+       {'power': 240, 'size': 120, 'thread_count': 2, 'tile_size': 8},
+       {'power': 240, 'size': 120, 'thread_count': 2, 'tile_size': 16}]
 
     Args:
       *args: A list of :obj:`dict`.

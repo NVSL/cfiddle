@@ -78,6 +78,13 @@ release-check:
 	git diff-index --quiet HEAD -- # require that there be no local changes
 	[ x"$$(git rev-parse main)" = x"$$(git rev-parse origin/main)" ] # make sure we are synced
 
+.PHONY: docs
+docs:
+	make -C docs html
+
+.PHONY: serve-docs
+serve-docs: docs
+	python -m http.server --directory docs/build/html/
 .PHONY: wc
 wc:
 	wc -l tests/*.py | sort -n

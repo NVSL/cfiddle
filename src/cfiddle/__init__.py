@@ -59,21 +59,23 @@ def build_list(build_specs, **kwargs):
 def build(source, build_parameters=None, **kwargs):
     """Compile one or more source files in one or more ways.
 
-    ``source`` can be a single filename or a list of file names.  ``build``
-    compiles each file into an :obj:`Executable`.  A call to :func:`code()` is
-    often passed as ``source``.
+    ``source`` can be a single file name  or a list of file names.  ``build``
+    compiles each file into an :obj:`Executable`.  A call to
+    :func:`cfiddle.code()` is often passed as ``source``.
 
-    ``build_parameters`` can set parameters for the build process (e.g.,
-    optimization levels or the compiler to use).  It can be a :obj:`dict` or list
-    of :obj:`dict` that provide values for build parameters.  If
-    ``build_parameters`` is ``None``, defaults will be used.
+    ``build_parameters`` can set parameters for the build process
+    (e.g., optimization levels, the target architecture, or the
+    compiler to use).  It can be a :obj:`dict` or list of :obj:`dict`
+    that provide values for build parameters.  If ``build_parameters``
+    is ``None``, defaults will be used.
 
-    Typically, the :code:`build_parameters` value is generated with :func:`cfiddle.util.arg_map()`.
+    Typically, the :code:`build_parameters` value is generated with
+    :func:`cfiddle.util.arg_map()`.
 
     ``build`` compiles each source file using each set of build parameters, and
-    returns list of resulting :obj:`Executable` objects.
+    returns list of resulting :obj:`InstrumentedExecutable` objects.
 
-    The :obj:`Executable` s can be studied themselves or passed to :func:`run`.
+    The :obj:`InstrumentedExecutable` s can be studied themselves or passed to :func:`run`.
 
     Args:
         source: One or more (as a list) of source files to compile.
@@ -114,30 +116,53 @@ def run_list(invocations, **kwargs):
 
 @handle_cfiddle_exceptions
 def run(executable, function, arguments=None, perf_counters=None, run_options=None, **kwargs):
-    """Run one or more functions with one or more sets of arguments.
+    """Run one or more functions with one or more sets of arguments and
+    collect one or more measurements.
+    
+    CFiddle parameterizes execution in five ways, corresponding to
+    :func:`run()` 's five arguments:
+    
+    1. An :obj:`InstrumentedExecutable` to run as returned by :func:`cfiddle.build()`.
+    2. The function to call.
+    3. The arguments to pass to the function.
+    4. The performance counters to track.
+    5. And the other aspects of the execution environment (e.g., environment variables and clock speed).
 
-    Run each ``function`` in each :obj:`Executable` using each set of arguments,
-    and collect the data provided by each ``perf_counter`` for each invocation.
+    :func:`run()` can take multiple values for each of these and will
+    run all combinations.  
 
-    Each ``function`` must exist in each :obj:`Executable` and they must have the
-    same signature.  Further, each set of arguments must match the function
-    signature (i.e., the key-value pairs in ``arguments`` must align with names
-    and types of the function's arguments).
+    :code:`function` can be a :obj:`str` corresponding to a function
+    that is present in each executable with the same signature.  To
+    run multiple functions, pass a list of strings.
 
-    The values of ``arguments`` and ``run_options`` are typically provided by a call to
-    :func:`cfiddle.util.arg_map()`.
+    The contents of :code:'arguments` must match the signature of the
+    function invoked.  While you can pass a :code:`dict` (for a single
+    invocation) or list of :code:`dict` (to invoke the function
+    multiple times), it's easiest to just always invoke
+    :func:`cfiddle.arg_map()` to generate this argument.
 
-    Returns an :obj:`InvocationResultsList` which is a subclass of :obj:`list`
-    that can format results in useful ways (e.g., as a Panda dataframe or CSV
-    file).
+    :code:`perf_counters` should be a list of :doc:`performance
+    counter <./perfcount>` names or a list of such lists.  If it is a
+    list of lists, it will result in multiple invocations using
+    different sets of counters.
 
-    The elements of the list are :obj:`InvocationResult` objects.  Each of
-    which contains the parameters and results for each invocation.
+    By default, :code:`run_options` interpreted by
+    :obj:`cfiddle.Runner.RunOptionManager`.  The default
+    implementation copies the contents of `run_options` to environment
+    variables before execution.
+    
+    :code:`run()` returns an :obj:`cfiddle.InvocationResultsList` which is a
+    subclass of :obj:`list` that can format results in useful ways
+    (e.g., as a Panda dataframe or CSV file).
+
+    The elements of the list are :obj:`cfiddle.InvocationResult` objects.
+    Each of which contains the build parameter for the executable used
+    and all the parameters listed aabove.
 
     Args:
        executable: An :obj:`Executable` or list of :obj:`Executable` objects.
        function: A ``str`` or list of ``str`` naming functions to call.
-       arguments: A :obj:`dict` of arguments for the function.  Or a list of such :obj:`dict`.  Defaults to ``{}``
+       arguments: A :obj:`dict` of arguments for the function.  Or a list of such :obj:`dict`.  Defaults to ``[{}]``
        perf_counters: A list of performance counters to collect. Default to None.
        run_options: Parameters controlling how the function is run.  Default to None.
 

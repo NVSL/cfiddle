@@ -8,11 +8,21 @@ from .paths import cfiddle_lib_path, cfiddle_include_path
 from .Exceptions import CFiddleException
 
 def code(source, file_name=None, language=None, raw=False):
-    """Generate an anonymous source file and return the path to it.
+    """Generate an anonymous (by default) source file and return the path to it.
 
     Write ``source`` to anonymous file and return the file's name.  This function
     is meant to be used an the first argument of :func:`build()`.
 
+    You can choose the location of the file, by speciying
+    :code:`file_name`.  If the contents of the file has changed since
+    :func:`code()` last wrote it, it will raise
+    :obj:`SourceCodeModified` to prevent deleting your edits.
+
+    Use :code:`language` to specify the language you are writing it.
+    
+    For some languages, :func:`code()` adds some boilerplate to make
+    compilation work.  You can prevent this with :code:`raw=True`.
+    
     Args:
       source:    The source code.  Raw strings work best (e.g., `r\"\"\" // my code \"\"\"`).
       file_name: Where to put the source code.  This file will be overwritten.
@@ -20,6 +30,7 @@ def code(source, file_name=None, language=None, raw=False):
       raw:       Don't add language-specific boilerplate. (Default: :code:`False`)
     Returns:
       ``str``: The file name.
+
     """
     
     if language is None:

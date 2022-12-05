@@ -1,7 +1,31 @@
 CFiddle Core API
 ----------------
 
-The core CFiddle API allows you to create, build, inspect, run, measure, and parameterize code.
+The core CFiddle API allows you to parameterize the compilation and
+execution of code and then analyze the code and resulting measurements.
+
+
+
+Parameterizing Compilation and Execution
+........................................
+
+Flexible, uniform parameterizations is one of the central features of
+CFiddle and the source of much of its power.
+
+Two functions, :func:`cfiddle.arg_map()` and
+:func:`cfiddle.arg_product()`, form the core of CFiddle's parameterization facilities.
+They let CFiddle explore the impact of compile- and run-time
+parameters by making it very easy to construct complex sets of
+parameter/argument values.
+
+:func:`arg_map()` ideal for generating all possible combinations of
+values for arguments or specifying a list of specific configurations.
+:func:`arg_product()` is useful when you need a combination of these
+two behaviors.  See the examples below.
+
+.. autofunction:: cfiddle.arg_map
+		  
+.. autofunction:: cfiddle.arg_product
 
 
 Creating Code
@@ -13,6 +37,8 @@ code.
 
 .. autofunction:: cfiddle.code
 
+		  
+		  
 Compiling Code
 ..............
 
@@ -51,15 +77,3 @@ summarize the results in several useful formats.
 .. autoclass:: cfiddle.Data.InvocationResultsList
 	       :members:
 	     
-Parameterizing Compilation and Execution
-........................................
-
-:func:`cfiddle.arg_map()` lets CFiddle explore the impact of compile-
-and run-time parameters by making it very easy to construct complex sets of
-parameter/argument values.
-
-The easiest way to use :func:`cfiddle.build()` and :func:`cfiddle.run()` is to call :func:`arg_map()`
-to construct their :code:`build_parameter` and :code:`argument` function parameters.
-
-.. autofunction:: cfiddle.util.arg_map
-
