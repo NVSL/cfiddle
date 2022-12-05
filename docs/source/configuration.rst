@@ -9,13 +9,25 @@ Running Under Jupyter
 CFiddle will automatically detect if it's running under Jupyter Notebook/Lab,
 but you can enable the mode mannually.  This includes interacive mode (see below).
 
+When CFiddle detects a user error (e.g., code that does not compile),
+it raises an exeception and CFiddle tries to provide a useful error
+message.  These errors will be more readable (i.e., they will not
+print the mostly-useless stack trace) with if you invoke
+
+.. code::
+
+   %xmode Minimal
+   
+in the notebook.  There doesn't seem to be a safe way to do
+this is from inside CFiddle.
+
 .. autofunction:: cfiddle.jupyter.configure_for_jupyter
 
 Error Reporting
 ***************
 
 By default CFiddle raises instances of :code:`CFiddleException` for all
-errors and hides the internal stack trace.  You can expose with :func:`enable_debug`
+errors and hides the internal stack trace.  You can expose it with :func:`enable_debug`
 
 .. autofunction:: cfiddle.enable_debug
 

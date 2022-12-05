@@ -40,12 +40,7 @@ class ExecutableDescription:
 
         
 class Executable:
-    """A compiled source file.
 
-    :obj:`Builder` objects create these when they compile code.   They can be passed to :func:`cfiddle.run` for execution.
-    
-    """
-    
     def __init__(self, lib, toolchain, build_dir, output, build_command, build_spec, functions):
         self.lib = lib
         self.build_dir = build_dir
@@ -69,6 +64,10 @@ class Executable:
         return source_name_base
 
     def get_build_parameters(self):
+        """
+        Returns a map containing the build parameters that :func:`cfiddle.build()` used when building it via :code:`get_build_parameters()`.
+        """
+        
         return self.build_spec.build_parameters
 
     def get_toolchain(self):

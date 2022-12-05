@@ -126,6 +126,14 @@ class Preprocessed:
                 
 class InstrumentedExecutable(Preprocessed, Source, Assembly, CFG, DebugInfo, Executable):
 
+    """A compiled source file.
+
+    :obj:`Builder` objects create these when they compile code.  They can be passed to :func:`cfiddle.run` for execution.
+
+    The compiled code is a dynamic library (i.e., a :code:`.so` file).  The path to the library is in :code:`lib`.
+
+    """
+
     def __init__(self, *argc, **kwargs):
         super().__init__(*argc, **kwargs)
 

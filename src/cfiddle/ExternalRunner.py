@@ -25,15 +25,18 @@ class SubprocessExternalRunnerDelegate:
 class ExternalRunner(Runner):
     """Delegate running :class:`InvocationDescription` objects to an external process.
     
-    This works by pickling this object, and invoking the `cfiddle-run`
+    This works by pickling this object, and invoking the :code:`cfiddle-run`
     command line tool to unpickle, run the invocations and then pickle
     the results.
 
-    The command line is passed to class specified is by the
-    `ExternalCommandRunner_type` configuration option.  The default
-    (:class:SubprocessExternalRunnerDelegate`) just runs it, but an
-    alternate implementation could, e.g., use `ssh` to execute it
-    remotely.
+    The :code:`cfiddle-run` command line is passed to
+    :class:SubprocessExternalRunnerDelegate` which just runs it.  
+
+    You can change this behavior by setting the
+    :code:`ExternalCommandRunner_type` configuration option.  For
+    instance, a replacement could submit the commandline to job
+    scheduling system or execute it remotely via :code:`ssh`.
+
     """
     
     def run(self):
