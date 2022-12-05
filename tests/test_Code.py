@@ -14,7 +14,7 @@ def test_code_cpp(setup):
         int four() {
     return 4;
     }
-"""), {}, "four", {})
+"""), arg_map(), "four", arg_map())
     assert os.path.exists(os.path.join(get_config("CFIDDLE_BUILD_ROOT"), "anonymous_code"))
 
 
@@ -24,7 +24,7 @@ def test_explicit_cpp(setup):
         int four() {
     return 4;
     }
-""", language="c++"), {}, "four", {})
+""", language="c++"), arg_map(), "four", arg_map())
 
 
 def test_code_c(setup):
@@ -32,7 +32,7 @@ def test_code_c(setup):
     int four() {
         return 4;
     }
-    """, language="c"), {}, "four", {})
+    """, language="c"), arg_map(), "four", arg_map())
 
     
 def test_modification(setup):

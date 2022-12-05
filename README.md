@@ -104,7 +104,7 @@ Or, if you prefer a CFG:
 ### What Does `-O3` Do To That Loop?
 
 ```python
->>> asm = build(sample, build_parameters=dict(OPTIMIZE="-O3"))[0].asm("loop")
+>>> asm = build(sample, build_parameters=arg_map(OPTIMIZE="-O3"))[0].asm("loop")
 >>> print(asm) # doctest: +SKIP
 loop:
 .LFB0:

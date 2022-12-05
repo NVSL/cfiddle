@@ -73,13 +73,13 @@ def test_build_simple(setup):
 def test_build_parameter(setup):
     
     t = build(source="test_src/std_maps.cpp",
-              build_parameters={},
+              build_parameters=arg_map(),
               verbose=True)
     assert t[0].build_spec.build_parameters == {}
     assert len(t) == 1
     
     t = build(source="test_src/std_maps.cpp",
-              build_parameters=dict(OPTIMIZE="-O0"),
+              build_parameters=arg_map(OPTIMIZE="-O0"),
               verbose=True)
     assert t[0].build_spec.build_parameters == dict(OPTIMIZE="-O0")
     assert len(t) == 1

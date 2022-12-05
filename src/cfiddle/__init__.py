@@ -26,11 +26,11 @@ __all__ = [
 
 from .Data import InvocationResultsList
 from .Builder import ExecutableDescription, Executable, ExecutableList
-from .MakeBuilder import MakeBuilder
-from .Runner import InvocationDescription, InvocationResult, Runner
+from .MakeBuilder import MakeBuilder, InvalidBuildParameter
+from .Runner import InvocationDescription, InvocationResult, Runner, InvalidRunOption
 from .ExternalRunner import ExternalRunner
 from .LocalSingleRunner import LocalSingleRunner
-from .util import arg_map, arg_product, changes_in, exp_range, running_under_jupyter
+from .util import arg_map, arg_product, changes_in, exp_range, running_under_jupyter, ArgProductError
 from .Code import code
 from .config import get_config, set_config, enable_debug, cfiddle_config
 from .paths import setup_ld_path
@@ -39,11 +39,9 @@ from .Toolchain import list_architectures
 from .Exceptions import CFiddleException, handle_cfiddle_exceptions
 
 
-
-def build_and_run(source_file, build_parameters, function, arguments):
-    executable = build_one(source_file, build_parameters)
-
-    return run_one(executable, function, arguments)
+def build_and_run(source_file=None, build_parameters=None, function=None, arguments=None, run_options=None, perf_counters=None):
+    executable = build(source_file, build_parameters)
+    return run(executable, function, arguments, run_options, perf_counters)
 
 def build_list(build_specs, **kwargs):
     Builder = get_config("Builder_type")
@@ -94,7 +92,11 @@ def build(source, build_parameters=None, **kwargs):
     if default_build_parameters is None:
         default_build_parameters = arg_map()
 
-    full_build_parameters = arg_product(default_build_parameters, build_parameters)
+    try:
+        full_build_parameters = arg_product(default_build_parameters, build_parameters)
+    except ArgProductError as e:
+        raise InvalidBuildParameter(e)
+        
 
     builds = arg_map(source=source, build_parameters=full_build_parameters)
     return build_list(builds, **kwargs)
@@ -199,8 +201,12 @@ def run(executable, function, arguments=None, perf_counters=None, run_options=No
         perf_counters = get_config("perf_counters_default")
         if perf_counters is None:
             perf_counters = []
-            
-    full_run_options = arg_product(default_run_options, run_options)
+
+    try:
+        full_run_options = arg_product(default_run_options, run_options)
+    except ArgProductError as e:
+        raise InvalidRunOption(e)
+    
 
     perf_counters = normalize_perf_counters(perf_counters)
     

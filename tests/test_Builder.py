@@ -38,7 +38,6 @@ def test_default_parameters(setup):
 
 def test_default_parameters2(setup):
     with cfiddle_config(build_parameters_default= arg_map(MORE_INCLUDES="-DFOO", DEBUG_FLAGS="-DBAR")):
-        breakpoint()
         histo = build(code(""), build_parameters=arg_map(OPTIMIZE="-O3 -fopenmp"))
         print(histo[0].get_build_parameters())
 
@@ -109,7 +108,9 @@ def test_invalid_parameters(setup):
         with pytest.raises(InvalidBuildParameter):
             build("test_src/test.cpp", [{4:""}])
 
-
+        with pytest.raises(InvalidBuildParameter):
+            build("test_src/test.cpp", build_parameters={"boo":"bar"})
+            
 def test_rebuild(setup):
     n = code(r"""
 extern "C"

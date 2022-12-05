@@ -83,7 +83,7 @@ set them using :func:`cfiddle.cfiddle_config`:
    
     >>> from cfiddle import  *
     >>> sample = code(r"""void nothing(){}""")
-    >>> with cfiddle_config(build_parameters_default=dict(OPTIMIZE="-O3")):
+    >>> with cfiddle_config(build_parameters_default=arg_map(OPTIMIZE="-O3")):
     ...    b = build(code(r"""void nothing() {}"""))
 	       
 		  

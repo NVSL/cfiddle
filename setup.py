@@ -54,7 +54,8 @@ setup(
         "pydot",
         "networkx",
         "click",
-        "pyelftools"]
+        "pyelftools",
+        "nbformat"]
     ,
     description="CFiddle makes it easy to ask and answers questions about the compilation and execution of smallish programs written in compiled languages like C, C++, and Go.",
     long_description=open("README.md").read(),
@@ -88,7 +89,8 @@ setup(
             'set-cfiddle-ld-path=cfiddle.paths:set_ld_path_in_shell',
             'cfiddle-lib-path=cfiddle.paths:print_cfiddle_lib_path',
             'cfiddle-include-path=cfiddle.paths:print_cfiddle_include_path',
-            'cfiddle-run=cfiddle.ExternalRunner:remote_runner'
+            'cfiddle-run=cfiddle.ExternalRunner:remote_runner',
+            'nbclean=util.nbclean:nbclean'
         ]
     }
 )

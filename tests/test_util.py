@@ -1,4 +1,5 @@
 from cfiddle.util import *
+
 import tempfile
 
 @pytest.mark.parametrize("inp,output", [
@@ -53,8 +54,11 @@ def test_map_product():
     assert arg_product(arg_map(a=1), arg_map(a=[2,3])) == [{"a":2}, {"a":3}]
     assert arg_product(arg_map(a=[1,2]), arg_map(a=[2,3])) == [{"a":2}, {"a":3},{"a":2}, {"a":3}]
     assert arg_product(arg_map(a=[1,2], b=5), arg_map(a=[2,3])) == [{"a":2, "b":5}, {"a":3, "b":5},{"a":2, "b":5}, {"a":3, "b":5}]
-    
-    
+
+
+def test_map_product_error_checking():
+    with pytest.raises(ArgProductError):
+        arg_product(arg_map(), {"boo":"bar"})
 
 def test_type_check():
     with pytest.raises(TypeError):

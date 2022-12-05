@@ -5,7 +5,7 @@ from itertools import product
 from fixtures import *
 
 def test_df_numeric_conversion(setup):
-    r = build_and_run("test_src/test_Data.cpp", {}, "go", {})
+    r = build_and_run("test_src/test_Data.cpp", arg_map(), "go", arg_map())
     df = InvocationResultsList([r]).as_df()
     
     # Shouldn't fail because the data aren't strings

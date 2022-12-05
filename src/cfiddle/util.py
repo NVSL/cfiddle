@@ -9,6 +9,8 @@ from collections.abc import Iterable
 import subprocess
 import time
 
+from .Exceptions import CFiddleException
+
 def arg_map(**parameters):
     """Generates take a set of named lists of values and generate the
     `named cross product` a set of :obj:`dict` s with all combinations of
@@ -59,7 +61,7 @@ def arg_map(**parameters):
     return list(arg_product(*expanded))
 
 def arg_product(*args):
-    """Generate and merge the cross product of a set of dicts.
+    """Generate and merge the cross product of a set of dicts.  The arguments must be lists of :obj:`dict`.
 
     In the common use case, the arguments are the result of calls to
     :func:`arg_map`.
@@ -137,6 +139,13 @@ def arg_product(*args):
     if len(args) == 0:
         return [{}]
 
+    
+    for a in args:
+        try:
+            type_check_list(a, dict)
+        except TypeError:
+            raise ArgProductError(f"Arguments to arg_product(), must be list of dicts, not {a}")
+            
     def merge(a,b):
         a.update(b)
         return a
@@ -307,3 +316,6 @@ def running_under_jupyter():
     ``False`` if in IPython shell or other Python shell.
     """
     return 'ipykernel' in sys.modules
+
+class ArgProductError(CFiddleException):
+    pass
