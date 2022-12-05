@@ -187,24 +187,6 @@ def changes_in(filename):
         time.sleep(0.5)
 
         
-def _cross_product(parameters):
-    if len(parameters) == 0:
-        return []
-    if len(parameters) == 1:
-        name, values = parameters[0]
-        return [{name:v} for v in values]
-    
-    ret = []
-    rest = _cross_product(parameters[:-1])
-    name, values = parameters[-1]
-    for r in rest:
-        for v in values:
-            t = copy.copy(r)
-            t[name] = v
-            ret.append(t)
-            
-    return ret
-
 
 def invoke_process(cmd, stdin=None):
     try:
