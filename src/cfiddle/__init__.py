@@ -86,14 +86,17 @@ def build(source, build_parameters=None, **kwargs):
         list of :obj:`Executable`: One executable for each combination of ``source`` and ``build_parameters``.
 
     """
-       
-    if build_parameters is None:
-        build_parameters = get_config("build_parameters_default")
 
     if build_parameters is None:
         build_parameters = arg_map()
-        
-    builds = arg_map(source=source, build_parameters=build_parameters)
+
+    default_build_parameters = get_config("build_parameters_default")
+    if default_build_parameters is None:
+        default_build_parameters = arg_map()
+
+    full_build_parameters = arg_product(default_build_parameters, build_parameters)
+
+    builds = arg_map(source=source, build_parameters=full_build_parameters)
     return build_list(builds, **kwargs)
 
 
@@ -146,11 +149,22 @@ def run(executable, function, arguments=None, perf_counters=None, run_options=No
     list of lists, it will result in multiple invocations using
     different sets of counters.
 
+    You can set default values for :code:`perf_counters` by setting
+    the :code:`perf_counters_default` configuration value.  Passing a
+    value to :func:`run()` completely overrides the default.
+
     By default, :code:`run_options` interpreted by
     :obj:`cfiddle.Runner.RunOptionManager`.  The default
     implementation copies the contents of `run_options` to environment
     variables before execution.
-    
+
+    You can set default values for :code:`run_options` by setting the
+    :code:`run_options_default` configuration value.  You set it to
+    the result of a call to :func:`cfiddle.arg_map()`.  The values you
+    pass to :func:`run()` will override the defaults.  If the defaults
+    includes multiple sets of values, :func:`run()` will run all
+    combinations of the defaults and the values passed supplied.
+
     :code:`run()` returns an :obj:`cfiddle.InvocationResultsList` which is a
     subclass of :obj:`list` that can format results in useful ways
     (e.g., as a Panda dataframe or CSV file).
@@ -172,15 +186,25 @@ def run(executable, function, arguments=None, perf_counters=None, run_options=No
     """
     
     if arguments is None:
-        arguments = [{}]
+        arguments = arg_map()
+        
+    if run_options is None:
+        run_options = arg_map()
+
+    default_run_options = get_config("run_options_default")
+    if default_run_options is None:
+        default_run_options = arg_map()
+
     if perf_counters is None:
         perf_counters = get_config("perf_counters_default")
-    if run_options is None:
-        run_options = get_config("run_options_default")
+        if perf_counters is None:
+            perf_counters = []
+            
+    full_run_options = arg_product(default_run_options, run_options)
 
     perf_counters = normalize_perf_counters(perf_counters)
     
-    invocations = arg_map(executable=executable, function=function, arguments=arguments, run_options=run_options, perf_counters=perf_counters)
+    invocations = arg_map(executable=executable, function=function, arguments=arguments, run_options=full_run_options, perf_counters=perf_counters)
     return run_list(invocations, **kwargs)
 
 

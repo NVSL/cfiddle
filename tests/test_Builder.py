@@ -32,8 +32,16 @@ def test_default_parameters(setup):
     with cfiddle_config(build_parameters_default=arg_map(OPTIMIZE="-O1")):
         b = build("test_src/test.cpp")
         assert b[0].build_spec.build_parameters == dict(OPTIMIZE="-O1")
-        
-    
+
+        b = build("test_src/test.cpp", build_parameters=arg_map(OPTIMIZE="-O3"))
+        assert b[0].build_spec.build_parameters == dict(OPTIMIZE="-O3")
+
+def test_default_parameters2(setup):
+    with cfiddle_config(build_parameters_default= arg_map(MORE_INCLUDES="-DFOO", DEBUG_FLAGS="-DBAR")):
+        breakpoint()
+        histo = build(code(""), build_parameters=arg_map(OPTIMIZE="-O3 -fopenmp"))
+        print(histo[0].get_build_parameters())
+
 def test_builder_construction(test_cpp_nop_builder, setup):
 
     assert test_cpp_nop_builder.source_file == "test_src/test.cpp"
@@ -81,28 +89,25 @@ def test_mixins(setup):
     assert result.my_result() == "my_result"
 
 def _test_numeric_parameters(setup):
-    build(1, dict(OPTIMIZE=1))
+    build(1, arg_map(OPTIMIZE=1))
     
 def test_invalid_parameters(setup):
     with cfiddle_config():
         enable_debug()
         with pytest.raises(CFiddleException):
-            build(1, dict(OPTIMIZE=None))
+            build(1, arg_map(OPTIMIZE=None))
 
         with pytest.raises(InvalidBuildParameter):
-            build("test_src/test.cpp", dict(OPTIMIZE=None))
+            build("test_src/test.cpp", arg_map(OPTIMIZE=None))
 
         with pytest.raises(InvalidBuildParameter):
-            build("test_src/test.cpp", dict(OPTIMIZE=True))
+            build("test_src/test.cpp", arg_map(OPTIMIZE=True))
 
         with pytest.raises(InvalidBuildParameter):
-            build("test_src/test.cpp", dict(OPTIMIZE=[]))
+            build("test_src/test.cpp", arg_map(OPTIMIZE={}))
 
         with pytest.raises(InvalidBuildParameter):
-            build("test_src/test.cpp", dict(OPTIMIZE={}))
-
-        with pytest.raises(InvalidBuildParameter):
-            build("test_src/test.cpp", {4:""})
+            build("test_src/test.cpp", [{4:""}])
 
 
 def test_rebuild(setup):
