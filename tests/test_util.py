@@ -49,6 +49,11 @@ def test_arg_map(inp, output):
 def test_arg_product(inp, output):
     assert arg_product(*inp) == output
 
+def test_map_product():
+    assert arg_product(arg_map(a=1), arg_map(a=[2,3])) == [{"a":2}, {"a":3}]
+    assert arg_product(arg_map(a=[1,2]), arg_map(a=[2,3])) == [{"a":2}, {"a":3},{"a":2}, {"a":3}]
+    assert arg_product(arg_map(a=[1,2], b=5), arg_map(a=[2,3])) == [{"a":2, "b":5}, {"a":3, "b":5},{"a":2, "b":5}, {"a":3, "b":5}]
+    
     
 
 def test_type_check():

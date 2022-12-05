@@ -66,7 +66,13 @@ def env_echo(setup):
     return build(code(r"""
 #include<stdlib.h>
 extern "C" long int env() {
-    return strtol(getenv("NUMBER"), NULL, 10);
+    long int a = 0;
+    long int b = 0;
+    if (getenv("NUMBER"))
+         a = strtol(getenv("NUMBER"), NULL, 10);
+    if (getenv("NUMBER2"))
+         b = strtol(getenv("NUMBER2"), NULL, 10);
+    return a + b;
 }"""))[0]
    
 
@@ -76,12 +82,11 @@ def test_run_options(env_echo):
     os.environ["NUMBER"] = "6"
     run(env_echo, function="env")[0].return_value == 6
     run(env_echo, function="env",
-        run_options=dict(NUMBER=4))[0].return_value == 4
+        run_options=arg_map(NUMBER=4))[0].return_value == 4
     run(env_echo, function="env")[0].return_value == 6
     
     t = run(env_echo, function="env",
             run_options=arg_map(NUMBER=[1,2,4]))
-
 
     assert (t[0].return_value, t[1].return_value, t[2].return_value) == (1,2,4)
 
@@ -90,6 +95,41 @@ def test_default_run_options(env_echo):
         t = run(env_echo, function="env")
         assert t[0].return_value == 1
         assert t[1].return_value == 2
+
+def test_default_run_option5(env_echo):
+    with cfiddle_config(run_options_default=arg_map(NUMBER=[1,2])):
+        t = run(env_echo, function="env", run_options = arg_map(NUMBER2=10))
+        assert t[0].return_value == 11
+        assert t[1].return_value == 12
+
+def test_default_run_options2(env_echo):
+    with cfiddle_config(run_options_default=arg_map(NUMBER=1)):
+        t = run(env_echo, function="env", run_options=arg_map(NUMBER2=[1,2]))
+        assert len(t) == 2
+        assert t[0].return_value == 2
+        assert t[1].return_value == 3
+
+def test_default_run_options3(env_echo):
+    with cfiddle_config(run_options_default=arg_map(NUMBER=[10,20])):
+        t = run(env_echo, function="env", run_options=arg_map(NUMBER=30, NUMBER2=[1,2]))
+        assert len(t) == 4
+        assert t[0].return_value == 31
+        assert t[1].return_value == 32
+        assert t[2].return_value == 31
+        assert t[3].return_value == 32
+
+def test_default_run_options4(env_echo):
+    with cfiddle_config(run_options_default=arg_map(NUMBER=[10,20], NUMBER2=[4,5])):
+        t = run(env_echo, function="env", run_options=arg_map(NUMBER=30, NUMBER2=[1,2]))
+        assert len(t) == 8
+        assert t[0].return_value == 31
+        assert t[1].return_value == 32
+        assert t[2].return_value == 31
+        assert t[3].return_value == 32
+        assert t[4].return_value == 31
+        assert t[5].return_value == 32
+        assert t[6].return_value == 31
+        assert t[7].return_value == 32
 
     
 def test_run_option_manager(setup):
