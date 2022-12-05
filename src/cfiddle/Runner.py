@@ -162,3 +162,6 @@ class IncorrectArgumentType(CFiddleException):
 
 class InvalidInvocation(CFiddleException):
     pass
+
+class InvalidRunOption(CFiddleException):
+    pass

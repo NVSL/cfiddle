@@ -1,6 +1,6 @@
 from cfiddle import *
 from util import *
-from cfiddle.Runner import Runner, InvocationDescription, IncorrectArgumentType, InvalidInvocation, RunOptionManager
+from cfiddle.Runner import Runner, InvocationDescription, IncorrectArgumentType, InvalidInvocation, RunOptionManager, InvalidRunOption
 from fixtures import *
 import ctypes
 import pytest
@@ -131,6 +131,12 @@ def test_default_run_options4(env_echo):
         assert t[6].return_value == 31
         assert t[7].return_value == 32
 
+def test_invalid_run_options(env_echo):
+
+    with pytest.raises(InvalidRunOption):
+        run(env_echo, "env", run_options={"boo":"bar"})
+
+    
     
 def test_run_option_manager(setup):
     
