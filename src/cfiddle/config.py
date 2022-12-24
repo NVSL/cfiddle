@@ -1,19 +1,17 @@
 import copy
+from tqdm import tqdm
+from contextlib import contextmanager
 
 from .Data import InvocationResultsList
 from .Builder import Executable, ExecutableDescription
 from .MakeBuilder import MakeBuilder
-from .Runner import InvocationResult, InvocationDescription, Runner, RunOptionManager
-from .ExternalRunner import ExternalRunner
+from .Runner import InvocationResult, InvocationDescription, Runner, RunOptionManager, SubprocessDelegate
 from .LocalSingleRunner import LocalSingleRunner
 from .CProtoParser import CProtoParser
 from .GoProtoParser import GoProtoParser
 from .Exceptions import CFiddleException
 from .source import InstrumentedExecutable
-from .ExternalRunner import SubprocessExternalRunnerDelegate
 
-from tqdm import tqdm
-from contextlib import contextmanager
 
 def noop_progress_bar(data, *argc, **kwargs):
     return data
@@ -21,7 +19,7 @@ def noop_progress_bar(data, *argc, **kwargs):
 default_config = dict(Executable_type=InstrumentedExecutable,
                       InvocationResult_type=InvocationResult,
                       Builder_type=MakeBuilder,
-                      Runner_type=ExternalRunner,
+                      Runner_type=Runner,
                       SingleRunner_type=LocalSingleRunner,
                       InvocationResultsList_type=InvocationResultsList,
                       ExecutableDescription_type=ExecutableDescription,
@@ -29,7 +27,7 @@ default_config = dict(Executable_type=InstrumentedExecutable,
                       ProtoParser_types=[CProtoParser, GoProtoParser],
                       CFIDDLE_BUILD_ROOT=".cfiddle/builds",
                       ProgressBar=noop_progress_bar,
-                      ExternalCommandRunner_type=SubprocessExternalRunnerDelegate,
+                      RunnerDelegate_type=SubprocessDelegate,
                       RunOptionManager_type=RunOptionManager,
                       perf_counters_default=None,
                       build_parameters_default=None,
