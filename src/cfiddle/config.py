@@ -4,6 +4,7 @@ from .Data import InvocationResultsList
 from .Builder import Executable, ExecutableDescription
 from .MakeBuilder import MakeBuilder
 from .Runner import InvocationResult, InvocationDescription, Runner, RunOptionManager
+from .ExternalRunner import ExternalRunner
 from .LocalSingleRunner import LocalSingleRunner
 from .CProtoParser import CProtoParser
 from .GoProtoParser import GoProtoParser
@@ -20,7 +21,7 @@ def noop_progress_bar(data, *argc, **kwargs):
 default_config = dict(Executable_type=InstrumentedExecutable,
                       InvocationResult_type=InvocationResult,
                       Builder_type=MakeBuilder,
-                      Runner_type=Runner,
+                      Runner_type=ExternalRunner,
                       SingleRunner_type=LocalSingleRunner,
                       InvocationResultsList_type=InvocationResultsList,
                       ExecutableDescription_type=ExecutableDescription,

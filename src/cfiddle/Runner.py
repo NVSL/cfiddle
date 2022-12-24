@@ -87,22 +87,21 @@ class Runner:
         self._result_list_factory = result_list_factory or get_config("InvocationResultsList_type")
         self._progress_bar = progress_bar or get_config("ProgressBar")
 
+        
 
     def run(self):
         """
         Run our :class:`InvocationDescription`s, return a list of :class:`InvocationResult`.
         """
         
-        return self._do_run(self._invocations)
-
-    def get_invocations(self):
-        return self._invocations
-    
-    def _do_run(self, invocations):
         l = self._result_list_factory()
-        for i in self._progress_bar(invocations, miniters=1):
+        for i in self._progress_bar(self._invocations, miniters=1):
             l.append(self._single_runner(i, self._result_factory).run())
         return l
+
+    
+    def get_invocations(self):
+        return self._invocations
 
     
     @classmethod

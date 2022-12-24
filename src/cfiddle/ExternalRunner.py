@@ -19,11 +19,11 @@ class SubprocessExternalRunnerDelegate:
         try:
             subprocess.run(command, check=True, capture_output=True)
         except subprocess.CalledProcessError as e:
-            raise ExternalRunnerException("ExternalRunner failed (error code {e.returncode}): {e.stdout} {e.stderr}")
+            raise ExternalRunnerException(f"ExternalRunner failed (error code {e.returncode}): {e.stdout} {e.stderr}")
 
   
 class ExternalRunner(Runner):
-    """Delegate running :class:`InvocationDescription` objects to an external process.
+    """Delegate running :class:`InvocationDescription` objects in an external process.
     
     This works by pickling this object, and invoking the :code:`cfiddle-run`
     command line tool to unpickle, run the invocations and then pickle

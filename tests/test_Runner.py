@@ -146,8 +146,8 @@ def test_run_option_manager(setup):
     class ROM(RunOptionManager):
         def apply_options(self):
             raise MyException()
-        
-    with cfiddle_config(RunOptionManager_type=ROM):
+    
+    with cfiddle_config(RunOptionManager_type=ROM, Runner_type=Runner):
         with pytest.raises(MyException):
             sanity_test()
     
