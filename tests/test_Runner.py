@@ -1,6 +1,6 @@
 from cfiddle import *
 from util import *
-from cfiddle.Runner import Runner, InvocationDescription, IncorrectArgumentType, InvalidInvocation, RunOptionManager, InvalidRunOption
+from cfiddle.Runner import Runner, DirectRunner, BashDelegate, SubprocessDelegate, InvocationDescription, IncorrectArgumentType, InvalidInvocation, RunOptionManager, InvalidRunOption
 from fixtures import *
 import ctypes
 import pytest
@@ -40,6 +40,14 @@ def test_bind_arguments(params, proto, result,setup):
 def test_return_values(test_cpp):
     r = run_one(test_cpp, "four")
     assert r.return_value == 4
+
+
+@pytest.mark.parametrize("ExternalCommandRunner", [BashDelegate,
+                                                   SubprocessDelegate])
+def test_run_delegates(test_cpp, ExternalCommandRunner):
+    from test_full_flow import test_run_combo
+    with cfiddle_config(ExternalCommandRunner_type=ExternalCommandRunner):
+        test_run_combo(test_cpp)
 
 
 def test_Invocation_types(test_cpp):
@@ -136,8 +144,6 @@ def test_invalid_run_options(env_echo):
     with pytest.raises(InvalidRunOption):
         run(env_echo, "env", run_options={"boo":"bar"})
 
-    
-    
 def test_run_option_manager(setup):
     
     class MyException(Exception):
@@ -146,8 +152,8 @@ def test_run_option_manager(setup):
     class ROM(RunOptionManager):
         def apply_options(self):
             raise MyException()
-        
-    with cfiddle_config(RunOptionManager_type=ROM):
+    
+    with cfiddle_config(RunOptionManager_type=ROM, Runner_type=DirectRunner):
         with pytest.raises(MyException):
             sanity_test()
     

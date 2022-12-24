@@ -25,7 +25,7 @@ class ClangToolchain(LinuxToolchain):
     def __init__(self, language, build_parameters):
         super().__init__(language, build_parameters)
         self._compiler = build_parameters.get("CC", build_parameters.get("CXX", "clang"))
-        self._asm_function_bookends = lambda function: (fr"^{re.escape(function)}:\s*", ".cfi_endproc")
+        self._asm_function_bookends = self._asm_bookends 
         self._version, self._architecture_name = self._extract_version() # this will be wrong with we coss compile
         
     def get_target(self):
@@ -39,6 +39,9 @@ class ClangToolchain(LinuxToolchain):
             return f"llvm-cxxfilt-{self._version}"
         else:
             return f"llvm-{tool}-{self._version}"
+
+    def _asm_bookends(self, function):
+        return fr"^{re.escape(function)}:\s*", ".cfi_endproc"
 
     def _extract_version(self):
         success, output = invoke_process([self._compiler, "-v"])
