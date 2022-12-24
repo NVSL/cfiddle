@@ -89,7 +89,7 @@ setup(
             'set-cfiddle-ld-path=cfiddle.paths:set_ld_path_in_shell',
             'cfiddle-lib-path=cfiddle.paths:print_cfiddle_lib_path',
             'cfiddle-include-path=cfiddle.paths:print_cfiddle_include_path',
-            'cfiddle-run=cfiddle.ExternalRunner:remote_runner',
+            'cfiddle-run=cfiddle.Runner:invoke_runner',
             'nbclean=util.nbclean:nbclean'
         ]
     }

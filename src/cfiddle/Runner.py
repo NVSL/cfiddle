@@ -1,9 +1,12 @@
-from .Builder import Executable
-from .Exceptions import CFiddleException
 import copy
 import os
-from .util import type_check, type_check_list
+import pickle
+import click
+import subprocess
 
+from .Builder import Executable
+from .Exceptions import CFiddleException
+from .util import type_check, type_check_list
 
 class InvocationDescription:
     def __init__(self, executable, function, arguments, perf_counters=None, run_options=None):
@@ -61,18 +64,32 @@ class RunOptionManager(object):
             return {str(k):str(v) for k,v in m.items()}
         
 class Runner:
-    """Runs a set of invocations.
+    """
 
-    This encapsulates the conversion from
-    :class:`InvocationDescription` to :class:`InvocationResults`.
-    This is default implementation uses :class:`LocalSingleRunner` to
-    perform each execution.  An alterante class can bespecified via
-    the :code:`SingleRunner_type` configuration option.
+    Runs a set of :class:`InvocationDescription` instances to produce
+    to :class:`InvocationResults`.  
+
+    Execution occurs in a separate process to protect the python
+    interpreter from misbehaving functions (e.g., segmentation
+    faults).  
+
+    This works by pickling this object, and invoking the
+    :code:`cfiddle-run` command line tool to unpickle this object, run the
+    invocations, and then pickle and return the results.
+
+    The :code:`cfiddle-run` command line is passed to
+    :class:SubprocessDelegate` which runs with Python's 
+    :func:`subprocess.run()`.
+
+    You can change this behavior by setting the
+    :code:`ExternalCommandRunner_type` configuration option.  For
+    instance, a replacement could submit the commandline to job
+    scheduling system or execute it remotely via :code:`ssh`.
 
     Creating a subclass allows for other execution methods.  Notably,
-    :class:`ExternalRunner` allows for execution via an external
-    process.
-
+    :class:`DirectRunner` runs the function in the current Python
+    process, which can be useful in some instances.
+    
     """
 
     def __init__(self, invocations,
@@ -86,22 +103,46 @@ class Runner:
         self._result_factory = result_factory or get_config("InvocationResult_type")
         self._result_list_factory = result_list_factory or get_config("InvocationResultsList_type")
         self._progress_bar = progress_bar or get_config("ProgressBar")
-
-        
+        self._cmd_runner = get_config("RunnerDelegate_type")
 
     def run(self):
-        """
-        Run our :class:`InvocationDescription`s, return a list of :class:`InvocationResult`.
-        """
+        cmd_runner = self._cmd_runner()
         
+        runner_filename, results_filename = self._temp_files()
+        if os.path.exists(results_filename):
+            os.remove(results_filename)
+
+        self._pickle_run(runner_filename)
+
+        cmd_runner.execute(["cfiddle-run", "--runner", runner_filename, "--results", results_filename], runner=self)
+
+        r = self._unpickle_results(results_filename)
+        if isinstance(r, Exception):
+            raise r
+        else:
+            return r
+        
+    def _delegated_run(self):
         l = self._result_list_factory()
         for i in self._progress_bar(self._invocations, miniters=1):
             l.append(self._single_runner(i, self._result_factory).run())
         return l
-
     
     def get_invocations(self):
         return self._invocations
+
+    def _pickle_run(self, f):
+        from .config import peek_config
+        with open(f, "wb") as r:
+            pickle.dump(dict(config=peek_config(), runner=self), r)
+
+    def _unpickle_results(self, f):
+        with open(f, "rb") as r:
+            return pickle.load(r)
+
+    def _temp_files(self):
+        from .config import get_config
+        return os.path.join(get_config("CFIDDLE_BUILD_ROOT"), "runner.pickle"), os.path.join(get_config("CFIDDLE_BUILD_ROOT"), "results.pickle"), 
 
     
     @classmethod
@@ -130,6 +171,11 @@ class Runner:
                 raise UnusedArgument(f"Argument '{p}' was provided but is not the signature of function '{signature.name}'.")
         return r
 
+class DirectRunner(Runner):
+    def run(self):
+        return self._delegated_run()
+
+
 class InvocationResult:
 
     def __init__(self, invocation, results, return_value):
@@ -146,6 +192,20 @@ class InvocationResult:
     def get_results(self):
         return self.results
     
+
+class BashDelegate:
+    def execute(self, command, runner):
+        c = " ".join(command)
+        os.system(f"""bash -c '{c}'""")
+
+        
+class SubprocessDelegate:
+    def execute(self, command, runner):
+        try:
+            subprocess.run(command, check=True, capture_output=True)
+        except subprocess.CalledProcessError as e:
+            raise RunnerDelegateException(f"SubprocessDelegate failed (error code {e.returncode}): {e.stdout} {e.stderr}")
+
 
 class RunnerException(CFiddleException):
     pass
@@ -164,3 +224,24 @@ class InvalidInvocation(CFiddleException):
 
 class InvalidRunOption(CFiddleException):
     pass
+
+class RunnerDelegateException(CFiddleException):
+    pass
+
+@click.command()
+@click.option('--runner', "runner", required=True, type=click.File("rb"), help="File with a pickled Runner in it.")
+@click.option('--results', "results", required=True, type=click.File("wb"), help="File to deposit the results in.")
+def invoke_runner(runner, results):
+    do_invoke_runner(runner, results)
+    
+def do_invoke_runner(runner, results):
+    from .config import cfiddle_config
+    contents = pickle.load(runner)
+
+    with cfiddle_config(**contents["config"]):
+        try:
+            return_value = contents["runner"]._delegated_run()
+            pickle.dump(return_value, results)
+        except CFiddleException as e:
+            pickle.dump(e, results)
+
