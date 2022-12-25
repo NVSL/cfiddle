@@ -23,11 +23,12 @@ To compile for multiple architecture you have two choices
 For example, using :code:`ARCH`:
 
 .. doctest::
-   
+   :skipif: aarch64_not_present
+	    
    >>> from cfiddle import  *
    >>> sample = code(r"""extern "C" int answer() {return 42;}""")
    >>> b = build(sample, arg_map(ARCH=["native", "aarch64"]))
-   >>> print(b[0].get_toolchain().describe()) # doctest: +SKIP
+   >>> print(b[0].get_toolchain().describe())
    g++ compiling for X86_64
    >>> print(b[1].get_toolchain().describe())
    arm-linux-gnueabi-g++ compiling for AARCH64
@@ -85,13 +86,14 @@ You can also set :code:`CXX`: or :code:`CC`: to any GCC compiler and CFiddle
 will figure out the tool chain:
 
 .. doctest::
-   
+   :skipif: aarch64_not_present
+
    >>> from cfiddle import  *
    >>> sample = code(r"""extern "C" int answer() {return 42;}""")
    >>> b = build(sample, arg_map(CXX=["g++", "arm-linux-gnueabi-g++"]))
-   >>> print(b[0].get_toolchain().describe()) # doctest: +SKIP
+   >>> print(b[0].get_toolchain().describe()) 
    g++ compiling for X86_64
-   >>> print(b[1].get_toolchain().describe())
+   >>> print(b[1].get_toolchain().describe()) 
    arm-linux-gnueabi-g++ compiling for AARCH64
 
 

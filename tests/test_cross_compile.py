@@ -1,7 +1,7 @@
 import pytest
 from cfiddle import *
 from cfiddle.util import  invoke_process
-from cfiddle.Toolchain import get_native_toolchain
+from cfiddle.Toolchain import get_native_toolchain, toolchain_present
 from fixtures import *
 
 @pytest.fixture
@@ -10,12 +10,9 @@ def simple_code():
 
 
 def skip_without_toolchain(cross_toolchain):
-    if not tool_chain_present(cross_toolchain):
+    if not toolchain_present(cross_toolchain):
         pytest.skip(f"{cross_toolchain} cross compiler is missing.")
 
-def tool_chain_present(cross_toolchain):
-    success, _ = invoke_process([f"{cross_toolchain}-gcc","-v"])
-    return success
 
 @pytest.mark.parametrize("toolchain,arch,search",
                          [("arm-linux-gnueabi", "aarch64", "ldr"),
@@ -41,7 +38,7 @@ def test_multiarch(setup, simple_code):
                            ppc="powerpc-linux-gnu",
                            native=get_native_toolchain())
 
-    architectures = [x for (x,y) in gcc_tool_chains.items() if tool_chain_present(y)]
+    architectures = [x for (x,y) in gcc_tool_chains.items() if toolchain_present(y)]
     
     builds = build(simple_code, arg_map(ARCH=architectures, DEBUG_FLAGS=""), verbose=True)
     for b in builds:
@@ -52,12 +49,14 @@ def test_multiarch(setup, simple_code):
 
 
 def test_naming(simple_code):
+    skip_without_toolchain("aarch64")
     b = build(simple_code, arg_map(ARCH=["arm", "aarch64"]))
     assert b[0].get_toolchain()._architecture_name == "aarch64".upper()
     assert b[1].get_toolchain()._architecture_name == "aarch64".upper()
 
 
 def test_toolchain_spec_1(setup):
+    skip_without_toolchain("aarch64")
     sample = code(r"""extern "C" int answer() {return 42;}""")
     b = build(sample, arg_map(CXX=["g++", "arm-linux-gnueabi-g++"]))
     assert b[0].get_toolchain()._tool_prefix == ""
@@ -65,10 +64,9 @@ def test_toolchain_spec_1(setup):
 
 arm_toolchains = [x for x in ["g++-8", "g++-9", "g++-11"] if invoke_process([f"arm-linux-gnueabi-{x}", "-v"])[0]]
 
-def test_arm_toolchains():
-    assert len(arm_toolchains) > 0, "We need at least one working gcc arm cross compiler"
     
 def test_toolchain_spec_2(setup):
+    skip_without_toolchain("aarch64")
     sample = code(r"""extern "C" int answer() {return 42;}""")
     built = build(sample, arg_map(ARCH="aarch64", CXX=arm_toolchains), verbose=True)
     for i, b in enumerate(built):

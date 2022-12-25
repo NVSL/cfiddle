@@ -14,6 +14,16 @@
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
 
+# -- Custom Content ----------------------------------------------------------
+
+doctest_global_setup = '''
+from cfiddle.perfcount import are_perf_counters_available
+perf_counters_unavailable = not are_perf_counters_available()
+from cfiddle.Toolchain import toolchain_present
+aarch64_not_present = not toolchain_present("aarch64")
+'''
+
+
 
 # -- Project information -----------------------------------------------------
 

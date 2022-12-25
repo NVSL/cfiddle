@@ -5,15 +5,14 @@
 default: 
 
 JUPYTER=--nbmake $(EXAMPLES)
-DOCS=--doctest-glob="*.rst" --doctest-glob="*.md" ../*.md ../docs/
 CPP_TESTS=test_DataSet.exe test_libcfiddle.exe test_PerfCounter.exe
 
 
+.PHONY: test
 test: $(CPP_TESTS)
 	rm -rf .cfiddle
 	rm -rf ../examples/.cfiddle # give these a clean directory.
-	pytest $(PYTEST_OPTS) -n auto .  $(DOCS) $(JUPYTER)
-.PHONY: test
+	pytest $(PYTEST_OPTS) -n auto .  $(JUPYTER)
 
 smoke:
 	rm -rf ../examples/.cfiddle # give these a clean directory.

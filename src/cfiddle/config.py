@@ -92,9 +92,9 @@ def cfiddle_config(**kwargs):
     False
     >>> with cfiddle_config():
     ...    enable_debug()
-    ...    print(get_config("DEBUG_MODE")
+    ...    print(get_config("DEBUG_MODE"))
     True
-    >>> print(get_config("DEBUG_MODE")
+    >>> print(get_config("DEBUG_MODE"))
     False
 
     """
