@@ -172,6 +172,31 @@ class Runner:
         return r
 
 class DirectRunner(Runner):
+    """
+    Run code in the current Python process instead of a separate process.
+
+    You can use it like so:
+
+    .. doctest::
+
+        >>> from cfiddle import  *
+        >>> sample = code(r'''
+        ... #include <cfiddle.hpp>
+        ... extern "C"
+        ... int loop(int count) {
+        ...	   int sum = 0;
+        ...    for(int i = 0; i < count; i++) {
+        ...       sum += i;
+        ...    }
+        ...    return sum;
+        ... }
+        ... ''')
+        >>> exes = build(sample)
+        >>> with cfiddle_config(Runner_type=DirectRunner):
+        ...    results = run(exes, "loop", arguments=arg_map(count=[1]))
+
+    """
+    
     def run(self):
         return self._delegated_run()
 
