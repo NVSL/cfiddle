@@ -202,7 +202,6 @@ class DirectRunner(Runner):
 
     """
     
-
     def run(self):
         return self._delegated_run()
 
