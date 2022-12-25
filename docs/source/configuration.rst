@@ -90,34 +90,14 @@ set them using :func:`cfiddle.cfiddle_config`:
 Controlling How CFiddle Runs Code
 *********************************
 
-Usually runs your code as part of the invoking Python process using
+Usually CFiddle runs your code in a separate process using
 :class:`Runner`.  You can modify this behavior by creating an
 alternative implementation of :class:`Runner` and setting the
 :code:`Runner_type` configuration option accordingly.
 
-CFiddle includes :class:`ExternalRunner` which will run your code in a
-separate process.  You can use it like so:
+CFiddle includes :class:`DirectRunner` which will run your code in the current Python process (which means a segfault in your code will take out Python).
 
-.. doctest::
-   
-    >>> from cfiddle import  *
-    >>> sample = code(r"""
-    ... #include <cfiddle.hpp>
-    ... extern "C"
-    ... int loop(int count) {
-    ...	   int sum = 0;
-    ...    for(int i = 0; i < count; i++) {
-    ...       sum += i;
-    ...    }
-    ...    return sum;
-    ... }
-    ... """)
-    >>> exes = build(sample)
-    >>> with cfiddle_config(Runner_type=ExternalRunner):
-    ...    results = run(exes, "loop", arguments=arg_map(count=[1]))
-   
-   
 .. autoclass:: cfiddle.Runner
 	       
-.. autoclass:: cfiddle.ExternalRunner
+.. autoclass:: cfiddle.DirectRunner
 	       

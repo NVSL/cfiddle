@@ -41,6 +41,7 @@ like to measure.
 For example, we can measure the number of clock cycles required to execute a loop like so:
 
 .. doctest::
+   :skipif: perf_counters_unavailable
 
    >>> from cfiddle import *
    >>> results = run(build(code(r"""

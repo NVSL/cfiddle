@@ -21,3 +21,6 @@ def get_native_toolchain():
         raise ToolchainException("Unable to determine native toolchain.")
     return arch.strip()
 
+def toolchain_present(cross_toolchain):
+    success, _ = invoke_process([f"{cross_toolchain}-gcc","-v"])
+    return success

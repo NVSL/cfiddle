@@ -6,6 +6,7 @@ __all__ = [
     "InvocationDescription",
     "LocalSingleRunner",
     "Runner",
+    "DirectRunner",
     "arg_map",
     "arg_product",
     "code",
@@ -20,13 +21,14 @@ __all__ = [
     "list_architectures",
     "CFiddleException",
     "enable_debug",
-    "cfiddle_config"
+    "cfiddle_config",
+    "get_config"
 ]
 
 from .Data import InvocationResultsList
 from .Builder import ExecutableDescription, Executable, ExecutableList
 from .MakeBuilder import MakeBuilder, InvalidBuildParameter
-from .Runner import InvocationDescription, InvocationResult, Runner, InvalidRunOption
+from .Runner import InvocationDescription, InvocationResult, Runner, InvalidRunOption, DirectRunner
 from .LocalSingleRunner import LocalSingleRunner
 from .util import arg_map, arg_product, changes_in, exp_range, running_under_jupyter, ArgProductError
 from .Code import code
