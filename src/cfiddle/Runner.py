@@ -35,7 +35,7 @@ class InvocationDescription:
             raise InvalidInvocation(e)
 
         
-class RunOptionManager(object):
+class RunOptionInterpreter(object):
     """
 
     Interpret the contents of the  :code:`run_options` argument to :func:`cfiddle.run`.
@@ -83,7 +83,7 @@ class Runner:
     :func:`subprocess.run()`.
 
     You can change this behavior by setting the
-    :code:`ExternalCommandRunner_type` configuration option.  For
+    :code:`RunnerDelegate_type` configuration option.  For
     instance, a replacement could submit the commandline to job
     scheduling system or execute it remotely via :code:`ssh`.
 
@@ -94,13 +94,13 @@ class Runner:
     """
 
     def __init__(self, invocations,
-                 single_runner=None,
+                 invoker=None,
                  result_factory=None,
                  result_list_factory=None,
                  progress_bar=None):
         from .config import get_config
         self._invocations = invocations
-        self._single_runner = single_runner or get_config("SingleRunner_type")
+        self._invoker = invoker or get_config("Invoker_type")
         self._result_factory = result_factory or get_config("InvocationResult_type")
         self._result_list_factory = result_list_factory or get_config("InvocationResultsList_type")
         self._progress_bar = progress_bar or get_config("ProgressBar")
@@ -128,7 +128,7 @@ class Runner:
     def _delegated_run(self):
         l = self._result_list_factory()
         for i in self._progress_bar(self._invocations, miniters=1):
-            l.append(self._single_runner(i, self._result_factory).run())
+            l.append(self._invoker(i, self._result_factory).run())
         return l
     
     def get_invocations(self):
@@ -147,6 +147,7 @@ class Runner:
         from .config import get_config
         os.makedirs(os.path.join(get_config("CFIDDLE_BUILD_ROOT"), self._uuid))
         return os.path.join(get_config("CFIDDLE_BUILD_ROOT"), self._uuid, "runner.pickle"), os.path.join(get_config("CFIDDLE_BUILD_ROOT"), self._uuid, "results.pickle")
+
 
     
     @classmethod
@@ -201,6 +202,7 @@ class DirectRunner(Runner):
 
     """
     
+
     def run(self):
         return self._delegated_run()
 
@@ -237,6 +239,7 @@ class SubprocessDelegate:
 
 def get_uuid(id_length=8):
     return uuid.uuid4().hex[:id_length]
+
 
 class RunnerException(CFiddleException):
     pass

@@ -4,7 +4,7 @@ __all__ = [
     "Executable",
     "MakeBuilder",
     "InvocationDescription",
-    "LocalSingleRunner",
+    "Invoker",
     "Runner",
     "DirectRunner",
     "arg_map",
@@ -29,7 +29,7 @@ from .Data import InvocationResultsList
 from .Builder import ExecutableDescription, Executable, ExecutableList
 from .MakeBuilder import MakeBuilder, InvalidBuildParameter
 from .Runner import InvocationDescription, InvocationResult, Runner, InvalidRunOption, DirectRunner
-from .LocalSingleRunner import LocalSingleRunner
+from .Invoker import Invoker
 from .util import arg_map, arg_product, changes_in, exp_range, running_under_jupyter, ArgProductError
 from .Code import code
 from .config import get_config, set_config, enable_debug, cfiddle_config
@@ -107,12 +107,12 @@ def run_list(invocations, **kwargs):
     IRList = get_config("InvocationResultsList_type")
     IRType = get_config("InvocationResult_type")
     Runner = get_config("Runner_type")
-    LocalSingleRunner = get_config("SingleRunner_type")
+    Invoker = get_config("Invoker_type")
     InvDesc = get_config("InvocationDescription_type")
     progress_bar = get_config("ProgressBar")
 
     return Runner([InvDesc(**i) for i in invocations],
-                  single_runner=LocalSingleRunner,
+                  invoker=Invoker,
                   result_list_factory=IRList,
                   result_factory=IRType,
                   progress_bar=progress_bar,
@@ -156,7 +156,7 @@ def run(executable, function, arguments=None, perf_counters=None, run_options=No
     value to :func:`run()` completely overrides the default.
 
     By default, :code:`run_options` interpreted by
-    :obj:`cfiddle.Runner.RunOptionManager`.  The default
+    :obj:`cfiddle.Runner.RunOptionInterpreter`.  The default
     implementation copies the contents of `run_options` to environment
     variables before execution.
 

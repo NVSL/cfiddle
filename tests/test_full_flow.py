@@ -19,7 +19,7 @@ def test_one(setup):
 
     invocation = InvocationDescription(executable, function="ordered", arguments=dict(count=1))
 
-    result = LocalSingleRunner(invocation).run()
+    result = Invoker(invocation).run()
 
     print(result.results)
 
