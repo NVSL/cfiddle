@@ -148,7 +148,6 @@ class Runner:
         os.makedirs(os.path.join(get_config("CFIDDLE_BUILD_ROOT"), self._uuid))
         return os.path.join(get_config("CFIDDLE_BUILD_ROOT"), self._uuid, "runner.pickle"), os.path.join(get_config("CFIDDLE_BUILD_ROOT"), self._uuid, "results.pickle")
 
-
     
     @classmethod
     def bind_arguments(cls, arguments, signature):
@@ -238,7 +237,6 @@ class SubprocessDelegate:
 
 def get_uuid(id_length=8):
     return uuid.uuid4().hex[:id_length]
-
 
 class RunnerException(CFiddleException):
     pass
