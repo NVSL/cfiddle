@@ -3,6 +3,7 @@ import os
 import pickle
 import click
 import subprocess
+import uuid
 
 from .Builder import Executable
 from .Exceptions import CFiddleException
@@ -104,6 +105,8 @@ class Runner:
         self._result_list_factory = result_list_factory or get_config("InvocationResultsList_type")
         self._progress_bar = progress_bar or get_config("ProgressBar")
         self._cmd_runner = get_config("RunnerDelegate_type")
+        self._uuid = get_uuid()
+
 
     def run(self):
         cmd_runner = self._cmd_runner()
@@ -142,7 +145,8 @@ class Runner:
 
     def _temp_files(self):
         from .config import get_config
-        return os.path.join(get_config("CFIDDLE_BUILD_ROOT"), "runner.pickle"), os.path.join(get_config("CFIDDLE_BUILD_ROOT"), "results.pickle"), 
+        os.makedirs(os.path.join(get_config("CFIDDLE_BUILD_ROOT"), self._uuid))
+        return os.path.join(get_config("CFIDDLE_BUILD_ROOT"), self._uuid, "runner.pickle"), os.path.join(get_config("CFIDDLE_BUILD_ROOT"), self._uuid, "results.pickle")
 
     
     @classmethod
@@ -231,6 +235,8 @@ class SubprocessDelegate:
         except subprocess.CalledProcessError as e:
             raise RunnerDelegateException(f"SubprocessDelegate failed (error code {e.returncode}): {e.stdout} {e.stderr}")
 
+def get_uuid(id_length=8):
+    return uuid.uuid4().hex[:id_length]
 
 class RunnerException(CFiddleException):
     pass
