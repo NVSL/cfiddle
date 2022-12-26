@@ -2,6 +2,7 @@ import pytest
 import copy
 import sys
 import os
+
 from contextlib import contextmanager
 from functools import reduce
 from itertools import product
@@ -316,6 +317,8 @@ def running_under_jupyter():
     ``False`` if in IPython shell or other Python shell.
     """
     return 'ipykernel' in sys.modules
+
+
 
 class ArgProductError(CFiddleException):
     pass
