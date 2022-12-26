@@ -83,7 +83,7 @@ class Runner:
     :func:`subprocess.run()`.
 
     You can change this behavior by setting the
-    :code:`ExternalCommandRunner_type` configuration option.  For
+    :code:`RunnerDelegate_type` configuration option.  For
     instance, a replacement could submit the commandline to job
     scheduling system or execute it remotely via :code:`ssh`.
 
