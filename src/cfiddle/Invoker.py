@@ -4,7 +4,7 @@ import os
 import csv
 import faulthandler
 
-from .Runner import Runner, InvocationResult, RunnerException, RunOptionManager
+from .Runner import Runner, InvocationResult, RunnerException, RunOptionInterpreter
 from .CProtoParser import funcptr_t
 from .Exceptions import CFiddleException
 from .util import environment
@@ -13,14 +13,14 @@ from .perfcount import install_perf_counters, clear_perf_counters
 
 faulthandler.enable()
 
-class LocalSingleRunner:
+class Invoker:
 
     def __init__(self, invocation, result_factory=None):
         from .config import get_config
         self._libcfiddle = ctypes.CDLL("libcfiddle.so")
         self._invocation = invocation
         self._result_factory = result_factory or get_config("InvocationResult_type")
-        self._run_option_manager = get_config("RunOptionManager_type")
+        self._run_option_manager = get_config("RunOptionInterpreter_type")
         
     def run(self):
         self._prepare_data_collection()

@@ -1,6 +1,6 @@
 from cfiddle import *
 from util import *
-from cfiddle.Runner import Runner, DirectRunner, BashDelegate, SubprocessDelegate, InvocationDescription, IncorrectArgumentType, InvalidInvocation, RunOptionManager, InvalidRunOption
+from cfiddle.Runner import Runner, DirectRunner, BashDelegate, SubprocessDelegate, InvocationDescription, IncorrectArgumentType, InvalidInvocation, RunOptionInterpreter, InvalidRunOption
 from fixtures import *
 import ctypes
 import pytest
@@ -149,11 +149,11 @@ def test_run_option_manager(setup):
     class MyException(Exception):
         pass
 
-    class ROM(RunOptionManager):
+    class ROM(RunOptionInterpreter):
         def apply_options(self):
             raise MyException()
     
-    with cfiddle_config(RunOptionManager_type=ROM, Runner_type=DirectRunner):
+    with cfiddle_config(RunOptionInterpreter_type=ROM, Runner_type=DirectRunner):
         with pytest.raises(MyException):
             sanity_test()
     
