@@ -47,26 +47,28 @@ def test_multiarch(setup, simple_code):
         print(b.asm())
         print(b.asm("foo"))
 
+        
+arm_toolchains = [x for x in ["g++-8", "g++-9", "g++-11"] if invoke_process([f"arm-linux-gnueabi-{x}", "-v"])[0]]
+
 
 def test_naming(simple_code):
-    skip_without_toolchain("aarch64")
+    skip_without_toolchain("arm-linux-gnueabi")
     b = build(simple_code, arg_map(ARCH=["arm", "aarch64"]))
     assert b[0].get_toolchain()._architecture_name == "aarch64".upper()
     assert b[1].get_toolchain()._architecture_name == "aarch64".upper()
 
 
 def test_toolchain_spec_1(setup):
-    skip_without_toolchain("aarch64")
+    skip_without_toolchain("arm-linux-gnueabi")
     sample = code(r"""extern "C" int answer() {return 42;}""")
     b = build(sample, arg_map(CXX=["g++", "arm-linux-gnueabi-g++"]))
     assert b[0].get_toolchain()._tool_prefix == ""
     assert b[1].get_toolchain()._tool_prefix == "arm-linux-gnueabi-"
 
-arm_toolchains = [x for x in ["g++-8", "g++-9", "g++-11"] if invoke_process([f"arm-linux-gnueabi-{x}", "-v"])[0]]
 
     
 def test_toolchain_spec_2(setup):
-    skip_without_toolchain("aarch64")
+    skip_without_toolchain("arm-linux-gnueabi")
     sample = code(r"""extern "C" int answer() {return 42;}""")
     built = build(sample, arg_map(ARCH="aarch64", CXX=arm_toolchains), verbose=True)
     for i, b in enumerate(built):
