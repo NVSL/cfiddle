@@ -58,16 +58,16 @@ Controlling the Code's Execution Environment
 
 You can control the execution environment for the code using the
 ``run_options`` paremeter to :func:`run`.  It takes a dictionary
-that's passed to an implementation of :class:`RunOptionManager`
-specified by the ``RunOptionManager_type`` configuration option.
+that's passed to an implementation of :class:`RunOptionIntepreter`
+specified by the ``RunOptionInterpreter_type`` configuration option.
 
 That should be context manager that sets up the execution environment.
-:class:`RunOptionManager` just adds the values in ``run_options`` to
+:class:`RunOptionInterpreter` just adds the values in ``run_options`` to
 the environment.
 
 The default just adds ``run_options`` as environment variables.
 
-.. autoclass:: cfiddle.Runner.RunOptionManager
+.. autoclass:: cfiddle.Runner.RunOptionInterpreter
 
 Setting Defaults for Building and Running
 *****************************************

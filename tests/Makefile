@@ -7,6 +7,7 @@ default:
 JUPYTER=--nbmake $(EXAMPLES)
 CPP_TESTS=test_DataSet.exe test_libcfiddle.exe test_PerfCounter.exe
 
+all: test doctest
 
 .PHONY: test
 test: $(CPP_TESTS)
@@ -29,9 +30,9 @@ examples:
 	rm -rf ../examples/.cfiddle # give these a clean directory.
 	pytest --nbmake $(EXAMPLES)
 
-.PHONY:docs
-docs:
-	pytest $(DOCS)
+.PHONY:doctest
+doctest:
+	(cd ../docs; $(MAKE) doctest)
 
 
 CXXFLAGS=-I../src/cfiddle/resources/include -MMD -g -Wall -Werror
