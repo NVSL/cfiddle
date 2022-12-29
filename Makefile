@@ -86,7 +86,6 @@ docs:
 serve-docs: docs
 	python -m http.server --directory docs/build/html/
 
-
 .PHONY: wc
 wc:
 	wc -l tests/*.py | sort -n
