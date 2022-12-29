@@ -1,4 +1,4 @@
-FROM jupyter/scipy-notebook:lab-3.2.5
+FROM jupyter/scipy-notebook
 ### create user with a home directory
 ARG NB_USER
 ARG NB_UID
