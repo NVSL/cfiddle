@@ -34,7 +34,7 @@ remote-test:
 ## Build release and test it
 .PHONY:
 test-dist: dist
-	(. build_release/dist_test/bin/activate; $(MAKE) -C build_release package-test)
+	(. build_release/dist_test/bin/activate; pip install build_release/dist/cfiddle-0.5.1.tar.gz; $(MAKE) -C build_release package-test)
 
 .PHONY: dist
 dist:
