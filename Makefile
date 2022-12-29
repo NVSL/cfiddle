@@ -4,19 +4,19 @@ default:
 BRANCH=$(shell git rev-parse --abbrev-ref HEAD)
 export CFIDDLE_DOCKER_IMAGE=cfiddle:$(BRANCH)
 
+FIDDLE_WHEEL=build_release/dist/cfiddle-$$(cat VERSION)-py3-none-any.whl
 .PHONY:test
-test:  package-test docker-test #remote-test
+test:  package-test dist-test docker-test #remote-test
 
 ## Basic tests
 .PHONY: package-test
 package-test:
 	$(MAKE) -C tests test
 
-
 ## Build and test docker image
 .PHONY: docker
-docker:
-	docker build --no-cache --progress plain -t stevenjswanson/$(CFIDDLE_DOCKER_IMAGE)  --build-arg ARG_THIS_DOCKER_IMAGE_UUID=$(shell uuidgen) .
+docker: dist
+	docker build --no-cache --progress plain -t stevenjswanson/$(CFIDDLE_DOCKER_IMAGE)  --build-arg ARG_THIS_DOCKER_IMAGE_UUID=$(shell uuidgen) --build-arg FIDDLE_WHEEL=$(FIDDLE_WHEEL) .
 
 .PHONY: docker-test
 docker-test: docker
@@ -33,8 +33,8 @@ remote-test:
 
 ## Build release and test it
 .PHONY:
-test-dist: dist
-	(. build_release/dist_test/bin/activate; pip install build_release/dist/cfiddle-0.5.1.tar.gz; $(MAKE) -C build_release package-test)
+dist-test: dist
+	(. build_release/dist_test/bin/activate; pip install $(FIDDLE_WHEEL); $(MAKE) -C build_release package-test)
 
 .PHONY: dist
 dist:

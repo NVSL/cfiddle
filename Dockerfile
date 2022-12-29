@@ -2,6 +2,7 @@ FROM jupyter/scipy-notebook
 ### create user with a home directory
 ARG NB_USER
 ARG NB_UID
+ARG FIDDLE_WHEEL
 ENV USER ${NB_USER}
 ENV HOME /home/${NB_USER}
 ENV THIS_DOCKER_IMAGE ${ARG_THIS_DOCKER_IMAGE}
@@ -9,11 +10,11 @@ USER root
 
 ##### Install cfiddle
 
-COPY  . ./cfiddle
-RUN (export CFIDDLE_INSTALL_CROSS_COMPILERS=yes;cd cfiddle; bash ./install_prereqs.sh)
+COPY . ./cfiddle
+RUN (cd cfiddle; bash ./install_prereqs.sh)
 RUN  chown -R ${NB_USER} ./cfiddle
 USER ${NB_USER}
-RUN cd cfiddle;  pip install  .
+RUN pip install cfiddle/$FIDDLE_WHEEL
 RUN mkdir -p ${HOME}/.jupyter
 COPY jupyter_notebook_config.py ${HOME}/.jupyter/
 
