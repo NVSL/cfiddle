@@ -5,7 +5,7 @@ BRANCH=$(shell git rev-parse --abbrev-ref HEAD)
 export CFIDDLE_DOCKER_IMAGE=cfiddle:$(BRANCH)
 
 .PHONY:test
-test:  package-test docker-test remote-test
+test:  package-test docker-test #remote-test
 
 ## Basic tests
 .PHONY: package-test
@@ -45,7 +45,7 @@ dist:
 
 .PHONY:do-dist
 do-dist:
-	pip install --upgrade pytest wheel build 
+	pip install --upgrade pytest wheel build pytest-xdist pytest-cpp nbmake
 	python3 -m build
 
 
