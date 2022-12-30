@@ -92,7 +92,9 @@ setup(
             'cfiddle-run=cfiddle.Runner:invoke_runner',
             'nbclean=util.nbclean:nbclean'
         ]
-    }
+    },
+    scripts=['bin/install_prereqs.sh', 'bin/install_compilers.sh', 'bin/install_perf.sh']
+
 )
 
 
