@@ -24,10 +24,10 @@ apt-get install -y gcc-8 g++-8 || true # this fails on circleci for some reason
 
 
 ##### perf
-bin/install_perf.sh
+cfiddle_install_perf.sh
 
 if ! [ x"$CFIDDLE_INSTALL_CROSS_COMPILERS" = x"no" ]; then
-    bin/install_compilers.sh
+    cfiddle_install_compilers.sh
 fi
 	    
 
