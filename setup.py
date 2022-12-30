@@ -95,7 +95,8 @@ setup(
     },
     scripts=['bin/cfiddle_install_prereqs.sh',
              'bin/cfiddle_install_compilers.sh',
-             'bin/cfiddle_install_perf.sh']
+             'bin/cfiddle_install_perf.sh',
+             'bin/cfiddle_with_env.sh']
 
 )
 
