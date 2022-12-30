@@ -125,31 +125,26 @@ CFiddle depends on some system packages and python's `wheel`.  Setup a virtual e
 python -m venv cfiddle-venv
 ```
 
-So you can install the system packages CFiddle needs.  Check
-`install_prereqs.sh` to see what this includes.  It uses `apt-get`.
-
-```
-sudo bash
-. cfiddle-venv/bin/activate	
-# export CFIDDLE_INSTALL_CROSS_COMPILERS=yes # uncomment if you want all the cross compilers
-./install_prereqs.sh
-exit
-```
-
 Install cfiddle:
 
 ```
 . cfiddle-venv/bin/activate
-pip install .
+pip install cfiddle
 ```
 
-Run the tests:
+So you can install the system packages CFiddle needs.  You can run
+`cfiddle_install_prereqs.sh` to install everyhing.  It uses `apt-get`,
+so you may need to tweak it for your system.
+
 
 ```
-make test
+sudo bash
+. cfiddle-venv/bin/activate	
+cfiddle_install_prereqs.sh
+exit
 ```
 
-## Common Problems
+## Setting Environment Variables
 
 CFiddle needs `LD_LIBRARY_PATH` set properly to work, and it can't set it itself reliably.  If you get
 
@@ -160,7 +155,7 @@ OSError: libcfiddle.so: cannot open shared object file: No such file or director
 You can update `LD_LIBRARY_PATH` with:
 
 ```
-$(set-cfiddle-ld-path)
+$(cfiddle-set-ld-path)
 ```
 
 

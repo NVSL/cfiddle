@@ -147,7 +147,7 @@ You can generate a list of the available value with
 The resulting list can be a bit dizzying (``showevtinfo`` is an example from the
 `libpfm4 source distribution <https://github.com/wcohen/libpfm4>`_.  It's not
 installed by default.  If you are using the CFiddle docker image or have run
-the ``install_prereqs.sh`` script in the CFiddle distribution, it should be
+the ``cfiddle_install_prereqs.sh`` script in the CFiddle distribution, it should be
 available).
 
 Here's a quick orientation on the output:

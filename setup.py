@@ -86,14 +86,16 @@ setup(
     },
     entry_points={
         'console_scripts' :[
-            'set-cfiddle-ld-path=cfiddle.paths:set_ld_path_in_shell',
+            'cfiddle-set-ld-path=cfiddle.paths:set_ld_path_in_shell',
             'cfiddle-lib-path=cfiddle.paths:print_cfiddle_lib_path',
             'cfiddle-include-path=cfiddle.paths:print_cfiddle_include_path',
             'cfiddle-run=cfiddle.Runner:invoke_runner',
             'nbclean=util.nbclean:nbclean'
         ]
     },
-    scripts=['bin/install_prereqs.sh', 'bin/install_compilers.sh', 'bin/install_perf.sh']
+    scripts=['bin/cfiddle_install_prereqs.sh',
+             'bin/cfiddle_install_compilers.sh',
+             'bin/cfiddle_install_perf.sh']
 
 )
 

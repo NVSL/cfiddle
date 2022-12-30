@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-`set-cfiddle-ld-path`
+`cfiddle-set-ld-path`
 exec "$@"
 
 

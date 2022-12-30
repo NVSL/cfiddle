@@ -26,7 +26,7 @@ jobs:
           # pip-dependency-file: test-requirements.txt  # if you have a different name for your requirements file, maybe one that combines your runtime and test requirements.
       - run: echo -ne "Host *\n    StrictHostKeyChecking no\n" | sudo tee -a ~/.ssh/config; sudo chmod 400 ~/.ssh/config
       - run: sudo apt-get update --allow-releaseinfo-change
-      - run: sudo -E bash -c "(export CFIDDLE_INSTALL_CROSS_COMPILERS=yes; bash ./install_prereqs.sh)"
+      - run: sudo -E bash -c "bash ./bin/cfiddle_install_prereqs.sh"
       - run: make dist
       - run: mkdir -p /tmp/cfiddle/packages/
       - run: cp build_release/dist/*.tar.gz /tmp/cfiddle/packages/
@@ -46,13 +46,13 @@ jobs:
       - attach_workspace:
           at: /tmp/cfiddle
       - run: ls -lRa /tmp/cfiddle
-      - run: sudo bash -c "(export CFIDDLE_INSTALL_CROSS_COMPILERS=yes; bash ./install_prereqs.sh)"
+      - run: sudo bash -c "bash ./bin/cfiddle_install_prereqs.sh"
       - run:
           name: Install cfiddle
           command: pip install /tmp/cfiddle/packages/*.tar.gz
       - run:
           name: Test cfiddle
-          command: $(set-cfiddle-ld-path); cd tests; CFIDDLE_FAKE_PERF_COUNTER_SUCCESS=1 make test
+          command: $(cfiddle-set-ld-path); cd tests; CFIDDLE_FAKE_PERF_COUNTER_SUCCESS=1 make test
   python-311:
     <<: *test-template
     docker:

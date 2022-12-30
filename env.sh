@@ -1,3 +1,3 @@
-if set-cfiddle-ld-path; then
-    `set-cfiddle-ld-path`
+if cfiddle-set-ld-path; then
+    `cfiddle-set-ld-path`
 fi

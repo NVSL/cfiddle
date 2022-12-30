@@ -2,7 +2,7 @@ import cfiddle.util
 from cfiddle.paths import *
 
 def test_set_ld_path_in_shell():
-    success,output = cfiddle.util.invoke_process("set-cfiddle-ld-path")
+    success,output = cfiddle.util.invoke_process("cfiddle-set-ld-path")
     assert success
     assert cfiddle_lib_path() in output
     
