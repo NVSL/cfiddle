@@ -4,25 +4,34 @@ import pickle
 import click
 import subprocess
 import uuid
+import glob
 
 from .Builder import Executable
 from .Exceptions import CFiddleException
 from .util import type_check, type_check_list
 
 class InvocationDescription:
-    def __init__(self, executable, function, arguments, perf_counters=None, run_options=None):
+    def __init__(self, executable, function, arguments, perf_counters=None, run_options=None,extra_required_files =None):
         if perf_counters is None:
             perf_counters = []
         if run_options is None:
             run_options = dict()
-
+        if extra_required_files is None:
+            extra_required_files = []
+            
         self.executable = executable
         self.function = function
         self.arguments = arguments
         self.perf_counters = perf_counters
         self.run_options = run_options
+        self.extra_required_files = extra_required_files
+
         self._raise_on_invalid_types()
 
+    def compute_required_files(self):
+        return self.executable.compute_required_files() + sum(map(lambda x: glob.glob(x, recursive=True),
+                                                                  self.extra_required_files), [])
+        
     def _raise_on_invalid_types(self):
 
         try:
@@ -34,6 +43,7 @@ class InvocationDescription:
         except (ValueError, TypeError) as e:
             raise InvalidInvocation(e)
 
+    
         
 class RunOptionInterpreter(object):
     """

@@ -157,3 +157,18 @@ def test_run_option_manager(setup):
         with pytest.raises(MyException):
             sanity_test()
     
+def test_required_files(test_cpp):
+    assert len(test_cpp.compute_required_files())== 1
+    assert ".so" in test_cpp.compute_required_files()[0]
+
+    r = run(test_cpp, 'sum', arg_map(a=0,b=1))
+    assert len(r[0].invocation.compute_required_files()) == 1
+
+    r = run(test_cpp, 'sum', arg_map(a=0,b=1), extra_required_files=["test_src/test.cpp"])
+    assert len(r[0].invocation.compute_required_files()) == 2
+    assert "test_src/test.cpp" in r[0].invocation.compute_required_files()
+
+    r = run(test_cpp, 'sum', arg_map(a=0,b=1), extra_required_files=["test_src/*.cpp"])
+    assert len(r[0].invocation.compute_required_files()) == 6
+
+    

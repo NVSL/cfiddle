@@ -72,6 +72,9 @@ class Executable:
 
     def get_toolchain(self):
         return self.toolchain
+
+    def compute_required_files(self):
+        return [self.lib]
     
     def _raise_on_invalid_types(self):
         type_check(self.lib, str)

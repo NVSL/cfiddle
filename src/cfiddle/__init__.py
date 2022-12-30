@@ -120,12 +120,12 @@ def run_list(invocations, **kwargs):
 
 
 @handle_cfiddle_exceptions
-def run(executable, function, arguments=None, perf_counters=None, run_options=None, **kwargs):
+def run(executable, function, arguments=None, perf_counters=None, run_options=None, extra_required_files=None, **kwargs):
     """Run one or more functions with one or more sets of arguments and
     collect one or more measurements.
     
     CFiddle parameterizes execution in five ways, corresponding to
-    :func:`run()` 's five arguments:
+    :func:`run()` 's first five arguments:
     
     1. An :obj:`InstrumentedExecutable` to run as returned by :func:`cfiddle.build()`.
     2. The function to call.
@@ -134,7 +134,7 @@ def run(executable, function, arguments=None, perf_counters=None, run_options=No
     5. And the other aspects of the execution environment (e.g., environment variables and clock speed).
 
     :func:`run()` can take multiple values for each of these and will
-    run all combinations.  
+    run all combinations.
 
     :code:`function` can be a :obj:`str` corresponding to a function
     that is present in each executable with the same signature.  To
@@ -167,6 +167,13 @@ def run(executable, function, arguments=None, perf_counters=None, run_options=No
     includes multiple sets of values, :func:`run()` will run all
     combinations of the defaults and the values passed supplied.
 
+    If any of the invocations you are running will access any files
+    (other than the compiler object file), you can pass a list of them
+    in :code:`extra_required_files`.  This is not necessary unless you
+    have configured :code:`Runner_type` to use a runner class than
+    needs this information (e.g., for remote execution).  You can pass
+    file names or file "glob" patterns (e.g., with :code:`*`, :code:`**`, or :code:`?`).
+
     :code:`run()` returns an :obj:`cfiddle.InvocationResultsList` which is a
     subclass of :obj:`list` that can format results in useful ways
     (e.g., as a Panda dataframe or CSV file).
@@ -179,8 +186,9 @@ def run(executable, function, arguments=None, perf_counters=None, run_options=No
        executable: An :obj:`Executable` or list of :obj:`Executable` objects.
        function: A ``str`` or list of ``str`` naming functions to call.
        arguments: A :obj:`dict` of arguments for the function.  Or a list of such :obj:`dict`.  Defaults to ``[{}]``
-       perf_counters: A list of performance counters to collect. Default to None.
-       run_options: Parameters controlling how the function is run.  Default to None.
+       perf_counters: A list of performance counters to collect. Defaults to None.
+       run_options: Parameters controlling how the function is run.  Defaults to None.
+       extra_required_files: A list of additional files needed for execution (e.g., input files).  Defaults to None.
 
     Returns:
        :obj:`InvocationResultsList`:  A list of :obj:`InvocationResult` objects.
@@ -211,6 +219,7 @@ def run(executable, function, arguments=None, perf_counters=None, run_options=No
     perf_counters = normalize_perf_counters(perf_counters)
     
     invocations = arg_map(executable=executable, function=function, arguments=arguments, run_options=full_run_options, perf_counters=perf_counters)
+    invocations = arg_product(invocations, [dict(extra_required_files=extra_required_files)])
     return run_list(invocations, **kwargs)
 
 
