@@ -14,8 +14,8 @@ USER root
 COPY $FIDDLE_WHEEL .
 RUN pip install ${FIDDLE_WHEEL##*/}
 RUN cfiddle_install_prereqs.sh
-COPY cfiddle/tests ./cfiddle-tests
-
+COPY . cfiddle
+RUN chown -R ${NB_USER}  cfiddle
 ##### Setup Jupyter
 
 USER ${NB_USER}
