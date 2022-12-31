@@ -11,26 +11,30 @@ from .Exceptions import CFiddleException
 from .util import type_check, type_check_list
 
 class InvocationDescription:
-    def __init__(self, executable, function, arguments, perf_counters=None, run_options=None,extra_required_files =None):
+    def __init__(self, executable, function, arguments, perf_counters=None, run_options=None, extra_input_files=None, extra_output_files=None):
         if perf_counters is None:
             perf_counters = []
         if run_options is None:
             run_options = dict()
-        if extra_required_files is None:
-            extra_required_files = []
-            
+        if extra_input_files is None:
+            extra_input_files = []
+        if extra_output_files is None:
+            extra_output_files = []
+
         self.executable = executable
         self.function = function
         self.arguments = arguments
         self.perf_counters = perf_counters
         self.run_options = run_options
-        self.extra_required_files = extra_required_files
-
+        self.extra_input_files = extra_input_files
+        self.extra_output_files = extra_output_files
         self._raise_on_invalid_types()
 
-    def compute_required_files(self):
-        return self.executable.compute_required_files() + sum(map(lambda x: glob.glob(x, recursive=True),
-                                                                  self.extra_required_files), [])
+    def compute_input_files(self):
+        return self.executable.compute_input_files() + sum(map(lambda x: glob.glob(x, recursive=True),
+                                                                  self.extra_input_files), [])
+    def compute_output_files(self):
+        return self.extra_output_files
         
     def _raise_on_invalid_types(self):
 
@@ -40,6 +44,8 @@ class InvocationDescription:
             type_check(self.arguments, dict)
             type_check_list(self.arguments.keys(), str)
             type_check_list(self.perf_counters, str)
+            type_check_list(self.extra_input_files, str)
+            type_check_list(self.extra_output_files, str)
         except (ValueError, TypeError) as e:
             raise InvalidInvocation(e)
 
@@ -121,38 +127,52 @@ class Runner:
     def run(self):
         cmd_runner = self._cmd_runner()
         
-        runner_filename, results_filename = self._temp_files()
-        if os.path.exists(results_filename):
-            os.remove(results_filename)
+        self._runner_filename, self._results_filename = self._temp_files()
+        if os.path.exists(self._results_filename):
+            os.remove(self._results_filename)
 
-        self._pickle_run(runner_filename)
+        self._pickle_run(self._runner_filename)
 
-        cmd_runner.execute(["cfiddle-run", "--runner", runner_filename, "--results", results_filename], runner=self)
+        cmd_runner.execute(["cfiddle-run", "--runner", self._runner_filename, "--results", self._results_filename], runner=self)
 
-        r = self._unpickle_results(results_filename)
+        r = self._unpickle_results(self._results_filename)
+
         if isinstance(r, Exception):
             raise r
         else:
             return r
+
         
+    def compute_input_files(self):
+        return [self._runner_filename]
+
+    
+    def compute_output_files(self):
+        return [self._results_filename]
+
+    
     def _delegated_run(self):
         l = self._result_list_factory()
         for i in self._progress_bar(self._invocations, miniters=1):
             l.append(self._invoker(i, self._result_factory).run())
         return l
+
     
     def get_invocations(self):
         return self._invocations
 
+    
     def _pickle_run(self, f):
         from .config import peek_config
         with open(f, "wb") as r:
             pickle.dump(dict(config=peek_config(), runner=self), r)
 
+            
     def _unpickle_results(self, f):
         with open(f, "rb") as r:
             return pickle.load(r)
 
+        
     def _temp_files(self):
         from .config import get_config
         os.makedirs(os.path.join(get_config("CFIDDLE_BUILD_ROOT"), self._uuid))

@@ -10,6 +10,7 @@ def setup():
         enable_debug()
         yield from _pristine_dir()
 
+        
 def _pristine_dir():
     with tempfile.TemporaryDirectory() as cfiddle_dir:
         with cfiddle_config(CFIDDLE_BUILD_ROOT=cfiddle_dir):

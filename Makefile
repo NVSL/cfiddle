@@ -20,7 +20,7 @@ docker: dist
 
 .PHONY: docker-test
 docker-test: docker
-	docker run -it --privileged -w /home/jovyan/cfiddle/tests docker.io/stevenjswanson/$(CFIDDLE_DOCKER_IMAGE) make test PYTEST_OPTS="-s -vv"
+	docker run -it --privileged -w /home/jovyan/cfiddle-tests docker.io/stevenjswanson/$(CFIDDLE_DOCKER_IMAGE) make test PYTEST_OPTS="-s -vv"
 
 ## Install current branch on remote machines and test there
 .PHONY:remote-test
