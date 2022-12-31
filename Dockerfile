@@ -11,16 +11,18 @@ USER root
 
 ##### Install cfiddle
 
-#COPY . ./cfiddle
-#RUN (cd cfiddle; bash ./bin/cfiddle_install_prereqs.sh)
-RUN  chown -R ${NB_USER} ./cfiddle
-USER ${NB_USER}
-RUN pip install cfiddle/$FIDDLE_WHEEL
+COPY $FIDDLE_WHEEL .
+RUN pip install ${FIDDLE_WHEEL##*/}
 RUN cfiddle_install_prereqs.sh
+COPY cfiddle/tests ./cfiddle-tests
+
+##### Setup Jupyter
+
+USER ${NB_USER}
 RUN mkdir -p ${HOME}/.jupyter
 COPY jupyter_notebook_config.py ${HOME}/.jupyter/
 
 WORKDIR ${HOME}/cfiddle/examples
 
-ENTRYPOINT  [ "/home/jovyan/cfiddle/bin/with_env.sh",  "tini",  "-g",  "--"  ]
+ENTRYPOINT  [ "cfiddle_with_env.sh",  "tini",  "-g",  "--"  ]
 CMD start-notebook.sh
