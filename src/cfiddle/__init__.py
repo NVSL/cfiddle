@@ -7,6 +7,7 @@ __all__ = [
     "Invoker",
     "Runner",
     "DirectRunner",
+    "direct_execution",
     "arg_map",
     "arg_product",
     "code",
@@ -28,7 +29,7 @@ __all__ = [
 from .Data import InvocationResultsList
 from .Builder import ExecutableDescription, Executable, ExecutableList
 from .MakeBuilder import MakeBuilder, InvalidBuildParameter
-from .Runner import InvocationDescription, InvocationResult, Runner, InvalidRunOption, DirectRunner
+from .Runner import InvocationDescription, InvocationResult, Runner, InvalidRunOption, DirectRunner, direct_execution
 from .Invoker import Invoker
 from .util import arg_map, arg_product, changes_in, exp_range, running_under_jupyter, ArgProductError
 from .Code import code

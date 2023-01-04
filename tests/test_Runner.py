@@ -144,6 +144,30 @@ def test_invalid_run_options(env_echo):
     with pytest.raises(InvalidRunOption):
         run(env_echo, "env", run_options={"boo":"bar"})
 
+@pytest.mark.parametrize("Runner_type", [(DirectRunner),
+                                         (Runner)])
+def test_output(setup, capfd, Runner_type):
+
+    with cfiddle_config(Runner_type=Runner_type):
+        r = run(build(code(r"""
+    #include<iostream>
+
+    extern "C" void go() {
+        std::cout << "hello\n";
+        std::cerr << "world\n";
+    }
+    """)), "go")
+
+    captured = capfd.readouterr()
+    assert captured.out == "hello\n"
+    assert captured.err == "world\n"
+
+    
+def test_DirectRunner(test_cpp):
+    with direct_execution():
+        r = run(test_cpp, 'sum', arg_map(a=0,b=1))
+        assert r[0].return_value == 1
+        
 def test_run_option_manager(setup):
     
     class MyException(Exception):

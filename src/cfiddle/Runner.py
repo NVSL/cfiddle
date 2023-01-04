@@ -5,6 +5,8 @@ import click
 import subprocess
 import uuid
 import glob
+from contextlib import contextmanager
+import logging as log
 
 from .Builder import Executable
 from .Exceptions import CFiddleException
@@ -205,11 +207,12 @@ class Runner:
                 raise UnusedArgument(f"Argument '{p}' was provided but is not the signature of function '{signature.name}'.")
         return r
 
+
 class DirectRunner(Runner):
     """
     Run code in the current Python process instead of a separate process.
 
-    You can use it like so:
+    You can use it either directly or with the :func:`direct_execution()` context manager:
 
     .. doctest::
 
@@ -228,12 +231,22 @@ class DirectRunner(Runner):
         >>> exes = build(sample)
         >>> with cfiddle_config(Runner_type=DirectRunner):
         ...    results = run(exes, "loop", arguments=arg_map(count=[1]))
-
+        >>> with direct_execution():
+        ...    results = run(exes, "loop", arguments=arg_map(count=[1]))
     """
     
     def run(self):
+        log.debug(f"DirectRunner running command in the python process")
         return self._delegated_run()
 
+@contextmanager
+def direct_execution():
+    from .config import cfiddle_config
+    try:
+        with cfiddle_config(Runner_type=DirectRunner):
+            yield
+    finally:
+        pass
 
 class InvocationResult:
 
@@ -261,7 +274,8 @@ class BashDelegate:
 class SubprocessDelegate:
     def execute(self, command, runner):
         try:
-            subprocess.run(command, check=True, capture_output=True)
+            log.debug(f"SubprocessDelegate running {command}")
+            subprocess.run(command, check=True)#, capture_output=True)
         except subprocess.CalledProcessError as e:
             raise RunnerDelegateException(f"SubprocessDelegate failed (error code {e.returncode}): {e.stdout} {e.stderr}")
 
@@ -290,7 +304,7 @@ class RunnerDelegateException(CFiddleException):
     pass
 
 @click.command()
-@click.option('--runner', "runner", required=True, type=click.File("rb"), help="File with a pickled Runner in it.")
+@click.option('--runner',  "runner",  required=True, type=click.File("rb"), help="File with a pickled Runner in it.")
 @click.option('--results', "results", required=True, type=click.File("wb"), help="File to deposit the results in.")
 def invoke_runner(runner, results):
     do_invoke_runner(runner, results)
