@@ -12,6 +12,8 @@ USER root
 ##### Install cfiddle
 
 COPY $FIDDLE_WHEEL .
+RUN apt-get update --fix-missing; apt-get update
+RUN apt-get install -y libpfm4 && apt-get clean -y 
 RUN pip install ${FIDDLE_WHEEL##*/}
 RUN cfiddle_install_prereqs.sh
 COPY . cfiddle

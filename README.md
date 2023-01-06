@@ -116,33 +116,37 @@ loop:
 	
 ```
 
-
 ## Local Installation
 
-CFiddle depends on some system packages and python's `wheel`.  Setup a virtual environment:
+Aside from a recent version of Python, all that the core functionality
+of CFiddle requires is `libpfm4` and Python's `wheel` package.  You
+can install these with it with:
 
 ```
-python -m venv cfiddle-venv
+apt-get install -y libpfm4
 ```
 
-Install cfiddle:
+and then (as always, a virtual environment is recommended):
 
 ```
-. cfiddle-venv/bin/activate
+pip install wheel
+```
+
+and then install CFiddle:
+
+```
 pip install cfiddle
 ```
 
-So you can install the system packages CFiddle needs.  You can run
-`cfiddle_install_prereqs.sh` to install everyhing.  It uses `apt-get`,
-so you may need to tweak it for your system.
-
+For all the bells and whistles (CFG visualization, full perf support, cross compilers, etc.), you can then run
 
 ```
-sudo bash
-. cfiddle-venv/bin/activate	
 cfiddle_install_prereqs.sh
-exit
 ```
+
+It uses `apt-get`, so you may need to tweak it for your system.  The
+source is in `bin/cfiddle_install_prereqs.sh`.  You'll need to be
+root.
 
 ## Setting Environment Variables
 
