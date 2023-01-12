@@ -106,7 +106,7 @@ class Runner:
     scheduling system or execute it remotely via :code:`ssh`.
 
     Creating a subclass allows for other execution methods.  Notably,
-    :class:`DirectRunner` runs the function in the current Python
+    :class:`DirectRunnerDelegate` runs the function in the current Python
     process, which can be useful in some instances.
     
     """
@@ -208,7 +208,7 @@ class Runner:
         return r
 
 
-class DirectRunner(Runner):
+class DirectRunnerDelegate(Runner):
     """
     Run code in the current Python process instead of a separate process.
 
@@ -229,21 +229,21 @@ class DirectRunner(Runner):
         ... }
         ... ''')
         >>> exes = build(sample)
-        >>> with cfiddle_config(Runner_type=DirectRunner):
+        >>> with cfiddle_config(Runner_type=DirectRunnerDelegate):
         ...    results = run(exes, "loop", arguments=arg_map(count=[1]))
         >>> with direct_execution():
         ...    results = run(exes, "loop", arguments=arg_map(count=[1]))
     """
     
     def run(self):
-        log.debug(f"DirectRunner running command in the python process")
+        log.debug(f"DirectRunnerDelegate running command in the python process")
         return self._delegated_run()
 
 @contextmanager
 def direct_execution():
     from .config import cfiddle_config
     try:
-        with cfiddle_config(Runner_type=DirectRunner):
+        with cfiddle_config(Runner_type=DirectRunnerDelegate):
             yield
     finally:
         pass
