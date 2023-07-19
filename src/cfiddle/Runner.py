@@ -99,16 +99,16 @@ class Runner:
     invocations, and then pickle and return the results.
 
     The :code:`cfiddle-run` command line is passed to an instance of
-    :class:SubprocessDelegate` which runs it with Python's 
+    :class:SubprocessExecutionMethod` which runs it with Python's 
     :func:`subprocess.run()`.
 
     You can change this behavior by setting the
-    :code:`RunnerDelegate_type` configuration option.  For
+    :code:`RunnerExecutionMethod_type` configuration option.  For
     instance, a replacement could submit the commandline to job
     scheduling system or execute it remotely via :code:`ssh`.
 
     Creating a subclass allows for other execution methods.  Notably,
-    :class:`DirectRunnerDelegate` runs the function in the current Python
+    :class:`DirectRunner` runs the function in the current Python
     process, which can be useful in some instances.
     
     """
@@ -126,7 +126,7 @@ class Runner:
         self._result_factory = result_factory or get_config("InvocationResult_type")
         self._result_list_factory = result_list_factory or get_config("InvocationResultsList_type")
         self._progress_bar = progress_bar or get_config("ProgressBar")
-        self._cmd_runner = get_config("RunnerDelegate_type")
+        self._cmd_runner = get_config("RunnerExecutionMethod_type")
         self._uuid = get_uuid()
 
 
@@ -212,7 +212,7 @@ class Runner:
         return r
 
 
-class DirectRunnerDelegate(Runner):
+class DirectRunner(Runner):
     """
     Run code in the current Python process instead of a separate process.
 
@@ -233,21 +233,21 @@ class DirectRunnerDelegate(Runner):
         ... }
         ... ''')
         >>> exes = build(sample)
-        >>> with cfiddle_config(Runner_type=DirectRunnerDelegate):
+        >>> with cfiddle_config(Runner_type=DirectRunner):
         ...    results = run(exes, "loop", arguments=arg_map(count=[1]))
         >>> with direct_execution():
         ...    results = run(exes, "loop", arguments=arg_map(count=[1]))
     """
     
     def run(self):
-        log.debug(f"DirectRunnerDelegate running command in the python process")
+        log.debug(f"DirectRunner running command in the python process")
         return self._delegated_run()
 
 @contextmanager
 def direct_execution():
     from .config import cfiddle_config
     try:
-        with cfiddle_config(Runner_type=DirectRunnerDelegate):
+        with cfiddle_config(Runner_type=DirectRunner):
             yield
     finally:
         pass
@@ -269,19 +269,19 @@ class InvocationResult:
         return self.results
     
 
-class BashDelegate:
+class BashExecutionMethod:
     def execute(self, command, runner):
         c = " ".join(command)
         os.system(f"""bash -c '{c}'""")
 
         
-class SubprocessDelegate:
+class SubprocessExecutionMethod:
     def execute(self, command, runner):
         try:
-            log.debug(f"SubprocessDelegate running {command}")
+            log.debug(f"SubprocessExecutionMethod running {command}")
             subprocess.run(command, check=True)#, capture_output=True)
         except subprocess.CalledProcessError as e:
-            raise RunnerDelegateException(f"SubprocessDelegate failed (error code {e.returncode}): {e.stdout.decode()} {e.stderr.decode()}")
+            raise RunnerExecutionMethodException(f"SubprocessExecutionMethod failed (error code {e.returncode}): {e.stdout and e.stdout.decode()} {e.stderr and e.stderr.decode()}")
 
 def get_uuid(id_length=8):
     return uuid.uuid4().hex[:id_length]
@@ -304,7 +304,7 @@ class InvalidInvocation(CFiddleException):
 class InvalidRunOption(CFiddleException):
     pass
 
-class RunnerDelegateException(CFiddleException):
+class RunnerExecutionMethodException(CFiddleException):
     pass
 
 @click.command()

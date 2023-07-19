@@ -5,7 +5,7 @@ from contextlib import contextmanager
 from .Data import InvocationResultsList
 from .Builder import Executable, ExecutableDescription
 from .MakeBuilder import MakeBuilder
-from .Runner import InvocationResult, InvocationDescription, Runner, RunOptionInterpreter, SubprocessDelegate
+from .Runner import InvocationResult, InvocationDescription, Runner, RunOptionInterpreter, SubprocessExecutionMethod
 from .Invoker import Invoker
 from .CProtoParser import CProtoParser
 from .GoProtoParser import GoProtoParser
@@ -27,7 +27,7 @@ default_config = dict(Executable_type=InstrumentedExecutable,
                       ProtoParser_types=[CProtoParser, GoProtoParser],
                       CFIDDLE_BUILD_ROOT=".cfiddle/builds",
                       ProgressBar=noop_progress_bar,
-                      RunnerDelegate_type=SubprocessDelegate,
+                      RunnerExecutionMethod_type=SubprocessExecutionMethod,
                       RunOptionInterpreter_type=RunOptionInterpreter,
                       perf_counters_default=None,
                       build_parameters_default=None,

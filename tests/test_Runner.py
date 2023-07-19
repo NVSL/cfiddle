@@ -1,6 +1,6 @@
 from cfiddle import *
 from util import *
-from cfiddle.Runner import Runner, DirectRunnerDelegate, BashDelegate, SubprocessDelegate, InvocationDescription, IncorrectArgumentType, InvalidInvocation, RunOptionInterpreter, InvalidRunOption
+from cfiddle.Runner import Runner, DirectRunner, BashExecutionMethod, SubprocessExecutionMethod, InvocationDescription, IncorrectArgumentType, InvalidInvocation, RunOptionInterpreter, InvalidRunOption
 from fixtures import *
 import ctypes
 import pytest
@@ -42,8 +42,8 @@ def test_return_values(test_cpp):
     assert r.return_value == 4
 
 
-@pytest.mark.parametrize("ExternalCommandRunner", [BashDelegate,
-                                                   SubprocessDelegate])
+@pytest.mark.parametrize("ExternalCommandRunner", [BashExecutionMethod,
+                                                   SubprocessExecutionMethod])
 def test_run_delegates(test_cpp, ExternalCommandRunner):
     from test_full_flow import test_run_combo
     with cfiddle_config(ExternalCommandRunner_type=ExternalCommandRunner):
@@ -144,7 +144,7 @@ def test_invalid_run_options(env_echo):
     with pytest.raises(InvalidRunOption):
         run(env_echo, "env", run_options={"boo":"bar"})
 
-@pytest.mark.parametrize("Runner_type", [(DirectRunnerDelegate),
+@pytest.mark.parametrize("Runner_type", [(DirectRunner),
                                          (Runner)])
 def test_output(setup, capfd, Runner_type):
 
@@ -163,7 +163,7 @@ def test_output(setup, capfd, Runner_type):
     assert captured.err == "world\n"
 
     
-def test_DirectRunnerDelegate(test_cpp):
+def test_DirectRunner(test_cpp):
     with direct_execution():
         r = run(test_cpp, 'sum', arg_map(a=0,b=1))
         assert r[0].return_value == 1
@@ -177,7 +177,7 @@ def test_run_option_manager(setup):
         def apply_options(self):
             raise MyException()
     
-    with cfiddle_config(RunOptionInterpreter_type=ROM, Runner_type=DirectRunnerDelegate):
+    with cfiddle_config(RunOptionInterpreter_type=ROM, Runner_type=DirectRunner):
         with pytest.raises(MyException):
             sanity_test()
     

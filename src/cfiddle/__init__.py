@@ -6,7 +6,7 @@ __all__ = [
     "InvocationDescription",
     "Invoker",
     "Runner",
-    "DirectRunnerDelegate",
+    "DirectRunner",
     "direct_execution",
     "arg_map",
     "arg_product",
@@ -29,7 +29,7 @@ __all__ = [
 from .Data import InvocationResultsList
 from .Builder import ExecutableDescription, Executable, ExecutableList
 from .MakeBuilder import MakeBuilder, InvalidBuildParameter
-from .Runner import InvocationDescription, InvocationResult, Runner, InvalidRunOption, DirectRunnerDelegate, direct_execution
+from .Runner import InvocationDescription, InvocationResult, Runner, InvalidRunOption, DirectRunner, direct_execution
 from .Invoker import Invoker
 from .util import arg_map, arg_product, changes_in, exp_range, running_under_jupyter, ArgProductError
 from .Code import code
@@ -173,7 +173,7 @@ def run(executable, function, arguments=None, perf_counters=None, run_options=No
     data files), you can pass lists of them in
     :code:`extra_input_files` and :code:`extra_output_files`.  This
     is not necessary unless you have configured
-    :code:`RunnerDelegate_type` to use a runner class that needs this
+    :code:`RunnerExecutionMethod_type` to use a runner class that needs this
     information (e.g., for remote execution).  You can pass file names
     or file "glob" patterns (e.g., with :code:`*`, :code:`**`, or
     :code:`?`).
