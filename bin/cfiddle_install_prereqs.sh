@@ -14,7 +14,7 @@ apt-get install -y gcc-8 g++-8 || true # this fails on circleci for some reason
 ##### Redare2 (for CFG generation)
 (set -ex; cd /tmp;
  rm -rf radare2;
- echo yes | git clone -b 5.5.4 http://github.com/radareorg/radare2
+ echo yes | git clone -b 5.5.8 http://github.com/radareorg/radare2
  cd radare2
  chmod a+rwX -R . # Redare's install script gives up root.  This ensures we can still build.
  ./sys/install.sh --install
