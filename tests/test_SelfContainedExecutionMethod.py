@@ -5,6 +5,18 @@ from contextlib import contextmanager
 
 from cfiddle import *
 from cfiddle.SelfContainedExecutionMethod import TestSelfContainedDelegate
+
+try:
+    from cfiddle.SelfContainedExecutionMethod import TestSelfContainedDelegateWithFunctionDelegate
+except:
+    delegate_list = [TestSelfContainedDelegate,
+                    ]
+else:    
+    delegate_list = [TestSelfContainedDelegate,
+                     TestSelfContainedDelegateWithFunctionDelegate
+                    ]
+    
+
 import pytest
 
 @contextmanager
@@ -21,22 +33,6 @@ def _pristine_dir():
     with tempfile.TemporaryDirectory(dir=".") as cfiddle_dir:
         with cfiddle_config(CFIDDLE_BUILD_ROOT=cfiddle_dir):
             yield cfiddle_dir
-
-
-@pytest.fixture(scope="module",
-                params=[
-                        TestSelfContainedDelegate,
-                        ])
-def setup(request):
-    with cfiddle_config(RunnerDelegate_type=request.param):
-        enable_debug()
-        yield from _pristine_dir()
-
-def test_file_list(setup):
-    exe = build(code('extern "C" int foo() {return 4;}'))
-    r = run(exe, "foo", extra_input_files=["test_SelfContainedExecutionMethod_data/empty_file"])
-    assert len(r[0].invocation.compute_input_files()) == 2
-    
 
 def test_file_zip():
 
@@ -58,6 +54,20 @@ def test_file_zip():
                 restored_metadata = collect_file_metadata(os.path.join(dst, f))
                 del restored_metadata["st_atime"]
                 assert original_metadata == restored_metadata
+
+
+@pytest.fixture(scope="module",
+                params=delegate_list)
+def setup(request):
+    with cfiddle_config(RunnerDelegate_type=request.param):
+        enable_debug()
+        yield from _pristine_dir()
+
+def test_file_list(setup):
+    exe = build(code('extern "C" int foo() {return 4;}'))
+    r = run(exe, "foo", extra_input_files=["test_SelfContainedExecutionMethod_data/empty_file"])
+    assert len(r[0].invocation.compute_input_files()) == 2
+    
 
 
 def test_input_transfer(setup):
@@ -88,8 +98,13 @@ extern "C" void foo() {
 }
 
 """))
+    try:
+        os.remove("test_SelfContainedExecutionMethod_data/number_file.out")
+    except FileNotFoundError:
+        pass
+    
     r = run(exe, "foo", extra_output_files=["test_SelfContainedExecutionMethod_data/number_file.out"])
-    with open("number_file.out") as f:
+    with open("test_SelfContainedExecutionMethod_data/number_file.out") as f:
         assert int(f.read()) == 42;
     
 def test_data_colletion(setup):

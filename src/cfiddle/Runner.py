@@ -139,7 +139,7 @@ class Runner:
 
         self._pickle_run(self._runner_filename)
 
-        cmd_runner.execute(["/opt/conda/bin/cfiddle-run", "--runner", self._runner_filename, "--results", self._results_filename], runner=self)
+        cmd_runner.execute(["cfiddle-run", "--runner", self._runner_filename, "--results", self._results_filename], runner=self)
 
         r = self._unpickle_results(self._results_filename)
 

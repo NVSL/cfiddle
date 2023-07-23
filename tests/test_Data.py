@@ -131,11 +131,11 @@ def test_rerun(setup):
     b = build(code(r"""
 #include"walltime.h"
 
-uint64_t time() {
-    return wall_time() * 1000000000.0;
+extern "C" uint64_t check_time() {
+    return wall_time();
 }
 """))
-    first = run(b, "time")
+    first = run(b, "check_time")
     time.sleep(1)
     second = first.rerun()
     assert second[0].return_value > first[0].return_value

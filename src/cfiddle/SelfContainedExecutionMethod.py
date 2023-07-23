@@ -131,7 +131,20 @@ def collect_file_metadata(path):
                 st_atime=r.st_atime)
 
 
-from delegate_function import SubprocessDelegate, TemporaryDirectoryDelegate
+class TestSelfContainedDelegate():
 
-def TestSelfContainedDelegate():
-    return SelfContainedExecutionMethod(TemporaryDirectoryDelegate(subdelegate=SubprocessDelegate()))
+    def __init__(self):
+        pass
+
+    def invoke(self, obj, method):
+        getattr(obj, method)()
+                
+
+import importlib.util
+
+if importlib.util.find_spec("delegate_function") is not None:
+    from delegate_function import SubprocessDelegate, TemporaryDirectoryDelegate
+
+    def TestSelfContainedDelegateWithFunctionDelegate():
+        return SelfContainedExecutionMethod(TemporaryDirectoryDelegate(subdelegate=SubprocessDelegate()))
+
