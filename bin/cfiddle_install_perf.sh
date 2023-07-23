@@ -11,9 +11,10 @@ if ! perf --version; then
     python3 -m pip install python-config
     
     pushd .
-    if apt-get install -y linux-source; then
+    kernel_version=$(uname -r | perl -ne '($m, $n, $r) = /(\d+)\.(\d+)\.(\d+)/; print "$m.$n.$r"')
+    # this conditional is fragile.  If you have fix it again, you should just always use the kernel sources.
+    if apt-get install -y linux-source && [ -e /usr/src/linux-source-$kernel_version ]; then
 	echo "Using source from apt-get"
-	kernel_version=$(uname -r | perl -ne '($m, $n, $r) = /(\d+)\.(\d+)\.(\d+)/; print "$m.$n.$r"')
 	cd /usr/src/linux-source-$kernel_version
 	rm -rf linux-source-$kernel_version
 	tar xf *.bz2
@@ -27,7 +28,7 @@ if ! perf --version; then
 	pushd /tmp/perf;
 	curl -L https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-$kernel_version.tar.xz -o linux-$kernel_version.tar.xz ;
 	tar xf linux-$kernel_version.tar.xz;
-	pushd linux-$kernel_version
+	cd linux-$kernel_version
     fi
 
     # somehow perf links against libcrypto.so.1.1, but it's not present.  So we disable
