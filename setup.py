@@ -44,6 +44,7 @@ setup(
         "pandas",
         "IPython",
         "nbmake",
+	"pyparsing<3.1", # the version bound prevents matplotlib from complaining.  THis hould be  removed eventually.
         "matplotlib",
         "tqdm",
         "ipywidgets",
