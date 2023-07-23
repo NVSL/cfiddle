@@ -173,7 +173,7 @@ def run(executable, function, arguments=None, perf_counters=None, run_options=No
     data files), you can pass lists of them in
     :code:`extra_input_files` and :code:`extra_output_files`.  This
     is not necessary unless you have configured
-    :code:`RunnerDelegate_type` to use a runner class that needs this
+    :code:`RunnerExecutionMethod_type` to use a runner class that needs this
     information (e.g., for remote execution).  You can pass file names
     or file "glob" patterns (e.g., with :code:`*`, :code:`**`, or
     :code:`?`).

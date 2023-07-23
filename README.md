@@ -123,7 +123,7 @@ of CFiddle requires is `libpfm4` and Python's `wheel` package.  You
 can install these with it with:
 
 ```
-apt-get install -y libpfm4
+apt-get install -y libpfm4-dev linux-tools-common linux-tools-generic linux-tools-`uname -r`
 ```
 
 and then (as always, a virtual environment is recommended):
@@ -169,4 +169,24 @@ If you want to save changes you make to any of the examples, you'll need to run 
 
 ```
 docker run -it -d --publish published=8888,target=8888 --mount type=bind,source=$PWD,dst=/home/jovyan/cfiddle -w /home/jovyan/  stevenjswanson/cfiddle:devel  jupyter lab --LabApp.token=''
+```
+
+## Installing for Development
+
+If you want to modify CFiddle, you'll need to do the following:
+
+```
+git clone http://github.org/NVSL/cfiddle
+cd cfiddle
+cfiddle_install_prereqs.sh
+(cd src/cfiddle/resources/libcfiddle/; make)
+pip install -e .
+`cfiddle-set-ld-path`  # you'll need to do this in each shell.
+```
+
+and you can check that things are working with
+
+```
+cd tests
+make test
 ```

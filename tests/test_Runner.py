@@ -1,6 +1,8 @@
 from cfiddle import *
 from util import *
-from cfiddle.Runner import Runner, DirectRunner, BashDelegate, SubprocessDelegate, InvocationDescription, IncorrectArgumentType, InvalidInvocation, RunOptionInterpreter, InvalidRunOption
+from cfiddle.Runner import Runner, DirectRunner, BashExecutionMethod, SubprocessExecutionMethod, InvocationDescription, IncorrectArgumentType, InvalidInvocation, RunOptionInterpreter, InvalidRunOption
+from cfiddle.SelfContainedExecutionMethod import TestSelfContainedDelegate
+
 from fixtures import *
 import ctypes
 import pytest
@@ -42,8 +44,10 @@ def test_return_values(test_cpp):
     assert r.return_value == 4
 
 
-@pytest.mark.parametrize("ExternalCommandRunner", [BashDelegate,
-                                                   SubprocessDelegate])
+@pytest.mark.parametrize("ExternalCommandRunner", [BashExecutionMethod,
+                                                   SubprocessExecutionMethod,
+                                                   TestSelfContainedDelegate
+                                                   ])
 def test_run_delegates(test_cpp, ExternalCommandRunner):
     from test_full_flow import test_run_combo
     with cfiddle_config(ExternalCommandRunner_type=ExternalCommandRunner):

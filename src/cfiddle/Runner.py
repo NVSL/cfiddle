@@ -34,7 +34,7 @@ class InvocationDescription:
 
     def compute_input_files(self):
         return self.executable.compute_input_files() + sum(map(lambda x: glob.glob(x, recursive=True),
-                                                                  self.extra_input_files), [])
+                                                               self.extra_input_files), [])
     def compute_output_files(self):
         return self.extra_output_files
         
@@ -58,7 +58,8 @@ class RunOptionInterpreter(object):
 
     Interpret the contents of the  :code:`run_options` argument to :func:`cfiddle.run`.
 
-    This is a context manager.  The base class implementation just copies the values into environment variables.  Subclasses or substitutions could implement other behavior.
+    This is a context manager.  The base class implementation just copies the values into environment variables.  
+    Subclasses or substitutions could implement other behavior.
     
     """
     
@@ -82,6 +83,7 @@ class RunOptionInterpreter(object):
     def _stringize(self, m):
             return {str(k):str(v) for k,v in m.items()}
         
+
 class Runner:
     """
 
@@ -96,12 +98,12 @@ class Runner:
     :code:`cfiddle-run` command line tool to unpickle this object, run the
     invocations, and then pickle and return the results.
 
-    The :code:`cfiddle-run` command line is passed to
-    :class:SubprocessDelegate` which runs with Python's 
+    The :code:`cfiddle-run` command line is passed to an instance of
+    :class:SubprocessExecutionMethod` which runs it with Python's 
     :func:`subprocess.run()`.
 
     You can change this behavior by setting the
-    :code:`RunnerDelegate_type` configuration option.  For
+    :code:`RunnerExecutionMethod_type` configuration option.  For
     instance, a replacement could submit the commandline to job
     scheduling system or execute it remotely via :code:`ssh`.
 
@@ -116,13 +118,15 @@ class Runner:
                  result_factory=None,
                  result_list_factory=None,
                  progress_bar=None):
+        
+        
         from .config import get_config
         self._invocations = invocations
         self._invoker = invoker or get_config("Invoker_type")
         self._result_factory = result_factory or get_config("InvocationResult_type")
         self._result_list_factory = result_list_factory or get_config("InvocationResultsList_type")
         self._progress_bar = progress_bar or get_config("ProgressBar")
-        self._cmd_runner = get_config("RunnerDelegate_type")
+        self._cmd_runner = get_config("RunnerExecutionMethod_type")
         self._uuid = get_uuid()
 
 
@@ -135,7 +139,7 @@ class Runner:
 
         self._pickle_run(self._runner_filename)
 
-        cmd_runner.execute(["cfiddle-run", "--runner", self._runner_filename, "--results", self._results_filename], runner=self)
+        cmd_runner.execute(["/opt/conda/bin/cfiddle-run", "--runner", self._runner_filename, "--results", self._results_filename], runner=self)
 
         r = self._unpickle_results(self._results_filename)
 
@@ -222,7 +226,7 @@ class DirectRunner(Runner):
         ... extern "C"
         ... int loop(int count) {
         ...	   int sum = 0;
-        ...    for(int i = 0; i < count; i++) {
+        ...    for(int i = 0; i < count; i++) { 
         ...       sum += i;
         ...    }
         ...    return sum;
@@ -265,19 +269,19 @@ class InvocationResult:
         return self.results
     
 
-class BashDelegate:
+class BashExecutionMethod:
     def execute(self, command, runner):
         c = " ".join(command)
         os.system(f"""bash -c '{c}'""")
 
         
-class SubprocessDelegate:
+class SubprocessExecutionMethod:
     def execute(self, command, runner):
         try:
-            log.debug(f"SubprocessDelegate running {command}")
+            log.debug(f"SubprocessExecutionMethod running {command}")
             subprocess.run(command, check=True)#, capture_output=True)
         except subprocess.CalledProcessError as e:
-            raise RunnerDelegateException(f"SubprocessDelegate failed (error code {e.returncode}): {e.stdout} {e.stderr}")
+            raise RunnerExecutionMethodException(f"SubprocessExecutionMethod failed (error code {e.returncode}): {e.stdout and e.stdout.decode()} {e.stderr and e.stderr.decode()}")
 
 def get_uuid(id_length=8):
     return uuid.uuid4().hex[:id_length]
@@ -300,7 +304,7 @@ class InvalidInvocation(CFiddleException):
 class InvalidRunOption(CFiddleException):
     pass
 
-class RunnerDelegateException(CFiddleException):
+class RunnerExecutionMethodException(CFiddleException):
     pass
 
 @click.command()
