@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 set -x
 
+if [ "$CFIDDLE_DEPS_INSTALL_PREFIX." == "." ]; then
+    CFIDDLE_DEPS_INSTALL_PREFIX=/usr/local
+fi
 
 # GCC cross compilers
 while read prefix libpfm4_arch extra_packages; do
@@ -20,6 +23,7 @@ while read prefix libpfm4_arch extra_packages; do
 	rm -rf libpfm4;
 	git clone http://github.com/wcohen/libpfm4.git
 	cd libpfm4
+	[ $CFIDDLE_DEPS_INSTALL_PREFIX != "/usr/local" ] && echo "========== PREFIX doesn't work properly for libpfm4 ==============" # set-cfiddle-ld-path doesn't do the right thing.
 	make PREFIX=/usr/$($CC -print-multiarch) ARCH=$libpfm4_arch lib install
     )
 done <<EOF

@@ -23,7 +23,8 @@ __all__ = [
     "CFiddleException",
     "enable_debug",
     "cfiddle_config",
-    "get_config"
+    "get_config",
+    "SelfContainedExecutionMethod"
 ]
 
 from .Data import InvocationResultsList
@@ -38,7 +39,7 @@ from .paths import setup_ld_path
 from .perfcount import are_perf_counters_available
 from .Toolchain import list_architectures
 from .Exceptions import CFiddleException, handle_cfiddle_exceptions
-
+from .SelfContainedExecutionMethod import SelfContainedExecutionMethod
 
 def build_and_run(source_file=None, build_parameters=None, function=None, arguments=None, run_options=None, perf_counters=None):
     executable = build(source_file, build_parameters)
