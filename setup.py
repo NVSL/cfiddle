@@ -40,6 +40,7 @@ setup(
         "pytest-cpp",
         "pytest-xdist",
         "click",
+        "dill",
         "pytest",
         "pandas",
         "IPython",

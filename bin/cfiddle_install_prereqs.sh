@@ -24,7 +24,11 @@ REDARE_VERSION=5.8.8
  echo yes | git clone -b $REDARE_VERSION http://github.com/radareorg/radare2
  cd radare2
  chmod a+rwX -R . # Redare's install script gives up root.  This ensures we can still build.
- sudo -u $SUDO_USER ./sys/install.sh --install --prefix=$CFIDDLE_DEPS_INSTALL_PREFIX
+ if [ -z $SUDO_USER ]; then
+     ./sys/install.sh --install --prefix=$CFIDDLE_DEPS_INSTALL_PREFIX
+ else
+     sudo -u $SUDO_USER ./sys/install.sh --install --prefix=$CFIDDLE_DEPS_INSTALL_PREFIX
+ fi
 )
 
 

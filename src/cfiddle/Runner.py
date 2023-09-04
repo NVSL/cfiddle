@@ -1,6 +1,6 @@
 import copy
 import os
-import pickle
+import dill as pickle
 import click
 import subprocess
 import uuid
