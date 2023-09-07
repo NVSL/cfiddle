@@ -12,7 +12,8 @@ echo CFIDDLE_DEPS_INSTALL_PREFIX=$CFIDDLE_DEPS_INSTALL_PREFIX
 
 #### development tools
 apt-get update --fix-missing --allow-releaseinfo-change
-apt-get install -y make less emacs-nox gcc g++  cmake gdb build-essential graphviz curl  && apt-get clean -y
+# note the '-' at the end of the last few packages.  Graphviz pulls in a bunch of x11 stuff we don't need.
+apt-get install -y make less emacs-nox gcc g++  cmake gdb build-essential graphviz curl libx11-6- libxaw7- libxmu6- libxt6- && apt-get clean -y
 apt-get install -y gcc-8 g++-8 || true # this fails on circleci for some reason
 
 set -ex

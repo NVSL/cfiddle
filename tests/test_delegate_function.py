@@ -7,7 +7,7 @@ def test_delegate_function(test_cpp):
     try:
         import delegate_function
     except ModuleNotFoundError:
-        pytest.skip("delegate_function is not installed.")
+        pytest.skip("delegate_function is not installed.    ")
     
     with cfiddle_config(RunnerExecutionMethod_type=execution_method("""
 version: 0.1
