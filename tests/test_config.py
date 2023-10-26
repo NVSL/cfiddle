@@ -43,6 +43,11 @@ def test_peek():
             assert isinstance(build_one("test_src/test.cpp"), MyExecutable)
         
 
+def test_unknown_option():
+    with pytest.raises(IllegalConfiguration):
+        with cfiddle_config(foo="bar"):
+            pass
+
 class MyExecutable(Executable):
         pass
 

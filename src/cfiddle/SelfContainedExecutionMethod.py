@@ -131,13 +131,14 @@ def collect_file_metadata(path):
                 st_atime=r.st_atime)
 
 
-class TestSelfContainedDelegate():
+class TestSelfContainedExecutionMethod(SelfContainedExecutionMethod):
+    def __init__(self, *argc, **kwargs):
+        super().__init__(*argc, function_delegator=TestDelegator(), **kwargs)
 
-    def __init__(self):
-        pass
-
-    def invoke(self, obj, method):
-        getattr(obj, method)()
+# this is a trivial implementation of the kind of delegate that the function_delegate package provides.  It's here just for testing.
+class TestDelegator():
+    def invoke(self, obj, method, *argc, **kwargs):
+        getattr(obj, method)(*argc, **kwargs)
                 
 
 import importlib.util

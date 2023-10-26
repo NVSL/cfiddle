@@ -4,16 +4,16 @@ import os
 from contextlib import contextmanager
 
 from cfiddle import *
-from cfiddle.SelfContainedExecutionMethod import TestSelfContainedDelegate
+from cfiddle.SelfContainedExecutionMethod import TestSelfContainedExecutionMethod
 
 try:
-    from cfiddle.SelfContainedExecutionMethod import TestSelfContainedDelegateWithFunctionDelegate
+    from cfiddle.SelfContainedExecutionMethod import TestSelfContainedExecutionMethodWithFunctionDelegate
 except:
-    delegate_list = [TestSelfContainedDelegate,
+    delegate_list = [TestSelfContainedExecutionMethod,
                     ]
 else:    
-    delegate_list = [TestSelfContainedDelegate,
-                     TestSelfContainedDelegateWithFunctionDelegate
+    delegate_list = [TestSelfContainedExecutionMethod,
+                     TestSelfContainedExecutionMethodWithFunctionDelegate
                     ]
     
 
@@ -59,7 +59,7 @@ def test_file_zip():
 @pytest.fixture(scope="module",
                 params=delegate_list)
 def setup(request):
-    with cfiddle_config(RunnerDelegate_type=request.param):
+    with cfiddle_config(RunnerExecutionMethod_type=request.param):
         enable_debug()
         yield from _pristine_dir()
 

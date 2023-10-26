@@ -48,6 +48,8 @@ def set_config(k,v):
     """
 
     global cfiddle_config_stack
+    if k not in cfiddle_config_stack[-1]:
+        raise IllegalConfiguration(f"Unknown configuration option: {k}")
     cfiddle_config_stack[-1][k] = v
 
     
