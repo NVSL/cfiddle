@@ -48,7 +48,7 @@ def test_return_values(test_cpp):
                                             SubprocessExecutionMethod,
                                             TestSelfContainedExecutionMethod
                                             ])
-def test_run_delegates(test_cpp, ExecutionMethod):
+def test_execution_methods(test_cpp, ExecutionMethod):
     from test_full_flow import test_run_combo
     with cfiddle_config(RunnerExecutionMethod_type=ExecutionMethod):
         test_run_combo(test_cpp)

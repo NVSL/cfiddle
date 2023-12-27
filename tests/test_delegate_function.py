@@ -1,10 +1,10 @@
 from cfiddle import *
 import pytest
 from fixtures import *
-from cfiddle.ext.delegate_function import execution_method
 
 def test_delegate_function(test_cpp):
     try:
+        from cfiddle.ext.delegate_function import execution_method
         import delegate_function
     except ModuleNotFoundError:
         pytest.skip("delegate_function is not installed.    ")

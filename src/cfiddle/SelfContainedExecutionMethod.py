@@ -146,6 +146,6 @@ import importlib.util
 if importlib.util.find_spec("delegate_function") is not None:
     from delegate_function import SubprocessDelegate, TemporaryDirectoryDelegate
 
-    def TestSelfContainedDelegateWithFunctionDelegate():
+    def TestSelfContainedExecutionMethodWithFunctionDelegate():
         return SelfContainedExecutionMethod(TemporaryDirectoryDelegate(subdelegate=SubprocessDelegate()))
 
