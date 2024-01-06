@@ -166,7 +166,8 @@ def infer_language(filename):
                             ".ii" : "c++",
                             ".c" : "c",
                             ".i" : "c",
-                            ".go": "go"}
+                            ".go": "go",
+                            ".json" : "json"}
 
     _, ext = os.path.splitext(filename)
     try:
