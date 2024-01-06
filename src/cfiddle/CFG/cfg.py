@@ -1,15 +1,12 @@
-import enum
 import pydot
 import click
 import r2pipe
 import tempfile
-import subprocess
 import networkx as nx
 import re
 import sys
 import time
 import os
-
 """
 CLI for x86 CFGs using radare2
 """
@@ -110,7 +107,7 @@ def identify_loops(cfg, back_edges):
                     paths = nx.all_simple_paths(cfg, v, n)
                     valid_paths = [p for p in paths if header not in p]
                     if valid_paths:
-                        curr_loop.append(v)    
+                        curr_loop.append(v)
                 for w in cfg.out_edges(v):
                     stack.append(w[1])
         loops.append(sorted(curr_loop))
@@ -192,16 +189,14 @@ def do_number_nodes(pydot_cfg):
 
     # Avoid graph and edge nodes, which are the 1st and 2nd nodes
     nodes = pydot_cfg.get_nodes()[2:]
-    i = 0;
+    i = 0
     for n in nodes:
         l = n.get_label()
+#        l = l.replace(r"\"@\"","")
         if l is None:
             l = ""
-        l = l.replace(r"\"@\"","")
-        lines = l.split(r"\l")
-        lines = [f"; n{i}"] + lines;
-        n.set_label(r"\l".join(lines))
-        i+=1;
+        n.set_label(join_label([f"; n{i}"] + split_label(l)))
+        i+=1
     return pydot_cfg
 
 
@@ -215,11 +210,11 @@ def do_trim_addresses(pydot_cfg):
         l = n.get_label()
         if not l:
             continue
-        lines = l.split(r"\l")
+        lines = split_label(l)
         for i in range(len(lines)):
             lines[i] = re.sub("^0x[0-9A-Fa-f]{8}", "", lines[i])
             lines[i] = re.sub("^\"0x[0-9A-Fa-f]{8}", "\"", lines[i])
-        n.set_label(r"\l".join(lines))
+        n.set_label(join_label(lines))
     return pydot_cfg
 
 def do_inst_counts(pydot_cfg):
@@ -232,7 +227,7 @@ def do_inst_counts(pydot_cfg):
         l = n.get_label()
         if not l:
             continue
-        lines = l.split(r"\l")
+        lines = split_label(l)
         c = 0 
         for i in range(len(lines)):
             if re.search("^0x[0-9A-Fa-f]{8}", lines[i]) \
@@ -240,6 +235,20 @@ def do_inst_counts(pydot_cfg):
                 c+=1
         n.set_label(str(c))
     return pydot_cfg
+
+def split_label(label):
+    l = label.strip("\"")
+    l = l.replace(r"\"", r'"')
+    return l.split(r"\l")
+
+def join_label(lines):
+    return r"\l".join(lines)
+
+
+def dump_labels(pydot_cfg):
+    for n in pydot_cfg.get_nodes():
+        print(n.get_label())
+        print()
 
 def do_trim_comments(pydot_cfg):
     """
@@ -253,7 +262,7 @@ def do_trim_comments(pydot_cfg):
         l = n.get_label()
         if not l:
             continue
-        lines = l.split(r"\l")
+        lines = split_label(l)
         for i in range(len(lines)):
             lines[i] = re.sub(";.*", "", lines[i])
             if not re.match(r"^\s*$", lines[i]):
@@ -262,10 +271,41 @@ def do_trim_comments(pydot_cfg):
         if len(c) == 0:
             n.set_label("")
         else:
-            n.set_label(r"\l".join(c))
+            n.set_label(join_label(c))
             
     return pydot_cfg
 
+def do_cleanup_names(pydot_cfg):
+    nodes = pydot_cfg.get_nodes()[2:]
+
+    for n in nodes:
+        l = n.get_label()
+        if not l:
+            continue
+        lines = split_label(l)
+        for i in range(0, len(lines)):
+            lines[i] = lines[i].replace("sym.", "").replace("imp.", "").replace("sym op", "")
+        n.set_label(join_label(lines))
+
+    return pydot_cfg
+            
+
+def do_remove_urls(pydot_cfg):
+    for n in pydot_cfg.get_nodes():
+        try:
+            del n.obj_dict['attributes']['URL']        
+        except:
+            pass
+    return pydot_cfg
+
+def do_remove_empty_nodes(pydot_cfg):
+    for n in pydot_cfg.get_nodes()[2:]:
+#        print("found" + str(n.get_label()))
+
+        if n.get_label() in ["\n", None]:
+ #           print("deleted " + str(n.get_label))
+            pydot_cfg.del_node(n)
+    return pydot_cfg
 
 @click.command()
 @click.argument('file', nargs=1)
@@ -276,6 +316,8 @@ def do_trim_comments(pydot_cfg):
 @click.option('--number-nodes', is_flag=True, default=False, help="Number the nodes")
 @click.option('--inst-counts', is_flag=True, default=False, help="Just show instructions per basic block")
 @click.option('--pretty-loops', is_flag=True, default=False, help="Make loops visually more sequential")
+@click.option('--cleanup-names', is_flag=True, default=True, help="Make symbol names easier to read")
+@click.option('--dot-file', default=None, help="Put the dot file here")
 @click.option('--spacing', type=float, default=1, help="Spacing between nodes")
 @click.option('--symbol', help="Function to draw")
 @click.option('--filter','filt', help="string to search for symbols to show.")
@@ -284,9 +326,10 @@ def cfg(*args, **kwargs):
     return do_cfg(*args, **kwargs)
     
 def do_cfg(file,  symbol, output=None,
-           spacing=1, trim_comments=False, remove_assembly=False,
+           spacing=1, trim_comments=True, remove_assembly=False,
            trim_addresses=True, number_nodes=False, jupyter=False,
            inst_counts=False, pretty_loops=True, filt=None,
+           cleanup_names=True, dot_file=None,
            just_list=None):
     r2 = r2pipe.open(f'{file}', flags="-e bin.cache=true".split())
     listing = r2.cmd('fs symbols; f')
@@ -332,6 +375,9 @@ def do_cfg(file,  symbol, output=None,
         pydot_cfg = nx.nx_pydot.to_pydot(nx_cfg)
         pydot_cfg = prettify_back_edges(pydot_cfg, back_edges)
 
+        pydot_cfg = do_remove_urls(pydot_cfg)
+        pydot_cfg = do_remove_empty_nodes(pydot_cfg)
+ 
         if pretty_loops:
             pydot_cfg = sequentialize_loops(nx_cfg, pydot_cfg, loops)
         if trim_addresses:
@@ -344,9 +390,14 @@ def do_cfg(file,  symbol, output=None,
             pydot_cfg = do_number_nodes(pydot_cfg)
         if inst_counts:
             pydot_cfg = do_inst_counts(pydot_cfg)
+        if cleanup_names:
+            pydot_cfg = do_cleanup_names(pydot_cfg)
 
         pydot_cfg.set_ranksep(spacing) # Increase spacing between ranks and thus the nodes
 
+
+            
+        
         if output is None:
             if in_notebook() or jupyter:
                 output = f"{file}-{symbol}.svg"
@@ -356,6 +407,9 @@ def do_cfg(file,  symbol, output=None,
         ext = os.path.splitext(output)[1]
 
         pydot_cfg.write_raw(f'{temp_dir}/pretty_tmp.dot')
+        if dot_file:
+            pydot_cfg.write_raw(dot_file)
+
         if ext == ".png":
             pydot_cfg.write_png(f'{output}')
         elif ext == ".svg":
