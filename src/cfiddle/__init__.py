@@ -104,8 +104,12 @@ def build(source, build_parameters=None, **kwargs):
     return build_list(builds, **kwargs)
 
 
-def run_list(invocations, **kwargs):
+def run_list(invocations, **kwargs): 
+    """
+    Run a list of invocations.  This is the helper function that :func:`run()` uses to do the actual work of running the invocations.
 
+    It takes a list of :obj:`dict` objects that describe the invocations to run, and returns a list of :obj:`InvocationResult` objects.
+    """
     IRList = get_config("InvocationResultsList_type")
     IRType = get_config("InvocationResult_type")
     Runner = get_config("Runner_type")
@@ -200,7 +204,16 @@ def run(executable, function, arguments=None, perf_counters=None, run_options=No
        :obj:`InvocationResultsList`:  A list of :obj:`InvocationResult` objects.
 
     """
-    
+
+    invocations = build_invocations(executable, function, arguments, run_options, perf_counters, extra_input_files, extra_output_files)
+    return run_list(invocations, **kwargs)
+
+def build_invocations(executable, function, arguments=None, run_options=None, perf_counters=None, extra_input_files=None, extra_output_files=None):    
+    """ 
+    This is a helper function for :func:`run()` that builds the invocations but does not run them.  It's arguments are the same, but it returns a list of
+    :obj:`dict`s suitable to be passed to :func:`run_list()`.
+    """
+
     if arguments is None:
         arguments = arg_map()
         
@@ -226,8 +239,8 @@ def run(executable, function, arguments=None, perf_counters=None, run_options=No
     invocations = arg_map(executable=executable, function=function, arguments=arguments, run_options=full_run_options, perf_counters=perf_counters)
     invocations = arg_product(invocations, [dict(extra_input_files=extra_input_files,
                                                  extra_output_files=extra_output_files)])
-    return run_list(invocations, **kwargs)
-
+    return invocations
+    
 
 def normalize_perf_counters(perf_counters):
     # this allows for us to say run(foo, "bar", arg_map(), perf_counters=["cycles", "instructions"] and
