@@ -45,13 +45,17 @@ bool are_perf_counters_available() {
 }
 
 extern "C"
-void start_measurement(const char *tag)
+void start_measurement(const char *value, const char*key)
 {
 
 	get_dataset()->start_new_row();
 	
-	if (tag) {
-		get_dataset()->set("tag", tag);
+	if (value) {
+		if (key) {
+			get_dataset()->set(key, value);
+		} else {
+			get_dataset()->set("tag", value);
+		}
 	}
 
 	start_time = wall_time();
@@ -73,10 +77,10 @@ void end_measurement()
 }
 
 extern "C"
-void restart_measurement(const char *tag)
+void restart_measurement(const char *value, const char*key)
 {
 	end_measurement();
-	start_measurement(tag);
+	start_measurement(value, key);
 }
 
 

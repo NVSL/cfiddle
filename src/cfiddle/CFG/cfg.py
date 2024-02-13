@@ -337,12 +337,12 @@ def do_cfg(file,  symbol, output=None,
         symbols = [l.split(r" ")[2] for l in listing.split(r"\n") if len(l) > 0]
         filtered_symbols = filter(lambda x: x.startswith("sym."), symbols)
         if filt:
-            filtered_symbols = filter(lambda x: filt in x , filtered_symbols)
+            filtered_symbols = list(filter(lambda x: filt in x , filtered_symbols))
         click.echo("\n".join(filtered_symbols))
         if just_list:
-            return
+            return list(filtered_symbols)
         symbol = click.prompt('Enter a function symbol name from one of the above', type=str)
-
+    
     if not symbol.startswith("sym."):
         fcn_name = f"sym.{symbol}"
     else:
@@ -437,3 +437,12 @@ class CFG:
 
         """
         return do_cfg(self.lib, function,  output=output, **kwargs)
+
+    def cfg_symbols(self):
+        """List symbols that Radare2 finds in the object file.
+
+        Returns:
+           ``list`` : a list of symbols
+
+        """
+        return do_cfg(self.lib,symbol=None, just_list=True)

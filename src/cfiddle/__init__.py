@@ -13,6 +13,7 @@ __all__ = [
     "code",
     "build_and_run",
     "build",
+    "build_with_exceptions",
     "run",
     "run_list",
     "sanity_test",
@@ -28,9 +29,9 @@ __all__ = [
 ]
 
 from .Data import InvocationResultsList
-from .Builder import ExecutableDescription, Executable, ExecutableList
+from .Builder import ExecutableDescription, Executable, ExecutableList, BuildFailure
 from .MakeBuilder import MakeBuilder, InvalidBuildParameter
-from .Runner import InvocationDescription, InvocationResult, Runner, InvalidRunOption, DirectRunner, direct_execution
+from .Runner import InvocationDescription, Runner, InvalidRunOption, DirectRunner, direct_execution
 from .Invoker import Invoker
 from .util import arg_map, arg_product, changes_in, exp_range, running_under_jupyter, ArgProductError
 from .Code import code
@@ -77,6 +78,9 @@ def build(source, build_parameters=None, **kwargs):
 
     The :obj:`InstrumentedExecutable` s can be studied themselves or passed to :func:`run`.
 
+    If build fails, it prints an error message and returns ``None``.  If you want to catch the 
+    exception and handle it yourself, use :func:`build_with_exceptions`.
+    
     Args:
         source: One or more (as a list) of source files to compile.
         build_parameters:  One or more (as a list) :obj:`dict` listing build parameters.  Defaults to None.
@@ -86,7 +90,17 @@ def build(source, build_parameters=None, **kwargs):
         list of :obj:`Executable`: One executable for each combination of ``source`` and ``build_parameters``.
 
     """
-
+    try:
+        return build_with_exceptions(source, build_parameters, **kwargs)
+    except BuildFailure as e:
+        print(e)
+    except InvalidBuildParameter as e:
+        print(e)
+ 
+def build_with_exceptions(source, build_parameters=None, **kwargs):
+    """
+    Just like :func:`build`, but it doesn't catch exceptions.
+    """
     if build_parameters is None:
         build_parameters = arg_map()
 
@@ -99,10 +113,8 @@ def build(source, build_parameters=None, **kwargs):
     except ArgProductError as e:
         raise InvalidBuildParameter(e)
         
-
     builds = arg_map(source=source, build_parameters=full_build_parameters)
     return build_list(builds, **kwargs)
-
 
 def run_list(invocations, **kwargs): 
     """

@@ -3,7 +3,7 @@ try:
     import IPython
 except ImportError:
     pass
-from IPython.display import Image,SVG
+from IPython.display import Image,SVG, HTML
 
 import cfiddle.source
 import cfiddle.DebugInfo
@@ -47,8 +47,11 @@ class CFG(CFG):
         
         t = super().cfg(function, output=filename, *argc, **kwargs, jupyter=True)
 
-        return SVG(t)
-    
+        # using SVG generates a div with the same size as the SVG which is often too big
+        # this scales the SVG to fit horizontally.
+        with open(t) as f: 
+            return HTML(f"<div>{f.read()}</div>")
+   
     
 class InstrumentedExecutable(Preprocessed, Source, Assembly, CFG, DebugInfo, Executable):
     def __init__(self, *argc, **kwargs):

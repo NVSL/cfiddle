@@ -15,9 +15,9 @@ extern DataSet * get_dataset();
 extern PerfCounter *get_perf_counter();
 extern "C" void write_stats(const char *  filename);
 
-extern "C" void start_measurement(const char *tag=NULL);
+extern "C" void start_measurement(const char *value=NULL, const char*key=NULL);
 extern "C" void end_measurement();
-extern "C" void restart_measurement(const char *tag=NULL);
+extern "C" void restart_measurement(const char *value=NULL, const char*key=NULL);
 
 extern DataSet * get_dataset();
 extern PerfCounter * get_perf_counter();
