@@ -154,6 +154,16 @@ def arg_product(*args):
     return [reduce(merge, copy.deepcopy(arg)) for arg in product(*args)]
 
 
+def arg_zip(*argc):
+    r = []
+    for c in argc:
+        t = {}
+        for names, values in c.items():
+            for pair in values:
+                r.append({n:p for n,p in zip(names, pair)})
+    return r
+
+
 def infer_language(filename):
     suffixes_to_language = {".CPP" : "c++",
                             ".cpp" : "c++",
