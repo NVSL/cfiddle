@@ -53,6 +53,7 @@ def arg_map(**parameters):
     
     def ensure_value_is_iterable(p):
         return {k: listify_value(v) for k,v in p.items()}
+    
     def expand_parameter_values(arg,values):
         return [{arg:v} for v in values]
     

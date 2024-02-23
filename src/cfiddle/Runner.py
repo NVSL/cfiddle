@@ -281,7 +281,9 @@ class SubprocessExecutionMethod:
             log.debug(f"SubprocessExecutionMethod running {command}")
             subprocess.run(command, check=True)#, capture_output=True)
         except subprocess.CalledProcessError as e:
-            raise RunnerExecutionMethodException(f"SubprocessExecutionMethod failed (error code {e.returncode}): {e.stdout and e.stdout.decode()} {e.stderr and e.stderr.decode()}")
+            raise RunnerExecutionMethodException(f"SubprocessExecutionMethod failed (error code {e.returncode}). This means that the supplied code caused a segfault or other error.  Here is the output cfiddle could capture: {e.stdout and e.stdout.decode()} {e.stderr and e.stderr.decode()}")
+        except Exception as e:
+            raise RunnerExecutionMethodException(f"SubprocessExecutionMethod failed ({repr(e)}).  This usually means that the supplied code caused a segfault or other error.")
 
 def get_uuid(id_length=8):
     return uuid.uuid4().hex[:id_length]

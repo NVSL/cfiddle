@@ -1,6 +1,7 @@
 from cfiddle import *
+from cfiddle import run_one
 from util import *
-from cfiddle.Runner import Runner, DirectRunner, BashExecutionMethod, SubprocessExecutionMethod, InvocationDescription, IncorrectArgumentType, InvalidInvocation, RunOptionInterpreter, InvalidRunOption
+from cfiddle.Runner import Runner, DirectRunner, BashExecutionMethod, SubprocessExecutionMethod, InvocationDescription, IncorrectArgumentType, InvalidInvocation, RunOptionInterpreter, InvalidRunOption, RunnerExecutionMethodException
 from cfiddle.SelfContainedExecutionMethod import TestSelfContainedExecutionMethod
 
 from fixtures import *
@@ -207,3 +208,10 @@ def test_output_files(test_cpp):
     
     assert len(r[0].invocation.compute_output_files()) == 1
     
+def test_user_segfault():
+    b = build(code(r"""
+                   int main () {
+                   return *((int*)0);
+                   }"""))
+    with pytest.raises(RunnerExecutionMethodException):
+        run(b, "main")

@@ -19,9 +19,10 @@ apt-get install -y gcc-8 g++-8 || true # this fails on circleci for some reason
 
 set -ex
 
-REDARE_VERSION=5.8.8
+REDARE_VERSION=master
 ##### Redare2 (for CFG generation)
 (set -ex; cd /tmp;
+ apt-get install -y libcapstone-dev && apt-get clean -y
  rm -rf radare2;
  echo yes | git clone -b $REDARE_VERSION http://github.com/radareorg/radare2
  cd radare2
@@ -62,8 +63,9 @@ REDARE_VERSION=5.8.8
 $SCRIPT_DIR/cfiddle_install_perf.sh
 
 if ! [ x"$CFIDDLE_INSTALL_CROSS_COMPILERS" = x"no" ]; then
+    echo "Installing cross-compilers"
     export CFIDDLE_DEPS_INSTALL_PREFIX
     $SCRIPT_DIR/cfiddle_install_compilers.sh
+else
+    echo "Skipping cross-compilers"
 fi
-	    
-
