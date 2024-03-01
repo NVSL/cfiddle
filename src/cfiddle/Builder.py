@@ -170,8 +170,13 @@ class ExecutableList(list):
         
     
 class BuildFailure(CFiddleException):
+    def __init__(self, command, output):
+        CFiddleException.__init__(self, command, output, original_exception=None)
+        self.command = command
+        self.output = output
+ 
     def __str__(self):
-        return f"Build command failed:\n\n{self.args[0]}\n\n{self.args[1]}"
+        return f"Build command failed:\n\n{self.command}\n\n{self.output}"
     
 class InvalidBuildParameter(CFiddleException):
     pass

@@ -36,7 +36,7 @@ def test_debug(setup):
 
 def test_exceptions(setup):
     class Handler():
-        def handle_exeception(self, e):
+        def handle_exception(self, e):
             if isinstance(e, CFiddleException):
                 echo("Handled")
                 return True

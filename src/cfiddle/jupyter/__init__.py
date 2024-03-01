@@ -3,6 +3,7 @@ from ..config import set_config
 from .source import InstrumentedExecutable
 from .util import compare
 from .util import html_parameters
+from .ExceptionHandler import PrettyExceptionHandler
 
 
 def configure_for_jupyter():
@@ -13,6 +14,7 @@ def configure_for_jupyter():
 
     """
     set_config("Executable_type", InstrumentedExecutable) 
-    set_config("ProgressBar", tqdm)
+#    set_config("ProgressBar", tqdm)
+    set_config("ExceptionHandler_type", PrettyExceptionHandler)
 
 

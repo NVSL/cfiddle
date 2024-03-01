@@ -38,3 +38,21 @@ def test_compare(setup):
         test_cpp = build("test_src/test.cpp")[0]
         assert isinstance(compare([test_cpp.cfg("sum"), test_cpp.cfg("sum"), "AOEU"]), HTML)
     
+
+def test_exceptions(setup):
+    with cfiddle_config(ExceptionHandler_type=PrettyExceptionHandler):
+        configure_for_jupyter()
+        build(code("aoeu"))
+
+def test_build_exception(setup):
+    with cfiddle_config(ExceptionHandler_type=PrettyExceptionHandler):
+        configure_for_jupyter()
+        build(code("aoeu"), arg_map(a=1))
+
+def test_run_exception(setup):
+    with cfiddle_config(ExceptionHandler_type=PrettyExceptionHandler):
+        configure_for_jupyter()
+        run(build(code(r"""
+                       extern "C"
+                       int foo()  
+                       {return *(int*)(0);}""")), 'foo')
