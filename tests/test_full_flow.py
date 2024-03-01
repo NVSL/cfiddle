@@ -99,15 +99,7 @@ def test_build_multi_build(setup):
     assert t[2].build_spec.build_parameters == dict(OPTIMIZE="-O0")
     assert len(t) == 4
     
-    
-    
-def test_run_one(test_cpp):
-    
-    for t in [run_one(test_cpp, "four"),
-              run_one(test_cpp, "sum", dict(a=2, b=2)),
-              run_one(exe=test_cpp, function="sum", arguments=dict(a=2, b=2))]:
-        assert isinstance(t, InvocationResult)
-        assert t.return_value == 4
+
 
         
 def test_run_list(test_cpp):

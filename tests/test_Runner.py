@@ -1,5 +1,4 @@
 from cfiddle import *
-from cfiddle import run_one
 from util import *
 from cfiddle.Runner import Runner, DirectRunner, BashExecutionMethod, SubprocessExecutionMethod, InvocationDescription, IncorrectArgumentType, InvalidInvocation, RunOptionInterpreter, InvalidRunOption, RunnerExecutionMethodException
 from cfiddle.SelfContainedExecutionMethod import TestSelfContainedExecutionMethod
@@ -41,8 +40,8 @@ def test_bind_arguments(params, proto, result,setup):
 
 
 def test_return_values(test_cpp):
-    r = run_one(test_cpp, "four")
-    assert r.return_value == 4
+    r = run(test_cpp, "four")
+    assert r[0].return_value == 4
 
 
 @pytest.mark.parametrize("ExecutionMethod", [BashExecutionMethod,
