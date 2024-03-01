@@ -318,8 +318,12 @@ def invoke_runner(runner, results):
 def do_invoke_runner(runner, results):
     from .config import cfiddle_config
     contents = pickle.load(runner)
+    config = contents["config"]
 
-    with cfiddle_config(**contents["config"]):
+    if "ExceptionHandler_type" in config:
+        del config["ExceptionHandler_type"]
+
+    with cfiddle_config(**config):
         try:
             return_value = contents["runner"]._delegated_run()
             pickle.dump(return_value, results)
