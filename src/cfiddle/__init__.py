@@ -13,7 +13,6 @@ __all__ = [
     "code",
     "build_and_run",
     "build",
-    "build_with_exceptions",
     "run",
     "run_list",
     "sanity_test",
@@ -89,17 +88,6 @@ def build(source, build_parameters=None, **kwargs):
     Returns:
         list of :obj:`Executable`: One executable for each combination of ``source`` and ``build_parameters``.
 
-    """
-    try:
-        return build_with_exceptions(source, build_parameters, **kwargs)
-    except BuildFailure as e:
-        print(e)
-    except InvalidBuildParameter as e:
-        print(e)
- 
-def build_with_exceptions(source, build_parameters=None, **kwargs):
-    """
-    Just like :func:`build`, but it doesn't catch exceptions.
     """
     if build_parameters is None:
         build_parameters = arg_map()

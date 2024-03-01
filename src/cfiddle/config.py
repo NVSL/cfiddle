@@ -9,7 +9,7 @@ from .Runner import InvocationResult, InvocationDescription, Runner, RunOptionIn
 from .Invoker import Invoker
 from .CProtoParser import CProtoParser
 from .GoProtoParser import GoProtoParser
-from .Exceptions import CFiddleException
+from .Exceptions import CFiddleException, NoopExceptionHandler
 from .source import InstrumentedExecutable
 
 
@@ -32,6 +32,7 @@ default_config = dict(Executable_type=InstrumentedExecutable,
                       perf_counters_default=None,
                       build_parameters_default=None,
                       run_options_default=None,
+                      ExceptionHandler_type=NoopExceptionHandler,
                       DEBUG_MODE=False)
 
 

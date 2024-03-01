@@ -34,5 +34,36 @@ def test_debug(setup):
             assert t.__context__ != None # this means we didn't wrap the exception in our own.
 
 
+def test_exceptions(setup):
+    class Handler():
+        def handle_exeception(self, e):
+            if isinstance(e, CFiddleException):
+                echo("Handled")
+                return True
+            else:
+                echo("Not handled")
+                return False
 
-    
+
+    @handle_cfiddle_exceptions
+    def mimic_handled_error():
+        1/0
+
+    @handle_cfiddle_exceptions
+    def mimic_handled_cfiddle_error():
+        raise CFiddleException("Handled")
+
+    @handle_cfiddle_exceptions
+    def mimic_unhandled_error():
+        dict()[1]
+
+    with cfiddle_config():
+        enable_debug(enable=False)
+        with cfiddle_config(ExceptionHandler_type=Handler):
+            mimic_handled_error()
+            mimic_handled_cfiddle_error()
+
+            enable_debug(enable=True)
+            with pytest.raises(KeyError):
+                mimic_unhandled_error()
+
