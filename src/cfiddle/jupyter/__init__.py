@@ -3,7 +3,7 @@ from ..config import set_config
 from .source import InstrumentedExecutable
 from .util import compare
 from .util import html_parameters
-from .ExceptionHandler import PrettyExceptionHandler
+from .ExceptionHandler import PrettyExceptionHandler, CFiddleUserException
 
 
 def configure_for_jupyter():

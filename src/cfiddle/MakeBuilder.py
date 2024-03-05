@@ -122,7 +122,7 @@ class MakeBuilder(Builder):
     def _invoke_make(self, cmd):
         success, output = invoke_process(cmd)
         if not success:
-            raise BuildFailure(" ".join(cmd), output)
+            raise BuildFailure(executable_description=self.build_spec, command=" ".join(cmd), output=output)
         return output
 
     

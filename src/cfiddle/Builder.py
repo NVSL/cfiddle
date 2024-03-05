@@ -170,11 +170,12 @@ class ExecutableList(list):
         
     
 class BuildFailure(CFiddleException):
-    def __init__(self, command, output):
-        CFiddleException.__init__(self, command, output, original_exception=None)
+    def __init__(self, executable_description, command, output):
+        CFiddleException.__init__(self, command, output)
         self.command = command
         self.output = output
- 
+        self.executable_description = executable_description
+        
     def __str__(self):
         return f"Build command failed:\n\n{self.command}\n\n{self.output}"
     

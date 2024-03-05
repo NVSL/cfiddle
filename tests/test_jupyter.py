@@ -42,17 +42,20 @@ def test_compare(setup):
 def test_exceptions(setup):
     with cfiddle_config(ExceptionHandler_type=PrettyExceptionHandler):
         configure_for_jupyter()
-        build(code("aoeu"))
+        with pytest.raises(CFiddleUserException):
+            build(code("aoeu"))
 
 def test_build_exception(setup):
     with cfiddle_config(ExceptionHandler_type=PrettyExceptionHandler):
         configure_for_jupyter()
-        build(code("aoeu"), arg_map(a=1))
+        with pytest.raises(CFiddleUserException):
+            build(code("aoeu"), arg_map(a=1))
 
 def test_run_exception(setup):
     with cfiddle_config(ExceptionHandler_type=PrettyExceptionHandler):
         configure_for_jupyter()
-        run(build(code(r"""
-                       extern "C"
-                       int foo()  
-                       {return *(int*)(0);}""")), 'foo')
+        with pytest.raises(CFiddleUserException):
+            run(build(code(r"""
+                        extern "C"
+                        int foo()  
+                        {return *(int*)(0);}""")), 'foo')

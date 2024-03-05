@@ -138,7 +138,7 @@ class Runner:
             os.remove(self._results_filename)
 
         self._pickle_run(self._runner_filename)
-
+#        print(self._runner_filename)
         cmd_runner.execute(["cfiddle-run", "--runner", self._runner_filename, "--results", self._results_filename], runner=self)
 
         r = self._unpickle_results(self._results_filename)
@@ -274,16 +274,33 @@ class BashExecutionMethod:
         c = " ".join(command)
         os.system(f"""bash -c '{c}'""")
 
-        
+import sys
+def run_command_with_live_output(command):
+    output = ""
+    with subprocess.Popen(command,
+                        #bufsize=1, 
+                        text=True,
+                        stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT) as p:
+        for line in p.stdout:
+            output += line
+            sys.stdout.write(line)
+            sys.stdout.flush()
+            #print(f"stdout: {line}", end="")
+
+    return_code = p.returncode
+    return return_code, output
+
 class SubprocessExecutionMethod:
     def execute(self, command, runner):
+        output=None
         try:
             log.debug(f"SubprocessExecutionMethod running {command}")
-            subprocess.run(command, check=True)#, capture_output=True)
-        except subprocess.CalledProcessError as e:
-            raise RunnerExecutionMethodException(f"SubprocessExecutionMethod failed (error code {e.returncode}). This means that the supplied code caused a segfault or other error.  Here is the output cfiddle could capture: {e.stdout and e.stdout.decode()} {e.stderr and e.stderr.decode()}")
+            return_code, output = run_command_with_live_output(command)
         except Exception as e:
-            raise RunnerExecutionMethodException(f"SubprocessExecutionMethod failed ({repr(e)}).  This usually means that the supplied code caused a segfault or other error.")
+            raise RunnerExecutionMethodException(f"SubprocessExecutionMethod failed ({repr(e)}).", command=command, output=output)
+        else:
+            if return_code != 0:
+               raise RunnerExecutionMethodException(f"SubprocessExecutionMethod failed (error code {return_code}).", command=command, output=output)
 
 def get_uuid(id_length=8):
     return uuid.uuid4().hex[:id_length]
@@ -307,7 +324,10 @@ class InvalidRunOption(CFiddleException):
     pass
 
 class RunnerExecutionMethodException(CFiddleException):
-    pass
+    def __init__(self, *argc, command=None, output=None, **kwargs):
+        self.output = output
+        self.command = command
+        super().__init__(*argc, **kwargs)
 
 @click.command()
 @click.option('--runner',  "runner",  required=True, type=click.File("rb"), help="File with a pickled Runner in it.")
@@ -323,10 +343,10 @@ def do_invoke_runner(runner, results):
     if "ExceptionHandler_type" in config:
         del config["ExceptionHandler_type"]
 
-    with cfiddle_config(**config):
+    with cfiddle_config(**config, force=True):
         try:
             return_value = contents["runner"]._delegated_run()
             pickle.dump(return_value, results)
-        except CFiddleException as e:
+        except Exception as e:
             pickle.dump(e, results)
 

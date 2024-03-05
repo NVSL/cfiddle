@@ -31,16 +31,16 @@ def test_push_pop2():
 
     with tempfile.TemporaryDirectory() as tdir:
         with cfiddle_config(Executable_type=MyExecutable, CFIDDLE_BUILD_ROOT=tdir):
-            assert isinstance(build_one("test_src/test.cpp"), MyExecutable)
+            assert isinstance(build("test_src/test.cpp")[0], MyExecutable)
 
-        assert not isinstance(build_one("test_src/test.cpp"), MyExecutable)
+        assert not isinstance(build("test_src/test.cpp")[0], MyExecutable)
         
 
 def test_peek():
     with tempfile.TemporaryDirectory() as tdir:
         with cfiddle_config(Executable_type=MyExecutable, CFIDDLE_BUILD_ROOT=tdir):
             peek_config() # shouldn't change anything.
-            assert isinstance(build_one("test_src/test.cpp"), MyExecutable)
+            assert isinstance(build("test_src/test.cpp")[0], MyExecutable)
         
 
 def test_unknown_option():
@@ -48,6 +48,17 @@ def test_unknown_option():
         with cfiddle_config(foo="bar"):
             pass
 
+def test_force():
+    with cfiddle_config():
+        set_config("foo", "bar", force=True)
+        assert get_config("foo") == "bar"
+        with cfiddle_config(baz="boom", force=True):
+            assert get_config("baz") == "boom"
+
+def test_default():
+    with cfiddle_config():
+        assert get_config("foo", "bar") == "bar"
+        
 class MyExecutable(Executable):
         pass
 

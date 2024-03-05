@@ -40,21 +40,23 @@ cfiddle_config_stack = []
 cfiddle_config_stack.append(default_config)
 
     
-def set_config(k,v):
+def set_config(k,v, force=False):
     """Set a configuration values.
 
     Args:
       k:  The name of the configuration variable.
       v:  The value.
+      force: Set the value even if it is not already in the configuration.  Defaults to :code:`False`.
     """
 
     global cfiddle_config_stack
-    if k not in cfiddle_config_stack[-1]:
-        raise IllegalConfiguration(f"Unknown configuration option: {k}")
+    if not force:
+        if k not in cfiddle_config_stack[-1]:
+            raise IllegalConfiguration(f"Unknown configuration option: {k}")
     cfiddle_config_stack[-1][k] = v
 
     
-def get_config(k):
+def get_config(k, default=None):
     """Query a configuration values.
 
     Args:
@@ -66,7 +68,7 @@ def get_config(k):
 
     # TODO several places check the environment first and then look here. We sohuld factor that out.
     global cfiddle_config_stack
-    return cfiddle_config_stack[-1][k]
+    return cfiddle_config_stack[-1].get(k, default)
 
 def enable_debug(enable=True):
     """Put CFiddle into debugging mode.
@@ -81,10 +83,13 @@ def in_debug():
 
 
 @contextmanager
-def cfiddle_config(**kwargs):
+def cfiddle_config(force=False, **kwargs):
     """Create a local configuration context.
 
     Any configuration changes made inside this context will be undone after the context completes.
+
+    Args:
+      force: Set the value even if it is not already in the configuration.  Defaults to :code:`False`.
 
     For example:
     
@@ -103,7 +108,7 @@ def cfiddle_config(**kwargs):
     """
 
     push_config()
-    [set_config(k,v) for k,v in kwargs.items()]
+    [set_config(k,v, force=force) for k,v in kwargs.items()]
     try:
         yield
     finally:

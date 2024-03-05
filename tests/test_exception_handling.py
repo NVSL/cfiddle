@@ -1,8 +1,10 @@
+from contextlib import contextmanager
 import pytest
 from cfiddle import *
 from cfiddle.Exceptions import handle_cfiddle_exceptions
 from cfiddle.config import cfiddle_config, enable_debug, in_debug, get_config
 from click import echo
+from cfiddle.Exceptions import OutermostCallExceptionHandler
 from fixtures import *
 
 def test_debug(setup):
@@ -36,6 +38,10 @@ def test_debug(setup):
 
 def test_exceptions(setup):
     class Handler():
+        @contextmanager
+        def exception_handling(self):
+            yield
+
         def handle_exception(self, e):
             if isinstance(e, CFiddleException):
                 echo("Handled")
@@ -67,3 +73,25 @@ def test_exceptions(setup):
             with pytest.raises(KeyError):
                 mimic_unhandled_error()
 
+def test_outermost_exception_handling(capsys):
+    class WrapperException(Exception):
+        pass
+
+    class Handler(OutermostCallExceptionHandler):
+        def handle_outermost_exception(self, e):
+            return WrapperException("Was wrapped")
+
+    @handle_cfiddle_exceptions
+    def outer1():
+        inner1()
+
+    @handle_cfiddle_exceptions
+    def inner1():
+        raise CFiddleException("Can you handle it")
+
+    with pytest.raises(CFiddleException):
+        outer1()    
+
+    with cfiddle_config(ExceptionHandler_type=Handler):
+        with pytest.raises(WrapperException):
+            outer1()
