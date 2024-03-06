@@ -156,6 +156,8 @@ class Runner:
     def compute_output_files(self):
         return [self._results_filename]
 
+    def get_output_file(self):
+        return self._results_filename
     
     def _delegated_run(self):
         l = self._result_list_factory()
@@ -299,9 +301,9 @@ class SubprocessExecutionMethod:
         except Exception as e:
             raise RunnerExecutionMethodException(f"SubprocessExecutionMethod failed ({repr(e)}).", command=command, output=output)
         else:
-            if return_code != 0:
-               raise RunnerExecutionMethodException(f"SubprocessExecutionMethod failed (error code {return_code}).", command=command, output=output)
-
+            if not os.path.exists(runner.get_output_file()):
+                raise RunnerExecutionMethodException(f"SubprocessExecutionMethod failed (error code {return_code}).", command=command, output=output)
+   
 def get_uuid(id_length=8):
     return uuid.uuid4().hex[:id_length]
 
@@ -328,6 +330,9 @@ class RunnerExecutionMethodException(CFiddleException):
         self.output = output
         self.command = command
         super().__init__(*argc, **kwargs)
+        
+    def __str__(self):
+        return f"{super().__str__()}  Command: {self.command}  Output: {self.output}"
 
 @click.command()
 @click.option('--runner',  "runner",  required=True, type=click.File("rb"), help="File with a pickled Runner in it.")
@@ -349,4 +354,5 @@ def do_invoke_runner(runner, results):
             pickle.dump(return_value, results)
         except Exception as e:
             pickle.dump(e, results)
+            raise click.ClickException(f"Runner failed with exception {repr(e)}")
 

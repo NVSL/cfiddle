@@ -41,18 +41,21 @@ def test_compare(setup):
 
 def test_exceptions(setup):
     with cfiddle_config(ExceptionHandler_type=PrettyExceptionHandler):
+        enable_debug(enable=False)
         configure_for_jupyter()
         with pytest.raises(CFiddleUserException):
             build(code("aoeu"))
 
 def test_build_exception(setup):
     with cfiddle_config(ExceptionHandler_type=PrettyExceptionHandler):
+        enable_debug(enable=False)
         configure_for_jupyter()
         with pytest.raises(CFiddleUserException):
             build(code("aoeu"), arg_map(a=1))
 
 def test_run_exception(setup):
     with cfiddle_config(ExceptionHandler_type=PrettyExceptionHandler):
+        enable_debug(enable=False)
         configure_for_jupyter()
         with pytest.raises(CFiddleUserException):
             run(build(code(r"""

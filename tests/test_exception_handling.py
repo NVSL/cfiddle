@@ -33,7 +33,7 @@ def test_debug(setup):
             mimic_internal_error()
         except Exception as e:
             t = e
-            assert t.__context__ != None # this means we didn't wrap the exception in our own.
+            assert t.__context__ == None # this means we didn't wrap the exception in our own.
 
 
 def test_exceptions(setup):
@@ -43,12 +43,13 @@ def test_exceptions(setup):
             yield
 
         def handle_exception(self, e):
-            if isinstance(e, CFiddleException):
+            if isinstance(e, CFiddleException) or isinstance(e, ZeroDivisionError):
                 echo("Handled")
-                return True
+                return CFiddleException()
             else:
                 echo("Not handled")
-                return False
+                return None
+                
 
 
     @handle_cfiddle_exceptions
@@ -66,8 +67,9 @@ def test_exceptions(setup):
     with cfiddle_config():
         enable_debug(enable=False)
         with cfiddle_config(ExceptionHandler_type=Handler):
-            mimic_handled_error()
-            mimic_handled_cfiddle_error()
+            with pytest.raises(CFiddleException):
+                mimic_handled_error()
+                mimic_handled_cfiddle_error()
 
             enable_debug(enable=True)
             with pytest.raises(KeyError):
@@ -78,8 +80,11 @@ def test_outermost_exception_handling(capsys):
         pass
 
     class Handler(OutermostCallExceptionHandler):
-        def handle_outermost_exception(self, e):
-            return WrapperException("Was wrapped")
+        def handle_exception(self, e):
+            if self.is_outermost_call():
+                return WrapperException("Was wrapped")
+            else:
+                return None
 
     @handle_cfiddle_exceptions
     def outer1():

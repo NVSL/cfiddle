@@ -41,10 +41,12 @@ from .Toolchain import list_architectures
 from .Exceptions import CFiddleException, handle_cfiddle_exceptions
 from .SelfContainedExecutionMethod import SelfContainedExecutionMethod
 
+@handle_cfiddle_exceptions
 def build_and_run(source_file=None, build_parameters=None, function=None, arguments=None, run_options=None, perf_counters=None):
     executable = build(source_file, build_parameters)
     return run(executable, function, arguments, run_options, perf_counters)
 
+@handle_cfiddle_exceptions
 def build_list(build_specs, **kwargs):
     Builder = get_config("Builder_type")
     ExeDesc = get_config("ExecutableDescription_type")
@@ -104,6 +106,7 @@ def build(source, build_parameters=None, **kwargs):
     builds = arg_map(source=source, build_parameters=full_build_parameters)
     return build_list(builds, **kwargs)
 
+@handle_cfiddle_exceptions
 def run_list(invocations, **kwargs): 
     """
     Run a list of invocations.  This is the helper function that :func:`run()` uses to do the actual work of running the invocations.
@@ -208,6 +211,7 @@ def run(executable, function, arguments=None, perf_counters=None, run_options=No
     invocations = build_invocations(executable, function, arguments, run_options, perf_counters, extra_input_files, extra_output_files)
     return run_list(invocations, **kwargs)
 
+@handle_cfiddle_exceptions
 def build_invocations(executable, function, arguments=None, run_options=None, perf_counters=None, extra_input_files=None, extra_output_files=None):    
     """ 
     This is a helper function for :func:`run()` that builds the invocations but does not run them.  It's arguments are the same, but it returns a list of
