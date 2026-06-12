@@ -32,7 +32,7 @@ if ! perf --version; then
     fi
 
     # somehow perf links against libcrypto.so.1.1, but it's not present.  So we disable
-    PYTHON=python3 make -C tools/perf clean install  DESTDIR=/usr/local NO_LIBCRYPTO=1
+    PYTHON=python3.10 make -C tools/perf clean install  DESTDIR=/usr/local NO_LIBCRYPTO=1
     
     rm -rf /tmp/perf
 
